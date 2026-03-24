@@ -12,7 +12,7 @@ import Foundation
 ///
 /// This describes a generic car charger. Every car charger needs to implement these
 /// functions to work within the SiincosCharge infrastructure
-protocol CarCharger {
+protocol CarCharger: Sendable {
     var modbusDevice: ModbusRTUClient { get }
     var unitId: UInt8 { get }
     init(modbusDevice: ModbusRTUClient, unitId: UInt8)
@@ -30,7 +30,7 @@ protocol CarCharger {
 ///
 /// This describes a generic power meter. Every power meter needs to implement these
 /// functions to work within the SiincosCharge infrastructure
-protocol PowerMeter {
+protocol PowerMeter: Sendable {
     var modbusDevice: ModbusRTUClient { get }
     var unitId: UInt8 { get }
     init(modbusDevice: ModbusRTUClient, unitId: UInt8)
