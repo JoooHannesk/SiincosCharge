@@ -41,7 +41,7 @@ struct SiincosChargerGenericTests {
     @Test("Run-All-Generic-Device-Tests")
     func runAllGenericDeviceTests() async throws {
         let genericDeviceTests = GenericChargerTestCases(charger: self.charger)
-        try await genericDeviceTests.getChargingState()
+        try await genericDeviceTests.runAllTests()
     }
 }
 

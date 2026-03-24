@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 import ModbusSerial
 @testable import SiincosChargeEdge
 
@@ -21,9 +22,25 @@ class GenericChargerTestCases {
         self.charger = charger
     }
 
-    func getChargingState() async throws {
+    /// Run all tests
+    func runAllTests() async throws {
+        try await self.getChargingState()
+        try await self.getInternalTemperature()
+    }
+
+    // MARK: Private Test Cases
+
+    private func getChargingState() async throws {
         let state = try await self.charger.getChargingState()
         #expect(state != .unknown)
-        print(state)
+        print("Charger State: \(state)")
+    }
+
+    private func getInternalTemperature() async throws {
+        let temperature = try await self.charger.getInternalTemperature()
+        let tempLow = Measurement(value: -25.0, unit: UnitTemperature.celsius)
+        let tempHigh = Measurement(value: 40.0, unit: UnitTemperature.celsius)
+        print("Charger internal temperature: \(temperature)")
+        #expect(temperature > tempLow && temperature < tempHigh)
     }
 }

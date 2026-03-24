@@ -50,8 +50,12 @@ struct SenecWallboxProS: CarCharger {
     }
     
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
-        // TODO: implement
-        return Measurement(value: 0.0, unit: UnitTemperature.celsius)
+        let response = try await self.modbusDevice.readInputRegisters(address: 9, count: 1, unitId: self.unitId)
+        guard let temperatureValue = response.signedValue(at: 0) else {
+            throw DeviceError.deviceDataMissing
+        }
+        let temperature = Double(temperatureValue)/10.0
+        return Measurement(value: temperature, unit: UnitTemperature.celsius)
     }
     
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {

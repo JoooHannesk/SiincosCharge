@@ -108,17 +108,18 @@ struct Boundaries<T: Comparable> {
     let minimal: T
     let maximal: T
 
-    init(minimal: T, maximal: T) throws(ChargerError) {
+    init(minimal: T, maximal: T) throws(DeviceError) {
         self.minimal = minimal
         self.maximal = maximal
         if minimal > maximal {
-            throw ChargerError.boundaryViolation
+            throw DeviceError.boundaryViolation
         }
     }
 }
 
 /// Car Charger Errors
 /// 
-enum ChargerError: Error {
+enum DeviceError: Error {
     case boundaryViolation
+    case deviceDataMissing
 }
