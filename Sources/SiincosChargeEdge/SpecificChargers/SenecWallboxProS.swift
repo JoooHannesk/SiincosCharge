@@ -21,7 +21,7 @@ struct SenecWallboxProS: CarCharger {
     }
     
     func getChargingState() async throws -> ChargerState {
-        var response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
+        let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
         let state = response.signedValue(at: 0)
         switch state {
         case 2:
@@ -51,41 +51,52 @@ struct SenecWallboxProS: CarCharger {
     
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         // TODO: implement
+        return Measurement(value: 0.0, unit: UnitTemperature.celsius)
     }
     
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
         // TODO: implement
+        let min = Measurement(value: 6, unit: UnitElectricCurrent.amperes)
+        let max = Measurement(value: 16, unit: UnitElectricCurrent.amperes)
+        return try Boundaries(minimal: min, maximal: max)
     }
 
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
         // TODO: implement
+        return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
     }
 
     func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         // TODO: implement
+        return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
     }
 
     func getHardwareLockState() async throws -> LockState {
         // TODO: implement
+        return .locked
     }
     
     func getSoftwareLockState() async throws -> LockState {
         // TODO: implement
+        return .locked
     }
     
     func setSoftwareLock(to: LockState) async throws -> LockState {
         // TODO: implement
+        return .locked
     }
 
     // MARK: Device specific functionality
     func getPowerSavingMode() -> Bool {
         // refered to as standby mode in modbus mapping manual
         // TODO: implement
+        return false
     }
 
-    func setPowerSavingMode(to: Bool) {
+    func setPowerSavingMode(to: Bool) -> Bool {
         // refered to as standby mode in modbus mapping manual
         // TODO: implement
+        return false
     }
 
     func getModbusWatchdogTimeout() {
@@ -121,18 +132,22 @@ struct SenecWallboxProSPowerMeter: PowerMeter {
     }
 
     func getElectricCurrent() -> ElectricCurrent3PhaseGrid {
-        <#code#>
+        // TODO: implement
+        return ElectricCurrent3PhaseGrid()
     }
     
     func getGridVoltage() -> ElectricVoltage3PhaseGrid {
-        <#code#>
+        // TODO: implement
+        return ElectricVoltage3PhaseGrid()
     }
     
     func getPower() -> ElectricPower3PhaseGrid {
-        <#code#>
+        // TODO: implement
+        return ElectricPower3PhaseGrid()
     }
     
     func getTotalEnergy() -> Measurement<UnitEnergy> {
-        <#code#>
+        // TODO: implement
+        return Measurement(value: 0, unit: UnitEnergy.kilowattHours)
     }
 }
