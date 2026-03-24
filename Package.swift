@@ -25,7 +25,7 @@ let package = Package(
         ),
         .testTarget(
             name: "SiincosChargeEdgeTests",
-            dependencies: [],
+            dependencies: ["SiincosChargeEdge", ],
             path: "Tests"
         )
     ]
