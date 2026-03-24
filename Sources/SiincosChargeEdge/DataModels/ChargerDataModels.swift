@@ -104,7 +104,11 @@ struct ElectricPower3PhaseGrid {
 /// Boundary
 ///
 /// Boundary consisting of a minimal and maximal value
-struct Boundaries<T: Comparable> {
+struct Boundaries<T: Comparable>: CustomStringConvertible {
+    var description: String {
+        return "Minimal Value: \(minimal) < Maximal Value: \(maximal)"
+    }
+
     let minimal: T
     let maximal: T
 

@@ -22,7 +22,9 @@ struct SenecWallboxProS: CarCharger {
     
     func getChargingState() async throws -> ChargerState {
         let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
-        let state = response.signedValue(at: 0)
+        guard let state = response.signedValue(at: 0) else {
+            throw DeviceError.deviceDataMissing
+        }
         switch state {
         case 2:
             return .vehicleNotPresentChargerNotReady
@@ -59,10 +61,13 @@ struct SenecWallboxProS: CarCharger {
     }
     
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
-        // TODO: implement
-        let min = Measurement(value: 6, unit: UnitElectricCurrent.amperes)
-        let max = Measurement(value: 16, unit: UnitElectricCurrent.amperes)
-        return try Boundaries(minimal: min, maximal: max)
+        let responseMinimalCurrent = try await self.modbusDevice.readInputRegisters(address: 101, count: 1, unitId: self.unitId)
+        let responseMaximalCurrent = try await self.modbusDevice.readInputRegisters(address: 100, count: 1, unitId: self.unitId)
+        guard let minimalCurrentValue = responseMinimalCurrent.signedValue(at: 0), let maximalCurrentValue = responseMaximalCurrent.signedValue(at: 0)  else {
+            throw DeviceError.deviceDataMissing
+        }
+        return try Boundaries(minimal: Measurement(value: Double(minimalCurrentValue), unit: UnitElectricCurrent.amperes),
+                              maximal: Measurement(value: Double(maximalCurrentValue), unit: UnitElectricCurrent.amperes))
     }
 
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {

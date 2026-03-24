@@ -26,6 +26,7 @@ class GenericChargerTestCases {
     func runAllTests() async throws {
         try await self.getChargingState()
         try await self.getInternalTemperature()
+        try await self.getHardwareCurrentLimits()
     }
 
     // MARK: Private Test Cases
@@ -42,5 +43,13 @@ class GenericChargerTestCases {
         let tempHigh = Measurement(value: 40.0, unit: UnitTemperature.celsius)
         print("Charger internal temperature: \(temperature)")
         #expect(temperature > tempLow && temperature < tempHigh)
+    }
+
+    private func getHardwareCurrentLimits() async throws {
+        let currLimits = try await self.charger.getHardwareCurrentLimits()
+        let currLow = Measurement(value: 6.0, unit: UnitElectricCurrent.amperes)
+        let currHigh = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
+        print("Charger hardware current limits: \(currLimits)")
+        #expect(currLow == currLimits.minimal && currHigh == currLimits.maximal)
     }
 }
