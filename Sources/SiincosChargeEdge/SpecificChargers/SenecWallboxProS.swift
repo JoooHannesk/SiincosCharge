@@ -133,9 +133,19 @@ struct SenecWallboxProS: CarCharger {
         return newSetpointProcessedByCharger
     }
 
+    /// Get Hardware Lock State
+    ///
+    /// Some chargers have a phyiscal hardware lock which is required to be unlocked manually before a charging session can be started. This
+    /// function returns the actual hardware lock state.
+    ///
+    /// - Returns: lock state as type ``LockState``
+    /// - Note: Refers to register address 13 in corresponding modbus mapping.
     func getHardwareLockState() async throws -> LockState {
-        // TODO: implement
-        return .locked
+        let lockState = try await self.modbusDevice.readInputRegisters(address: 13, count: 1, unitId: self.unitId)
+        guard let lockStateValue = lockState.signedValue(at: 0) else {
+            throw DeviceError.dataMissing
+        }
+        return LockState(rawValue: UInt(lockStateValue)) ?? .unlocked
     }
     
     func getSoftwareLockState() async throws -> LockState {

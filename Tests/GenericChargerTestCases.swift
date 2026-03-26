@@ -95,4 +95,11 @@ class GenericChargerTestCases {
             #expect(currentSetpoint == expected)
         }
     }
+
+    @Test("Get-Hardware-Lock-State")
+    func getHardwareLockState() async throws {
+        let state = try await self.charger.getHardwareLockState()
+        print("Actual charger hardware lock state: \(state)")
+        #expect(state == .unlocked)
+    }
 }
