@@ -181,13 +181,13 @@ struct SenecWallboxProS: CarCharger {
 
     // MARK: Device specific functionality
     func getPowerSavingMode() -> Bool {
-        // refered to as standby mode in modbus mapping manual
+        // referred to as standby mode in modbus mapping manual
         // TODO: implement
         return false
     }
 
     func setPowerSavingMode(to: Bool) -> Bool {
-        // refered to as standby mode in modbus mapping manual
+        // referred to as standby mode in modbus mapping manual
         // TODO: implement
         return false
     }
@@ -200,12 +200,41 @@ struct SenecWallboxProS: CarCharger {
         // TODO: implement
     }
 
-    func getCommFailureMaxCurrent() {
-        // TODO: implement
+    /// Get Modbus Communication Failure Current Limit
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle in
+    /// case the modbus communication breaks. This function reads the fallback current limit for the case.
+    ///
+    /// - Returns: Fallback electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
+    /// - Note: Refers to register address 262 in corresponding modbus mapping. This value is not retained in the charger and
+    /// will not survive a power cylce!
+    func getCommFailureMaxCurrent() async throws -> Measurement<UnitElectricCurrent> {
+        let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 262, count: 1, unitId: self.unitId)
+        guard var responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
+            throw DeviceError.dataMissing
+        }
+        responseCurrentSetpointValue /= 10 // Required per modbus documentation
+        return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }
 
-    func setCommFailureMaxCurrent() {
-        // TODO: implement
+    /// Set Modbus Communication Failure Current Limit
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle in
+    /// case the modbus communication breaks. This function sets the maximum current limit for this case.
+    ///
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
+    /// - Returns: Fallback electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
+    /// to register address 262 in corresponding modbus mapping.
+    func setCommFailureMaxCurrent(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
+        let hardwareLimits = try await self.getHardwareCurrentLimits()
+        // ensure to not exceed the hardware current constraints
+        let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal)
+        // Factory required per modbus documentation
+        let newSetpointInt = UInt16(newSetpoint.value * 10)
+        let _ = try await self.modbusDevice.writeMultipleRegisters(address: 262, values: [newSetpointInt], unitId: self.unitId)
+        let newSetpointProcessedByCharger = try await self.getCommFailureMaxCurrent()
+        return newSetpointProcessedByCharger
     }
 
 }

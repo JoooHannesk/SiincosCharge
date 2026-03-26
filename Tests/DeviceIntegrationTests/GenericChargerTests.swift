@@ -1,5 +1,5 @@
 //
-//  DeviceIntegrationTestsGenericCharger.swift
+//  GenericChargerTests.swift
 //  SiincosChargeEdge
 //
 //  Created by Johannes Kinzig on 24.03.26.
@@ -11,11 +11,11 @@ import ModbusSerial
 @testable import SiincosChargeEdge
 
 
-/// Generic Charger Device Test Cases
+/// Generic Charger Device Tests
 ///
 /// Generic tests for the car chargers
 /// To run this test, a physical charger is required.
-class GenericChargerTestCases {
+class GenericChargerTests {
 
     let unitId: UInt8
     let config: RTUClientConfiguration
@@ -43,6 +43,25 @@ class GenericChargerTestCases {
         )
         modbusDevice = ModbusRTUClient(configuration: config)
         charger = SenecWallboxProS(modbusDevice: modbusDevice, unitId: unitId)
+    }
+
+    @Test("Software-Lock-State")
+    func softwareLockState() async throws {
+        try await setLockState(to: .unlocked, expected: .unlocked)
+        try await setLockState(to: .locked, expected: .locked)
+
+        func setLockState(to value: LockState, expected: LockState) async throws {
+            let newState = try await self.charger.setSoftwareLock(to: value)
+            print("Actual charger software lock state: \(newState), Expected: \(expected) - Fullfilled: \(newState == expected ? "✔" : "✘")")
+            #expect(newState == expected)
+        }
+    }
+
+    @Test("Get-Hardware-Lock-State")
+    func getHardwareLockState() async throws {
+        let state = try await self.charger.getHardwareLockState()
+        print("Actual charger hardware lock state: \(state)")
+        #expect(state == .unlocked)
     }
 
     @Test("Get-Charging-State")
@@ -93,25 +112,6 @@ class GenericChargerTestCases {
             let currentSetpoint = try await self.charger.setMaxCurrentLimitSetpoint(to: value)
             print("Actual charger current limit setpoint: \(currentSetpoint), Expected: \(expected) - Fullfilled: \(currentSetpoint == expected ? "✔" : "✘")")
             #expect(currentSetpoint == expected)
-        }
-    }
-
-    @Test("Get-Hardware-Lock-State")
-    func getHardwareLockState() async throws {
-        let state = try await self.charger.getHardwareLockState()
-        print("Actual charger hardware lock state: \(state)")
-        #expect(state == .unlocked)
-    }
-
-    @Test("Software-Lock-State")
-    func softwareLockState() async throws {
-        try await setLockState(to: .unlocked, expected: .unlocked)
-        try await setLockState(to: .locked, expected: .locked)
-
-        func setLockState(to value: LockState, expected: LockState) async throws {
-            let newState = try await self.charger.setSoftwareLock(to: value)
-            print("Actual charger software lock state: \(newState), Expected: \(expected) - Fullfilled: \(newState == expected ? "✔" : "✘")")
-            #expect(newState == expected)
         }
     }
 }
