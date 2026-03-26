@@ -31,7 +31,7 @@ protocol CarCharger: Sendable {
     ///
     /// Retrieve internal system temperature from charger. Required for monitoring and system health diagnosis.
     ///
-    /// - Returns: internal system temperature as ``Measurement<UnitTemperature>``
+    /// - Returns: internal system temperature
     func getInternalTemperature() async throws -> Measurement<UnitTemperature>
 
     /// Get Hardware Current Limits
@@ -39,7 +39,7 @@ protocol CarCharger: Sendable {
     /// The charger is bound to specific electric current limits, constraint by the overall hardware design and the installation limits.
     /// These limits are required to ensure proper system functionality such as load balancing, equal current distribution, etc.
     ///
-    /// - Returns: Current limites (given by hardware and/or installation) as type ``Boundaries<Measurement<UnitElectricCurrent>>``
+    /// - Returns: Current limites (given by hardware and/or installation)
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>>
 
     /// Get Max Current Limit Setpoint
@@ -47,7 +47,7 @@ protocol CarCharger: Sendable {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function retrieves the
     /// current setpoint from the charger and returns it.
     ///
-    /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
+    /// - Returns: acutal electrical current setpoint
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent>
 
     /// Set Max Current Limit Setpoint
@@ -55,8 +55,8 @@ protocol CarCharger: Sendable {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
     ///
-    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
-    /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger
+    /// - Returns: Acutal electrical current setpoint as type, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger.
     @discardableResult func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
 

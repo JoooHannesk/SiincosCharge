@@ -68,7 +68,7 @@ struct SenecWallboxProS: CarCharger {
     ///
     /// Retrieve internal system temperature from charger. Required for monitoring and system health diagnosis.
     ///
-    /// - Returns: internal system temperature as ``Measurement<UnitTemperature>``
+    /// - Returns: internal system temperature
     /// - Note: Refers to register address 9 in corresponding modbus mapping
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         let response = try await self.modbusDevice.readInputRegisters(address: 9, count: 1, unitId: self.unitId)
@@ -84,7 +84,7 @@ struct SenecWallboxProS: CarCharger {
     /// The charger is bound to specific electric current limits, given by the overall hardware design and the installation limits.
     /// These limits are required to ensure proper system functionality such as load balancing, equal current distribution, etc.
     ///
-    /// - Returns: Current limites (given by hardware and/or installation) as type ``Boundaries<Measurement<UnitElectricCurrent>>``
+    /// - Returns: Current limites (given by hardware and/or installation)
     /// - Note: Refers to register addresses 100 and 101 in corresponding modbus mapping
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
         let responseMinimalCurrent = try await self.modbusDevice.readInputRegisters(address: 101, count: 1, unitId: self.unitId)
@@ -101,7 +101,7 @@ struct SenecWallboxProS: CarCharger {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function retrieves the
     /// current setpoint from the charger and returns it.
     ///
-    /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
+    /// - Returns: acutal electrical current setpoint
     /// - Note: Refers to register address 261 in corresponding modbus mapping. This value is not retained in the charger and
     /// will not survive a power cylce!
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
@@ -118,8 +118,8 @@ struct SenecWallboxProS: CarCharger {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
     ///
-    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
-    /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger
+    /// - Returns: Acutal electrical current setpoint, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
     /// to register address 261 in corresponding modbus mapping. This value is not retained in the cahrger and will not survive a power cylce!
     func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
@@ -154,7 +154,7 @@ struct SenecWallboxProS: CarCharger {
     /// function returns the actual lock state. Refer to ``SenecWallboxProS/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Returns: lock state as type ``SiincosChargeEdge/LockState``
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
     func getSoftwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readHoldingRegisters(address: 259, count: 1, unitId: self.unitId)
@@ -206,7 +206,7 @@ struct SenecWallboxProS: CarCharger {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle in
     /// case the modbus communication breaks. This function reads the fallback current limit for the case.
     ///
-    /// - Returns: Fallback electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
+    /// - Returns: Fallback electrical current setpoint
     /// - Note: Refers to register address 262 in corresponding modbus mapping. This value is not retained in the charger and
     /// will not survive a power cylce!
     func getCommFailureMaxCurrent() async throws -> Measurement<UnitElectricCurrent> {
@@ -223,8 +223,8 @@ struct SenecWallboxProS: CarCharger {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle in
     /// case the modbus communication breaks. This function sets the maximum current limit for this case.
     ///
-    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
-    /// - Returns: Fallback electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger
+    /// - Returns: Fallback electrical current setpoint, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
     /// to register address 262 in corresponding modbus mapping.
     func setCommFailureMaxCurrent(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
