@@ -36,7 +36,7 @@ struct SenecWallboxProS: CarCharger {
     func getChargingState() async throws -> ChargerState {
         let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
         guard let state = response.signedValue(at: 0) else {
-            throw DeviceError.deviceDataMissing
+            throw DeviceError.dataMissing
         }
         switch state {
         case 2:
@@ -73,7 +73,7 @@ struct SenecWallboxProS: CarCharger {
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         let response = try await self.modbusDevice.readInputRegisters(address: 9, count: 1, unitId: self.unitId)
         guard let temperatureValue = response.signedValue(at: 0) else {
-            throw DeviceError.deviceDataMissing
+            throw DeviceError.dataMissing
         }
         let temperature = Double(temperatureValue)/10.0
         return Measurement(value: temperature, unit: UnitTemperature.celsius)
@@ -90,7 +90,7 @@ struct SenecWallboxProS: CarCharger {
         let responseMinimalCurrent = try await self.modbusDevice.readInputRegisters(address: 101, count: 1, unitId: self.unitId)
         let responseMaximalCurrent = try await self.modbusDevice.readInputRegisters(address: 100, count: 1, unitId: self.unitId)
         guard let minimalCurrentValue = responseMinimalCurrent.signedValue(at: 0), let maximalCurrentValue = responseMaximalCurrent.signedValue(at: 0)  else {
-            throw DeviceError.deviceDataMissing
+            throw DeviceError.dataMissing
         }
         return try Boundaries(minimal: Measurement(value: Double(minimalCurrentValue), unit: UnitElectricCurrent.amperes),
                               maximal: Measurement(value: Double(maximalCurrentValue), unit: UnitElectricCurrent.amperes))
@@ -107,7 +107,7 @@ struct SenecWallboxProS: CarCharger {
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
         let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 261, count: 1, unitId: self.unitId)
         guard let responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
-            throw DeviceError.deviceDataMissing
+            throw DeviceError.dataMissing
         }
         return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }

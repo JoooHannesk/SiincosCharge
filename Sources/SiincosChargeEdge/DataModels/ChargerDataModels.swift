@@ -170,5 +170,5 @@ struct Boundaries<T: Comparable>: CustomStringConvertible {
 /// 
 enum DeviceError: Error {
     case boundaryViolation
-    case deviceDataMissing
+    case dataMissing
 }
