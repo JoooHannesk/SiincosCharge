@@ -20,7 +20,7 @@ class GenericChargerTestCases {
     let unitId: UInt8
     let config: RTUClientConfiguration
     let modbusDevice: ModbusRTUClient
-    let charger: CarCharger
+    let charger: ModbusRTUCarCharger
 
     init() {
         // TODO: make dynamic by loading the device based on config from file

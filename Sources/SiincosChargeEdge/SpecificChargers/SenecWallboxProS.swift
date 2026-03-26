@@ -102,13 +102,14 @@ struct SenecWallboxProS: CarCharger {
     /// current setpoint from the charger and returns it.
     ///
     /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
-    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the charger and
+    /// - Note: Refers to register address 261 in corresponding modbus mapping. This value is not retained in the charger and
     /// will not survive a power cylce!
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
         let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 261, count: 1, unitId: self.unitId)
-        guard let responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
+        guard var responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
             throw DeviceError.dataMissing
         }
+        responseCurrentSetpointValue /= 10 // Required per modbus documentation
         return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }
 
@@ -120,12 +121,13 @@ struct SenecWallboxProS: CarCharger {
     /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
     /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
-    /// to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and will not survive a power cylce!
+    /// to register address 261 in corresponding modbus mapping. This value is not retained in the cahrger and will not survive a power cylce!
     func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         let hardwareLimits = try await self.getHardwareCurrentLimits()
-        let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal) // ensure to not exceed the hardware current constraints
-        let newSetpointInt = UInt16(floor(newSetpoint.value)) // Always round to floor to prevent higher currents caused by rounding inaccuracy!
-        print(newSetpointInt) // TODO: remove if test succeeds
+        // ensure to not exceed the hardware current constraints
+        let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal)
+        // Factory required per modbus documentation
+        let newSetpointInt = UInt16(newSetpoint.value * 10)
         let _ = try await self.modbusDevice.writeMultipleRegisters(address: 261, values: [newSetpointInt], unitId: self.unitId)
         let newSetpointProcessedByCharger = try await self.getMaxCurrentLimitSetpoint()
         return newSetpointProcessedByCharger

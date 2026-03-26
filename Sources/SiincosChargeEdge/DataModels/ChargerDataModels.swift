@@ -8,11 +8,11 @@
 import ModbusSerial
 import Foundation
 
-/// Generic Car Charger
+/// Generic Car Charger (via ModbusRTU)
 ///
 /// This describes a generic car charger. Every car charger needs to implement these
 /// functions to work within the SiincosCharge infrastructure
-protocol CarCharger: Sendable {
+protocol ModbusRTUCarCharger: Sendable {
     var modbusDevice: ModbusRTUClient { get }
     var unitId: UInt8 { get }
 
