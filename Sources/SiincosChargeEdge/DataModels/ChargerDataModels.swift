@@ -17,7 +17,7 @@ protocol CarCharger: Sendable {
     /// Unit ID
     ///
     /// Unique id for identifying the device and its data within the local infrastructure.
-    /// Power meters and car chargers belonging logically togehter have the same unit id.
+    /// Power meters ``PowerMeter`` and car chargers ``CarCharger`` belonging logically togehter have to share the same unit id.
     var unitId: UInt8 { get }
 
     /// Get Charging State
@@ -97,7 +97,7 @@ protocol PowerMeter: Sendable {
     /// Unit ID
     ///
     /// Unique id for identifying the device and its data within the local infrastructure.
-    /// Power meters and car chargers belonging logically togehter have the same unit id.
+    /// Power meters and car chargers belonging logically togehter have to share the same unit id.
     var unitId: UInt8 { get }
     func getElectricCurrent() -> ElectricCurrent3PhaseGrid
     func getGridVoltage() -> ElectricVoltage3PhaseGrid

@@ -192,11 +192,12 @@ struct SenecWallboxProS: CarCharger {
         return false
     }
 
-    func getModbusWatchdogTimeout() {
+    func getModbusWatchdogTimeout() -> UInt16 {
         // TODO: implement
+        return 0
     }
 
-    func setModbusWatchdogTimeout(to: Int) {
+    func setModbusWatchdogTimeout(to seconds: UInt16) {
         // TODO: implement
     }
 
