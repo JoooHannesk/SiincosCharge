@@ -66,26 +66,24 @@ protocol CarCharger: Sendable {
     /// function returns the actual hardware lock state.
     ///
     /// - Returns: lock state as type ``LockState``
-    /// - Note: In case a charger has no physical hardware lock, this function returns .unlocked
+    /// - Note: In case a charger has no physical hardware lock, this function returns .unavailable
     func getHardwareLockState() async throws -> LockState
 
     /// Get Software Lock State
     ///
-    /// Some chargers have a software lock which is required to be unlocked before a charging session can be started. This
+    /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
     /// function returns the actual lock state. Refer to ``CarCharger/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
     /// - Returns: lock state as type ``LockState``
-    /// - Note: In case a charger has no software lock, this function returns .unlocked
     func getSoftwareLockState() async throws -> LockState
 
     /// Set Software Lock State
     ///
-    /// Some chargers have a software lock which is required to be unlocked before a charging session can be started. This
+    /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
     /// function unlocks the software lock.
     ///
     /// - Returns: lock state as type ``LockState``
-    /// - Note: In case a charger has no software lock, this function returns .unlocked
     func setSoftwareLock(to: LockState) async throws -> LockState
     
 }
@@ -139,6 +137,7 @@ enum ChargerState {
 enum LockState: UInt {
     case locked = 0
     case unlocked = 1
+    case unknown = 2
 }
 
 /// Electric Current
