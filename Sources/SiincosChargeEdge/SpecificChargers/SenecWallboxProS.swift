@@ -167,13 +167,16 @@ struct SenecWallboxProS: CarCharger {
     /// Set Software Lock State
     ///
     /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
-    /// function unlocks the software lock.
+    /// function locks or unlocks the software lock.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Parameter state: Lock state to set
+    /// - Returns: lock state as type ``LockState``, processed by the charger
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
-    func setSoftwareLock(to: LockState) async throws -> LockState {
-        // TODO: implement
-        return .locked
+    func setSoftwareLock(to state: LockState) async throws -> LockState {
+        let lockState = UInt16(state.rawValue)
+        let _ = try await self.modbusDevice.writeMultipleRegisters(address: 259, values: [lockState], unitId: self.unitId)
+        let newStateProcessByCharger = try await self.getSoftwareLockState()
+        return newStateProcessByCharger
     }
 
     // MARK: Device specific functionality

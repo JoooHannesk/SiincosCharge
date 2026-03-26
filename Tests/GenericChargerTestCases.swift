@@ -102,4 +102,16 @@ class GenericChargerTestCases {
         print("Actual charger hardware lock state: \(state)")
         #expect(state == .unlocked)
     }
+
+    @Test("Software-Lock-State")
+    func softwareLockState() async throws {
+        try await setLockState(to: .unlocked, expected: .unlocked)
+        try await setLockState(to: .locked, expected: .locked)
+
+        func setLockState(to value: LockState, expected: LockState) async throws {
+            let newState = try await self.charger.setSoftwareLock(to: value)
+            print("Actual charger software lock state: \(newState), Expected: \(expected) - Fullfilled: \(newState == expected ? "✔" : "✘")")
+            #expect(newState == expected)
+        }
+    }
 }

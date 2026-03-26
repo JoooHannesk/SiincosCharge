@@ -83,9 +83,8 @@ protocol CarCharger: Sendable {
     /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
     /// function unlocks the software lock.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Returns: lock state as type ``LockState``, processed by the charger.
     func setSoftwareLock(to: LockState) async throws -> LockState
-    
 }
 
 /// Generic Power Meter
