@@ -117,13 +117,18 @@ struct SenecWallboxProS: CarCharger {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
     ///
-    /// - Parameter to: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
     /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
     /// to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and will not survive a power cylce!
-    func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
-        // TODO: implement
-        return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
+    func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
+        let hardwareLimits = try await self.getHardwareCurrentLimits()
+        let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal) // ensure to not exceed the hardware current constraints
+        let newSetpointInt = UInt16(floor(newSetpoint.value)) // Always round to floor to prevent higher currents caused by rounding inaccuracy!
+        print(newSetpointInt) // TODO: remove if test succeeds
+        let _ = try await self.modbusDevice.writeMultipleRegisters(address: 261, values: [newSetpointInt], unitId: self.unitId)
+        let newSetpointProcessedByCharger = try await self.getMaxCurrentLimitSetpoint()
+        return newSetpointProcessedByCharger
     }
 
     func getHardwareLockState() async throws -> LockState {

@@ -60,10 +60,10 @@ protocol CarCharger: Sendable {
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
     ///
-    /// - Parameter to: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
+    /// - Parameter setpoint: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
     /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger.
-    @discardableResult func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
+    @discardableResult func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
 
     func getHardwareLockState() async throws -> LockState
     func getSoftwareLockState() async throws -> LockState

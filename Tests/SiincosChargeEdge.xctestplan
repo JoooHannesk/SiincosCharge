@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "348877DD-0E7C-411C-B0D6-C81085D040C6",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "SiincosChargeEdge",
+      "name" : "SiincosChargeEdge"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SiincosChargeEdgeTests",
+        "name" : "SiincosChargeEdgeTests"
+      }
+    }
+  ],
+  "version" : 1
+}
