@@ -15,11 +15,24 @@ struct SenecWallboxProS: CarCharger {
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
 
+    /// Initializer
+    ///
+    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    ///
+    /// - Parameters:
+    ///    - modbusDevice: Configured modbus client, connected
+    ///    - unitId: Device unit id on the modbus bus
     init(modbusDevice: ModbusRTUClient, unitId: UInt8) {
         self.modbusDevice = modbusDevice
         self.unitId = unitId
     }
-    
+
+    /// Get Charging State
+    ///
+    /// Retrieve the charger state from device
+    ///
+    /// - Returns: ``ChargerState``
+    /// - Note: Refers to register address 5 in corresponding modbus mapping
     func getChargingState() async throws -> ChargerState {
         let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
         guard let state = response.signedValue(at: 0) else {
@@ -50,7 +63,13 @@ struct SenecWallboxProS: CarCharger {
             return .unknown
         }
     }
-    
+
+    /// Get Internal Temperature
+    ///
+    /// Retrieve internal system temperature from charger
+    ///
+    /// - Returns: internal system temperature as ``Measurement<UnitTemperature>``
+    /// - Note: Refers to register address 9 in corresponding modbus mapping
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         let response = try await self.modbusDevice.readInputRegisters(address: 9, count: 1, unitId: self.unitId)
         guard let temperatureValue = response.signedValue(at: 0) else {
@@ -59,7 +78,14 @@ struct SenecWallboxProS: CarCharger {
         let temperature = Double(temperatureValue)/10.0
         return Measurement(value: temperature, unit: UnitTemperature.celsius)
     }
-    
+
+    /// Get Hardware Current Limits
+    ///
+    /// The charger is bound to specific electric current limits, given by the overall hardware design and the installation limits.
+    /// These limits are required to ensure proper system functionality such as load balancing, equal current distribution, etc.
+    ///
+    /// - Returns: Current limites (given by hardware and/or installation) as type ``Boundaries<Measurement<UnitElectricCurrent>>``
+    /// - Note: Refers to register addresses 100 and 101 in corresponding modbus mapping
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
         let responseMinimalCurrent = try await self.modbusDevice.readInputRegisters(address: 101, count: 1, unitId: self.unitId)
         let responseMaximalCurrent = try await self.modbusDevice.readInputRegisters(address: 100, count: 1, unitId: self.unitId)

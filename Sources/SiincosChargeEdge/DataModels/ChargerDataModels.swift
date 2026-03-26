@@ -59,7 +59,7 @@ enum ChargerState {
     case vehiclePresentRequestChargerNotReady
 
     // other states
-    case chargingDerated
+    case chargingDerated // TODO: check status name and description
     case e // TODO: check status name and description
     case f // TODO: check status name and description
     case chargingError
