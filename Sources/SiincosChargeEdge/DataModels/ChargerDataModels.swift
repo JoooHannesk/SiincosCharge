@@ -15,12 +15,56 @@ import Foundation
 protocol CarCharger: Sendable {
     var modbusDevice: ModbusRTUClient { get }
     var unitId: UInt8 { get }
+
+    /// Initializer
+    ///
+    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    ///
+    /// - Parameters:
+    ///    - modbusDevice: Configured modbus client, connected
+    ///    - unitId: Device unit id on the modbus bus
     init(modbusDevice: ModbusRTUClient, unitId: UInt8)
+
+    /// Get Charging State
+    ///
+    /// Retrieve the charger state from device
+    ///
+    /// - Returns: ``ChargerState``
     func getChargingState() async throws -> ChargerState
+
+    /// Get Internal Temperature
+    ///
+    /// Retrieve internal system temperature from charger. Required for monitoring and system health diagnosis.
+    ///
+    /// - Returns: internal system temperature as ``Measurement<UnitTemperature>``
     func getInternalTemperature() async throws -> Measurement<UnitTemperature>
+
+    /// Get Hardware Current Limits
+    ///
+    /// The charger is bound to specific electric current limits, constraint by the overall hardware design and the installation limits.
+    /// These limits are required to ensure proper system functionality such as load balancing, equal current distribution, etc.
+    ///
+    /// - Returns: Current limites (given by hardware and/or installation) as type ``Boundaries<Measurement<UnitElectricCurrent>>``
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>>
+
+    /// Get Max Current Limit Setpoint
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function retrieves the
+    /// current setpoint from the charger and returns it.
+    ///
+    /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent>
+
+    /// Get Max Current Limit Setpoint
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
+    /// maximum current setpoint in the charger.
+    ///
+    /// - Parameter to: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
+    /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger.
     @discardableResult func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
+
     func getHardwareLockState() async throws -> LockState
     func getSoftwareLockState() async throws -> LockState
     func setSoftwareLock(to: LockState) async throws -> LockState

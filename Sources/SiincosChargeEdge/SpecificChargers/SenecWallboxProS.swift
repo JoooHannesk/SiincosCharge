@@ -66,7 +66,7 @@ struct SenecWallboxProS: CarCharger {
 
     /// Get Internal Temperature
     ///
-    /// Retrieve internal system temperature from charger
+    /// Retrieve internal system temperature from charger. Required for monitoring and system health diagnosis.
     ///
     /// - Returns: internal system temperature as ``Measurement<UnitTemperature>``
     /// - Note: Refers to register address 9 in corresponding modbus mapping
@@ -96,11 +96,28 @@ struct SenecWallboxProS: CarCharger {
                               maximal: Measurement(value: Double(maximalCurrentValue), unit: UnitElectricCurrent.amperes))
     }
 
+    /// Get Max Current Limit Setpoint
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function retrieves the
+    /// current setpoint from the charger and returns it.
+    ///
+    /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
+    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and
+    /// will not survive a power cylce!
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
         // TODO: implement
         return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
     }
 
+    /// Get Max Current Limit Setpoint
+    ///
+    /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
+    /// maximum current setpoint in the charger.
+    ///
+    /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
+    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and
+    /// will not survive a power cylce!
+    /// In case the maximum hardware current limit is lower than the provided argument, the hardware specific limit is transferred to the charger.
     func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         // TODO: implement
         return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
