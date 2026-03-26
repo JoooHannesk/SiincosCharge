@@ -8,22 +8,17 @@
 import ModbusSerial
 import Foundation
 
-/// Generic Car Charger (via ModbusRTU)
+/// Generic Car Charger
 ///
 /// This describes a generic car charger. Every car charger needs to implement these
 /// functions to work within the SiincosCharge infrastructure
-protocol ModbusRTUCarCharger: Sendable {
-    var modbusDevice: ModbusRTUClient { get }
-    var unitId: UInt8 { get }
+protocol CarCharger: Sendable {
 
-    /// Initializer
+    /// Unit ID
     ///
-    /// Instance requires a modbus client configuration and the specific unit id on the bus system
-    ///
-    /// - Parameters:
-    ///    - modbusDevice: Configured modbus client, connected
-    ///    - unitId: Device unit id on the modbus bus
-    init(modbusDevice: ModbusRTUClient, unitId: UInt8)
+    /// Unique id for identifying the device and its data within the local infrastructure.
+    /// Power meters and car chargers belonging logically togehter have the same unit id.
+    var unitId: UInt8 { get }
 
     /// Get Charging State
     ///
@@ -65,9 +60,34 @@ protocol ModbusRTUCarCharger: Sendable {
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger.
     @discardableResult func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
 
+    /// Get Hardware Lock State
+    ///
+    /// Some chargers have a phyiscal hardware lock which is required to be unlocked manually before a charging session can be started. This
+    /// function returns the actual hardware lock state.
+    ///
+    /// - Returns: lock state as type ``LockState``
+    /// - Note: In case a charger has no physical hardware lock, this function returns .unlocked
     func getHardwareLockState() async throws -> LockState
+
+    /// Get Software Lock State
+    ///
+    /// Some chargers have a software lock which is required to be unlocked before a charging session can be started. This
+    /// function returns the actual lock state. Refer to ``CarCharger/setSoftwareLock(to:)`` for unlocking the
+    /// software lock.
+    ///
+    /// - Returns: lock state as type ``LockState``
+    /// - Note: In case a charger has no software lock, this function returns .unlocked
     func getSoftwareLockState() async throws -> LockState
+
+    /// Set Software Lock State
+    ///
+    /// Some chargers have a software lock which is required to be unlocked before a charging session can be started. This
+    /// function unlocks the software lock.
+    ///
+    /// - Returns: lock state as type ``LockState``
+    /// - Note: In case a charger has no software lock, this function returns .unlocked
     func setSoftwareLock(to: LockState) async throws -> LockState
+    
 }
 
 /// Generic Power Meter
@@ -76,9 +96,12 @@ protocol ModbusRTUCarCharger: Sendable {
 /// functions to work within the SiincosCharge infrastructure.
 /// Power meter and charger are separated in case an external, dedicated power meter is used
 protocol PowerMeter: Sendable {
-    var modbusDevice: ModbusRTUClient { get }
+
+    /// Unit ID
+    ///
+    /// Unique id for identifying the device and its data within the local infrastructure.
+    /// Power meters and car chargers belonging logically togehter have the same unit id.
     var unitId: UInt8 { get }
-    init(modbusDevice: ModbusRTUClient, unitId: UInt8)
     func getElectricCurrent() -> ElectricCurrent3PhaseGrid
     func getGridVoltage() -> ElectricVoltage3PhaseGrid
     func getPower() -> ElectricPower3PhaseGrid
@@ -113,9 +136,9 @@ enum ChargerState {
 /// Lock States
 ///
 /// States representing a generic lock
-enum LockState {
-    case locked
-    case unlocked
+enum LockState: UInt {
+    case locked = 0
+    case unlocked = 1
 }
 
 /// Electric Current
