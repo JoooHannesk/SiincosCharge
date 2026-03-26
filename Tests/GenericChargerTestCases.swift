@@ -27,6 +27,7 @@ class GenericChargerTestCases {
         try await self.getChargingState()
         try await self.getInternalTemperature()
         try await self.getHardwareCurrentLimits()
+        try await self.getMaxCurrentLimitSetpoint()
     }
 
     // MARK: Private Test Cases
@@ -47,9 +48,14 @@ class GenericChargerTestCases {
 
     private func getHardwareCurrentLimits() async throws {
         let currLimits = try await self.charger.getHardwareCurrentLimits()
-        let currLow = Measurement(value: 6.0, unit: UnitElectricCurrent.amperes)
+        let currLow = Measurement(value: 6.0, unit: UnitElectricCurrent.amperes) // Lower limits won't be accepted by the vehicles, as they'd result in the vehicle rejectes charging
         let currHigh = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
         print("Charger hardware current limits: \(currLimits)")
-        #expect(currLow == currLimits.minimal && currHigh == currLimits.maximal)
+        #expect(currLow == currLimits.minimal && currHigh >= currLimits.maximal)
+    }
+
+    private func getMaxCurrentLimitSetpoint() async throws {
+        let currentSetpoint = try await self.charger.getMaxCurrentLimitSetpoint()
+        print("Actual charger current limit setpoint: \(currentSetpoint)")
     }
 }

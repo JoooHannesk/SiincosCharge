@@ -55,7 +55,7 @@ protocol CarCharger: Sendable {
     /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent>
 
-    /// Get Max Current Limit Setpoint
+    /// Set Max Current Limit Setpoint
     ///
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
@@ -73,7 +73,8 @@ protocol CarCharger: Sendable {
 /// Generic Power Meter
 ///
 /// This describes a generic power meter. Every power meter needs to implement these
-/// functions to work within the SiincosCharge infrastructure
+/// functions to work within the SiincosCharge infrastructure.
+/// Power meter and charger are separated in case an external, dedicated power meter is used
 protocol PowerMeter: Sendable {
     var modbusDevice: ModbusRTUClient { get }
     var unitId: UInt8 { get }

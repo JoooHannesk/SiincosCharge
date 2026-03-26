@@ -102,22 +102,25 @@ struct SenecWallboxProS: CarCharger {
     /// current setpoint from the charger and returns it.
     ///
     /// - Returns: acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``
-    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and
+    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the charger and
     /// will not survive a power cylce!
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
-        // TODO: implement
-        return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
+        let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 261, count: 1, unitId: self.unitId)
+        guard let responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
+            throw DeviceError.deviceDataMissing
+        }
+        return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }
 
-    /// Get Max Current Limit Setpoint
+    /// Set Max Current Limit Setpoint
     ///
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
     /// maximum current setpoint in the charger.
     ///
+    /// - Parameter to: Current limit setpoint to transfer to the charger (as type ``Measurement<UnitElectricCurrent>``).
     /// - Returns: Acutal electrical current setpoint as type ``Measurement<UnitElectricCurrent>``, processed by the charger.
-    /// - Note: Refers to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and
-    /// will not survive a power cylce!
-    /// In case the maximum hardware current limit is lower than the provided argument, the hardware specific limit is transferred to the charger.
+    /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger. Refers
+    /// to register addresses 261 in corresponding modbus mapping. This value is not retained in the cahrger and will not survive a power cylce!
     func setMaxCurrentLimitSetpoint(to: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         // TODO: implement
         return Measurement(value: 16, unit: UnitElectricCurrent.amperes)
