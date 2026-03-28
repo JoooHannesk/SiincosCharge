@@ -33,7 +33,7 @@ struct SiincosChargeEdge {
             handleLocalEcho: false  // For RS-485 half-duplex adapters
         )
         let modbusDevice = ModbusRTUClient(configuration: config)
-        let charger = SenecWallboxProS(modbusDevice: modbusDevice, unitId: unitId)
+        let charger = SenecWallboxProS11kW(modbusDevice: modbusDevice, unitId: unitId)
 
         while true {
             print(try! await charger.getChargingState())

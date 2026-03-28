@@ -19,7 +19,7 @@ class SenecWallboxProSTests {
     let unitId: UInt8
     let config: RTUClientConfiguration
     let modbusDevice: ModbusRTUClient
-    let charger: SenecWallboxProS
+    let charger: SenecWallboxProS11kW
     static let devicePresent: Bool = true // TODO: skip if charger not available per config file
 
     init() {
@@ -42,7 +42,7 @@ class SenecWallboxProSTests {
             handleLocalEcho: false  // For RS-485 half-duplex adapters
         )
         modbusDevice = ModbusRTUClient(configuration: config)
-        charger = SenecWallboxProS(modbusDevice: modbusDevice, unitId: unitId)
+        charger = SenecWallboxProS11kW(modbusDevice: modbusDevice, unitId: unitId)
     }
 
     @Test("Test-Fallback-Current-Setpoint", .enabled(if: Self.devicePresent))

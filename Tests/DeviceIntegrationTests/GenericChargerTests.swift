@@ -42,7 +42,7 @@ class GenericChargerTests {
             handleLocalEcho: false  // For RS-485 half-duplex adapters
         )
         modbusDevice = ModbusRTUClient(configuration: config)
-        charger = SenecWallboxProS(modbusDevice: modbusDevice, unitId: unitId)
+        charger = SenecWallboxProS11kW(modbusDevice: modbusDevice, unitId: unitId)
     }
 
     @Test("Software-Lock-State")

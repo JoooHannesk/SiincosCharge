@@ -11,7 +11,7 @@ import ModbusSerial
 /// Senec Wallbox Pro S
 ///
 /// Senec Wallbox Pro S as modbus device
-struct SenecWallboxProS: CarCharger {
+struct SenecWallboxProS11kW: CarCharger {
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
 
