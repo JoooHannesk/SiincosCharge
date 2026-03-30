@@ -1,12 +1,15 @@
 {
-    "serialNo": "SN1A2B3C",
+    "systemId": "HTS1Proto1",
     "chargerModel": "SenecWallboxProS11kW",
+    "chargerBus": "/dev/tty.ACM0",
     "meterModel": "None",
-    "lineLength": 1
-    "host": "kinzig-solutions.de",
-    "port": 8883,
-    "caCertPath": "/etc/ssl/siincos-ca.cert.pem",
-    "clientId": "SiincosChargeHTS1",
-    "username": "abc",
-    "password": "def"
+    "meterBus": "/dev/tty.ACM1",
+    "lineLength": 1,
+    "lineMaxCurrentA": 16,
+    "cloudHost": "kinzig-solutions.de",
+    "cloudPort": 8883,
+    "cloudCACertPath": "/etc/ssl/siincos-ca.cert.pem",
+    "cloudClientId": "SiincosChargeHTS1",
+    "cloudUsername": "abc",
+    "cloudPassword": "def"
 }
