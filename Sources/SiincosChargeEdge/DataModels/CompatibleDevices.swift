@@ -8,13 +8,13 @@
 /// Compatible EV Charger
 ///
 /// System compatible EV chargers are listed here
-enum CompatibleCharger: String {
+enum CompatibleCharger: String, Codable {
     case senecWallboxProS11kW  = "SenecWallboxProS11kW"
 }
 
 /// Compatible Smart Meters
 ///
 /// System compatible smart meters are listed here
-enum CompatibleSmartMeter: String {
+enum CompatibleSmartMeter: String, Codable {
     case nope = "Nope"
 }

@@ -9,31 +9,62 @@ import Logging
 import Foundation
 
 
-/// App Logging
+/// File Logging Configuration
 ///
-/// App-wide logging labels
-enum AppLogging {
+/// File logging configuration for the project specific global logger (based on swift-log)
+actor FileLoggingConfiguration {
 
-    fileprivate static let fileLogger = FileLoggingConfiguration()
+    static let shared = FileLoggingConfiguration()
+
+    static let logFileBasePath = AppConstants.logFolderLocation
+    let fileHandle: FileHandle!
+
+    /// Generate log file name
+    ///
+    /// Each log file takes the current date, with the following format
+    /// "yyyy-MM-dd", e.g. 2026-05-31.log
+    static private func generateLogFileName() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: Date())
+        return "\(dateString).log"
+    }
+
+    /// Setup the Logging system
+    ///
+    /// Set up the logging system, by passing the `FileLogHandler`
+    private init() {
+        let logFileName = "\(Self.logFileBasePath)\(Self.generateLogFileName())"
+        let logFileURL = URL(fileURLWithPath: logFileName)
+
+        do {
+            self.fileHandle = try FilePathHandler.getFileHandle(at: logFileURL)
+        } catch {
+            fatalError("Unable to open file for logging: \(error)")
+        }
+
+        LoggingSystem.bootstrap { label in
+            return FileLogHandler(label: label, fileHandle: self.fileHandle)
+        }
+    }
 
     /// Get a logger instance for the specified label
-    private static func getLogger(for label: String) throws -> Logger {
+    func getLogger(for label: String) -> Logger {
         return Logger(label: label)
     }
 
-    /// Get logger instances for each logging type
-    static let mainLogger = try? getLogger(for: "SiincosChargeEdge")
-    static let testsLogger = try? getLogger(for: "TestSuites")
-
-    /// Teardown logger
-    static func teardown() async {
-        await Self.fileLogger.close()
+    /// Close the file logger
+    ///
+    /// Synchronize and close the file handle safely
+    /// - Note: Call this immediately before quitting the application.
+    /// An earlier call will result in a broken logger.
+    func close() {
+        try? self.fileHandle.synchronize()
+        try? self.fileHandle.close()
     }
 }
 
-
 // MARK: Logging backend - private
-
 
 /// Provide a file handler for the logging system
 private struct FileLogHandler: LogHandler {
@@ -77,53 +108,5 @@ private struct FileLogHandler: LogHandler {
             // Use a simple write; ignore errors to avoid crashing logging
             try? fileHandle.write(contentsOf: data)
         }
-    }
-}
-
-/// File Logging Configuration
-///
-/// File logging configuration for the project specific global logger (based on swift-log)
-fileprivate actor FileLoggingConfiguration {
-
-    static let logFileBasePath = AppConstants.logFolderLocation
-    let fileHandle: FileHandle!
-
-    /// Generate log file name
-    ///
-    /// Each log file takes the current date, with the following format
-    /// "yyyy-MM-dd", e.g. 2026-05-31.log
-    static private func generateLogFileName() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let dateString = dateFormatter.string(from: Date())
-        return "\(dateString).log"
-    }
-
-    /// Setup the Logging system
-    ///
-    /// Set up the logging system, by passing the `FileLogHandler`
-    init() {
-        let logFileName = "\(Self.logFileBasePath)\(Self.generateLogFileName())"
-        let logFileURL = URL(fileURLWithPath: logFileName)
-
-        do {
-            self.fileHandle = try FilePathHandler.getFileHandle(at: logFileURL)
-        } catch {
-            fatalError("Unable to open file for logging: \(error)")
-        }
-
-        LoggingSystem.bootstrap { label in
-            return FileLogHandler(label: label, fileHandle: self.fileHandle)
-        }
-    }
-
-    /// Close the file logger
-    ///
-    /// Synchronize and close the file handle safely
-    /// - Note: Call this immediately before quitting the application.
-    /// An earlier call will result in a broken logger.
-    func close() {
-        try? self.fileHandle.synchronize()
-        try? self.fileHandle.close()
     }
 }

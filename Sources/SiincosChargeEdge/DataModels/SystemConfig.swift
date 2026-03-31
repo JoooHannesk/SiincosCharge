@@ -5,7 +5,7 @@
 //  Created by Johannes Kinzig on 31.03.26.
 //
 
-struct SystemConfig: CustomStringConvertible {
+struct SystemConfig: Codable, CustomStringConvertible {
     let systemId: String
     let chargerModel: CompatibleCharger
     let chargerBus: String
