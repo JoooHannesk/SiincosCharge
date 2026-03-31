@@ -151,7 +151,7 @@ struct SenecWallboxProS11kW: CarCharger {
     /// Get Software Lock State
     ///
     /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
-    /// function returns the actual lock state. Refer to ``SenecWallboxProS/setSoftwareLock(to:)`` for unlocking the
+    /// function returns the actual lock state. Refer to ``SenecWallboxProS11kW/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
     /// - Returns: lock state as type ``SiincosChargeEdge/LockState``
