@@ -20,19 +20,24 @@ struct FileResourceLoader {
     }
 
     /**
-     Load user credentials from file
-     - Parameter fileName: file name (as files in resource location) containing data
-     - Returns: ServerSettings object
+     Load data from file
+
+     Load data from file and return its corresponding instance
+     - Parameter fromFile: file name (as files in resource location) containing data
+     - Returns: Instance of type defined in the provided file. `nil` in case file parsing failed.
      - Note: Returns nil in case data was not able to be loaded from file
      */
-    func loadDeviceConfigFromFile(fileName: String) -> SystemConfig? {
+    func load<T: Codable>(fromFile: String) -> T? {
         let decoder = JSONDecoder()
-        if let textData = loadTextFromFile(fileName: fileName) {
-            let userCredentials = try? decoder.decode(SystemConfig.self, from: textData)
-            return userCredentials
+        var textData: Data
+        var fileContentInstance: T?
+        do {
+            textData = try loadTextFromFile(fileName: fromFile)
+            fileContentInstance = try decoder.decode(T.self, from: textData)
+        } catch {
+            self.logger?.error("Error loading product config from file: \(fromFile)", metadata: ["error": "\(error)"])
         }
-        self.logger?.error("Error loading product config from file: \(fileName)")
-        return nil
+        return fileContentInstance
     }
     
     // MARK: Private methods
@@ -44,26 +49,21 @@ struct FileResourceLoader {
      */
     private func getPathToResource(fileName: String) -> URL {
         let fileName = fileName
-        let urlToThisFile = URL(fileURLWithPath: #file, isDirectory: false).deletingLastPathComponent().deletingLastPathComponent()
+        let urlToThisFile = URL(fileURLWithPath: #file, isDirectory: false).deletingLastPathComponent()
         return urlToThisFile.appendingPathComponent(searchPath).appendingPathComponent(fileName)
     }
     
     /**
      Load text from file
-     - Parameter fileName: file name (as files in resource location) containing data
+     - Parameter fileName: file name (must be present in the location provided under `searchPath`)
      - Returns: text as Data?
-     - Note: Returns nil in case data was not able to be loaded from file
+     - Note: Throws in case data was not able to be loaded from file
      */
-    private func loadTextFromFile(fileName: String) -> Data? {
+    private func loadTextFromFile(fileName: String) throws -> Data {
         let fileUrl = getPathToResource(fileName: fileName)
-        // print("File Path: \(fileUrl)")
-        if let jsonData = try? Data(contentsOf: fileUrl) {
-            // print("Mock data: \(String(decoding: jsonData, as: UTF8.self))")
-            return jsonData
-            }
-        else {
-            self.logger?.error("Error loading file: \(fileName).json")
-            return nil
-        }
+        print("File Path: \(fileUrl)")
+        let jsonData = try Data(contentsOf: fileUrl)
+        // print("Mock data: \(String(decoding: jsonData, as: UTF8.self))")
+        return jsonData
     }
 }
