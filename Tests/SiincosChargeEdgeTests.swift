@@ -9,7 +9,7 @@ struct SiincosChargeEdgeTests {
 
     @Test("Load-System-Config-From-File")
     func loadConfig() async throws {
-        let config = await ConfigLoader.getSystemConfig()
+        let config = await ConfigurationSupplier.getSystemConfig()
         #expect(config != nil)
         #expect(!config!.systemId.isEmpty)
         #expect(CompatibleCharger.allCases.contains(config!.chargerModel))

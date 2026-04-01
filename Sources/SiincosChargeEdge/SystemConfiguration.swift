@@ -6,7 +6,7 @@
 //
 
 
-enum ConfigLoader {
+enum ConfigurationSupplier {
 
     /// Load System Configuration
     ///
