@@ -13,7 +13,7 @@ enum ConfigLoader {
     /// Load system configuration from file and return a configuration instance.
     /// - Returns: System configuration as type ``SystemConfig``
     static func getSystemConfig() async -> SystemConfig? {
-        let resourceLoader = FileResourceLoader(logger: await FileLoggingConfiguration.shared.getLogger(for: AppConstants.mainLoggerLabel))
+        let resourceLoader = JsonFileResourceLoader(logger: await FileLoggingConfiguration.shared.getLogger(for: AppConstants.mainLoggerLabel))
         return resourceLoader.load(fromFile: AppConstants.configFileLocation)
     }
 }
