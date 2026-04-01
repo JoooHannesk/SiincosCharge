@@ -11,11 +11,13 @@ import Logging
 ///
 /// App-wide static configuration parameters
 enum AppConstants {
-    /// Log folder location for the application
-    static let logFolderLocation = "/tmp/SiincosChargeEdge/"
 
-    /// Configuration file name
-    static let configFileName = "config.json"
+    /// Configuration file location
+    static let configFileLocation = "/opt/SiincosChargeEdge/config.json"
+
+    /// Logger configuration
+    static let mainLoggerLabel = "SiincosChargeEdge"
+    static let logFolderLocation = "/tmp/SiincosChargeEdge/logs/"
 }
 
 
