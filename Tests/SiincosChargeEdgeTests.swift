@@ -7,6 +7,14 @@ import ModbusSerial
 
 struct SiincosChargeEdgeTests {
 
+    @Test("Load-System-Config-From-File")
+    func loadConfig() async throws {
+        let config = await ConfigLoader.getSystemConfig()
+        #expect(config != nil)
+        #expect(!config!.systemId.isEmpty)
+        #expect(CompatibleCharger.allCases.contains(config!.chargerModel))
+        #expect(CompatibleSmartMeter.allCases.contains(config!.meterModel))
+    }
 
     /// Test logging to file
     ///

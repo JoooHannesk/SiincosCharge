@@ -8,7 +8,7 @@
     "lineMaxCurrentA": 16,
     "cloudHost": "kinzig-solutions.de",
     "cloudPort": 8883,
-    "cloudCACertPath": "/etc/ssl/siincos-ca.cert.pem",
+    "cloudCACertPath": "/opt/SiincosChargeEdge/siincos-ca.cert.pem",
     "cloudClientId": "SiincosChargeHTS1",
     "cloudUsername": "abc",
     "cloudPassword": "def"
