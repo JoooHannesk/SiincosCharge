@@ -294,4 +294,8 @@ struct SenecWallboxProSPowerMeter: PowerMeter {
         // TODO: implement
         return Measurement(value: 0, unit: UnitEnergy.kilowattHours)
     }
+
+    // MARK: Device specific functionality
+
+    // TODO: implement total energy, energy since power on
 }
