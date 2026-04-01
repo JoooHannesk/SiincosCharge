@@ -17,7 +17,7 @@ enum AppConstants {
 
     /// Logger configuration
     static let mainLoggerLabel = "SiincosChargeEdge"
-    static let logFolderLocation = "/tmp/SiincosChargeEdge/logs/"
+    static let logFolderLocation = "/opt/SiincosChargeEdge/logs/"
 }
 
 

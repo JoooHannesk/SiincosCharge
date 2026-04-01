@@ -11,7 +11,28 @@ import ModbusSerial
 /// Senec Wallbox Pro S
 ///
 /// Senec Wallbox Pro S as modbus device
-struct SenecWallboxProS11kW: CarCharger {
+struct SenecWallboxProS11kW: EVCharger {
+
+    static func getModbusDeviceClient() -> ModbusRTUClient {
+        let config = RTUClientConfiguration(
+            serialConfiguration: SerialConfiguration(
+                port: "/dev/tty.usbserial-AB0O6Z7W",
+                baudRate: .b19200,
+                parity: .even,
+                stopBits: .one,
+                dataBits: .eight,
+                timeout: .seconds(3)
+            ),
+            retries: 3,
+            errorRecovery: .exponentialBackoff(
+                initialDelay: .milliseconds(500),
+                maxDelay: .seconds(10)
+            ),
+            handleLocalEcho: false  // For RS-485 half-duplex adapters
+        )
+        return ModbusRTUClient(configuration: config)
+    }
+
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
 
@@ -20,10 +41,10 @@ struct SenecWallboxProS11kW: CarCharger {
     /// Instance requires a modbus client configuration and the specific unit id on the bus system
     ///
     /// - Parameters:
-    ///    - modbusDevice: Configured modbus client, connected
+    ///    - modbusClient: Configured modbus client, connected
     ///    - unitId: Device unit id on the modbus bus
-    init(modbusDevice: ModbusRTUClient, unitId: UInt8) {
-        self.modbusDevice = modbusDevice
+    init(modbusClient: ModbusRTUClient, unitId: UInt8) {
+        self.modbusDevice = modbusClient
         self.unitId = unitId
     }
 
@@ -246,11 +267,11 @@ struct SenecWallboxProS11kW: CarCharger {
 /// - Note: Power meter and charger are separated in case an external,
 /// dedicated power meter is used
 struct SenecWallboxProSPowerMeter: PowerMeter {
-    let modbusDevice: ModbusSerial.ModbusRTUClient
+    let modbusDevice: ModbusRTUClient
     let unitId: UInt8
 
-    init(modbusDevice: ModbusRTUClient, unitId: UInt8) {
-        self.modbusDevice = modbusDevice
+    init(modbusClient: ModbusRTUClient, unitId: UInt8) {
+        self.modbusDevice = modbusClient
         self.unitId = unitId
     }
 

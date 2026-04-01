@@ -8,11 +8,11 @@
 import ModbusSerial
 import Foundation
 
-/// Generic Car Charger
+/// Generic EV Charger
 ///
 /// This describes a generic car charger. Every car charger needs to implement these
 /// functions to work within the SiincosCharge infrastructure
-protocol CarCharger: Sendable {
+protocol EVCharger: Sendable {
 
     /// Unit ID
     ///

@@ -21,7 +21,7 @@ struct SiincosChargeEdgeTests {
     /// Log a single line to file
     @Test("Log-Sample-Message-To-File")
     func logToFile() async throws {
-        let logger = await FileLoggingConfiguration.shared.getLogger(for: "Tests")
+        let logger = FileLoggingConfiguration.shared.getLogger(for: "Tests")
         let logString = "This is a single log entry. This should be written in the log file."
         logger.info("\(logString)")
         logger.warning("\(logString)")

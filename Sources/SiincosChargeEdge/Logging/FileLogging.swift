@@ -49,7 +49,7 @@ actor FileLoggingConfiguration {
     }
 
     /// Get a logger instance for the specified label
-    func getLogger(for label: String) -> Logger {
+    nonisolated func getLogger(for label: String) -> Logger {
         return Logger(label: label)
     }
 
