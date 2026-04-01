@@ -9,7 +9,7 @@ struct SystemConfig: Codable, CustomStringConvertible {
     let systemId: String
     let chargerModel: CompatibleCharger
     let chargerBus: String
-    let meterModel: CompatibleCharger
+    let meterModel: CompatibleSmartMeter
     let meterBus: String
     let lineLength: UInt8
     let lineMaxCurrentA: UInt8
