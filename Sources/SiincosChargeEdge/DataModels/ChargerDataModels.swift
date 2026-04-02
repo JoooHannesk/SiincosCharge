@@ -8,6 +8,22 @@
 import ModbusSerial
 import Foundation
 
+
+/// Generic EV Charger
+///
+/// Generic EV charger attached via Modbus RTU
+protocol EVChargerModbusRTU: EVCharger {
+
+    /// Initializer
+    ///
+    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    /// - Parameters:
+    ///    - modbusClient: Configured modbus client, connected
+    ///    - unitId: Device unit id on the modbus bus
+    init(modbusClient: ModbusRTUClient, unitId: UInt8)
+
+}
+
 /// Generic EV Charger
 ///
 /// This describes a generic car charger. Every car charger needs to implement these
@@ -19,6 +35,12 @@ protocol EVCharger: Sendable {
     /// Unique id for identifying the device and its data within the local infrastructure.
     /// Power meters ``PowerMeter`` and car chargers ``CarCharger`` belonging logically togehter have to share the same unit id.
     var unitId: UInt8 { get }
+
+    /// Setup Configuration
+    ///
+    /// Setup device by loading device specific default configuration required
+    /// for operation
+    func setupConfig() async throws
 
     /// Get Charging State
     ///
@@ -86,6 +108,23 @@ protocol EVCharger: Sendable {
     /// - Returns: lock state as type ``LockState``, processed by the charger.
     func setSoftwareLock(to: LockState) async throws -> LockState
 }
+
+
+/// Generic Power Meter
+///
+/// Generic power meter attached via Modbus RTU
+protocol PowerMeterModbusRTU: PowerMeter {
+
+    /// Initializer
+    ///
+    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    /// - Parameters:
+    ///    - modbusClient: Configured modbus client, connected
+    ///    - unitId: Device unit id on the modbus bus
+    init(modbusClient: ModbusRTUClient, unitId: UInt8)
+
+}
+
 
 /// Generic Power Meter
 ///
