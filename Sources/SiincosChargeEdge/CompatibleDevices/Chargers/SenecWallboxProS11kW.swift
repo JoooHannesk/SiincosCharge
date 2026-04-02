@@ -10,13 +10,13 @@ import ModbusSerial
 
 /// Senec Wallbox Pro S
 ///
-/// Senec Wallbox Pro S as modbus device
-struct SenecWallboxProS11kW: EVCharger {
+/// Senec Wallbox Pro S as Modbus Device
+struct SenecWallboxProS11kW: EVChargerModbusRTU {
 
-    static func getModbusDeviceClient() -> ModbusRTUClient {
+    static func getModbusDeviceClient(serialPort: String) -> ModbusRTUClient {
         let config = RTUClientConfiguration(
             serialConfiguration: SerialConfiguration(
-                port: "/dev/tty.usbserial-AB0O6Z7W",
+                port: serialPort,
                 baudRate: .b19200,
                 parity: .even,
                 stopBits: .one,
@@ -46,6 +46,14 @@ struct SenecWallboxProS11kW: EVCharger {
     init(modbusClient: ModbusRTUClient, unitId: UInt8) {
         self.modbusDevice = modbusClient
         self.unitId = unitId
+    }
+
+    /// Setup Configuration
+    ///
+    /// Setup device by loading device specific configuration such as
+    /// power saving mode, modbus watchdog timeout, communication failure behavior
+    func setupConfig() async throws {
+        // TODO: implement required mechanisms herer
     }
 
     /// Get Charging State
@@ -266,7 +274,7 @@ struct SenecWallboxProS11kW: EVCharger {
 /// Senec Wallbox Pro S has an integrated power meter.
 /// - Note: Power meter and charger are separated in case an external,
 /// dedicated power meter is used
-struct SenecWallboxProSPowerMeter: PowerMeter {
+struct SenecWallboxProSPowerMeter: PowerMeterModbusRTU {
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
 

@@ -5,7 +5,28 @@
 //  Created by Johannes Kinzig on 31.03.26.
 //
 
-struct SystemConfig: Codable, CustomStringConvertible {
+protocol DeviceConfig {
+    var systemId: String { get }
+    var chargerModel: CompatibleCharger { get }
+    var chargerBus: String { get }
+    var meterModel: CompatibleSmartMeter { get }
+    var meterBus: String { get }
+    var lineLength: UInt8 { get }
+}
+
+protocol CloudConfig {
+    var cloudHost: String { get }
+    var cloudPort: UInt16 { get }
+    var cloudCACertPath: String { get }
+    var cloudClientId: String { get }
+    var cloudUsername: String { get }
+    var cloudPassword: String { get }
+}
+
+/// System Configuration
+///
+/// System configuration for the Siincos Charge Edge system
+struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible {
     let systemId: String
     let chargerModel: CompatibleCharger
     let chargerBus: String
