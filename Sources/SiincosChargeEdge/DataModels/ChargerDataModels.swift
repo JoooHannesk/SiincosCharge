@@ -9,19 +9,19 @@ import ModbusSerial
 import Foundation
 
 
-/// Generic EV Charger
+/// Generic ModbusRTU Device
 ///
-/// Generic EV charger attached via Modbus RTU
-protocol EVChargerModbusRTU: EVCharger {
+/// Generic Modbus RTU device attached to the bus line
+protocol ModbusRTUDevice: Sendable {
 
     /// Initializer
     ///
-    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    /// Instance requires a modbus rtu client and a specific unit id to
+    /// communicate on the bus system
     /// - Parameters:
-    ///    - modbusClient: Configured modbus client, connected
-    ///    - unitId: Device unit id on the modbus bus
-    init(modbusClient: ModbusRTUClient, unitId: UInt8)
-
+    ///    - modbusRTUClient: Configured modbus rtu client
+    ///    - unitId: Device unit id on the modbus rtu bus
+    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8)
 }
 
 /// Generic EV Charger
@@ -107,22 +107,6 @@ protocol EVCharger: Sendable {
     ///
     /// - Returns: lock state as type ``LockState``, processed by the charger.
     func setSoftwareLock(to: LockState) async throws -> LockState
-}
-
-
-/// Generic Power Meter
-///
-/// Generic power meter attached via Modbus RTU
-protocol PowerMeterModbusRTU: PowerMeter {
-
-    /// Initializer
-    ///
-    /// Instance requires a modbus client configuration and the specific unit id on the bus system
-    /// - Parameters:
-    ///    - modbusClient: Configured modbus client, connected
-    ///    - unitId: Device unit id on the modbus bus
-    init(modbusClient: ModbusRTUClient, unitId: UInt8)
-
 }
 
 
