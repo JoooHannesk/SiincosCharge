@@ -19,8 +19,9 @@ enum ConfigurationSupplier {
         return resourceLoader.load(fromFile: AppConstants.configFileLocation)
     }
 
-//    static func getDevices(for config: SystemConfig) -> (Array<EVCharger>, Array<PowerMeter>) {
-//
-//    }
+    
+    static func getDevices(for config: SystemConfig) { //-> (Array<EVCharger>, Array<PowerMeter>) {
+        let deviceSetup = DeviceSetup(config: config)
+    }
 
 }
