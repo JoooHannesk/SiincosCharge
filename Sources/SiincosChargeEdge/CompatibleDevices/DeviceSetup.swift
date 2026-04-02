@@ -28,7 +28,7 @@ class DeviceSetup {
         switch config.chargerModel {
         case .senecWallboxProS11kW:
             let senecDeviceClient = SenecWallboxProS11kW.getModbusDeviceClient(serialPort: config.chargerBus)
-            let senecCharger: Array<SenecWallboxProS11kW> = self.defineModbusRTUChargersOnBus(deviceClient: senecDeviceClient, lineLenght: config.lineLength)
+            let senecCharger: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: config.lineLength)
 
         }
     }
@@ -41,22 +41,13 @@ class DeviceSetup {
 
     }
 
-    private func defineModbusRTUChargersOnBus<T: EVChargerModbusRTU>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1) -> Array<T> {
+    private func defineModbusRTUDeviceOnBus<T: ModbusRTUDevice>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1) -> Array<T> {
         var devices: [T] = []
-        for uid in 1...lineLenght {
-            print(uid) // TODO: remove
-            devices.append(T(modbusClient: deviceClient, unitId: uid))
+        let upperBound = startAddress + lineLenght
+        for uid in startAddress..<upperBound {
+            print("UID: \(uid)")
+            devices.append(T(modbusRTUClient: deviceClient, unitId: uid))
         }
         return devices
     }
-
-    private func defineModbusRTUPowerMetersOnBus<T: PowerMeterModbusRTU>(deviceClient: ModbusRTUClient, lineLenght: UInt8) -> Array<T> {
-        var devices: [T] = []
-        for uid in 1...lineLenght {
-            print(uid) // TODO: remove
-            devices.append(T(modbusClient: deviceClient, unitId: uid))
-        }
-        return devices
-    }
-
 }
