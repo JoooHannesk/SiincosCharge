@@ -30,9 +30,7 @@ class DeviceSetup {
 
             // Chargers with integrated power meters
             case .senecWallboxProS11kW:
-                let senecWallboxProS11kW = self.setupSenecWallboxProS11kW(deviceConfig: self.config)
-                self.evChargers = senecWallboxProS11kW.0
-                self.powerMeters = senecWallboxProS11kW.1
+            (self.evChargers, self.powerMeters) = self.setupSenecWallboxProS11kW(deviceConfig: self.config)
 
             // Chargers without integrated power meter
 
