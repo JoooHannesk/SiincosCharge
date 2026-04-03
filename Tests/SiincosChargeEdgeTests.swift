@@ -9,11 +9,17 @@ struct SiincosChargeEdgeTests {
 
     @Test("Load-System-Config-From-File")
     func loadConfig() async throws {
-        let config = await ConfigurationSupplier.getSystemConfig()
-        #expect(config != nil)
-        #expect(!config!.systemId.isEmpty)
-        #expect(CompatibleCharger.allCases.contains(config!.chargerModel))
-        #expect(CompatibleSmartMeter.allCases.contains(config!.meterModel))
+        let config = try ComponentSupplier.getSystemConfig()
+        #expect(!config.systemId.isEmpty)
+        #expect(CompatibleCharger.allCases.contains(config.chargerModel))
+        #expect(CompatiblePowerMeter.allCases.contains(config.meterModel))
+    }
+
+    @Test("Configure-Devices")
+    func configureDevices() throws {
+        let config = try ComponentSupplier.getSystemConfig()
+        let (chargers, powerMeters) = try ComponentSupplier.getDevices(for: config)
+        #expect(!chargers.isEmpty && !powerMeters.isEmpty)
     }
 
     /// Test logging to file
