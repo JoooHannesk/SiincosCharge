@@ -6,7 +6,7 @@
 //
 
 
-enum ConfigurationSupplier {
+enum ComponentSupplier {
 
     static let mainLogger = FileLoggingConfiguration.shared.getLogger(for: AppConstants.mainLoggerLabel)
 
@@ -20,8 +20,17 @@ enum ConfigurationSupplier {
     }
 
     
-    static func getDevices(for config: SystemConfig) { //-> (Array<EVCharger>, Array<PowerMeter>) {
+    static func getDevices(for config: SystemConfig) throws(SystemError) -> (Array<EVCharger>, Array<PowerMeter>) {
         let deviceSetup = DeviceSetup(config: config)
+        if deviceSetup.evChargers.isEmpty {
+            mainLogger.error("No chargers configured!")
+            throw SystemError.chargersMissing
+        }
+        if deviceSetup.powerMeters.isEmpty {
+            mainLogger.error("No power meters configured!")
+            throw SystemError.powerMetersMissing
+        }
+        return (deviceSetup.evChargers, deviceSetup.powerMeters)
     }
 
 }

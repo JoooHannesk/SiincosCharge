@@ -201,18 +201,11 @@ struct Boundaries<T: Comparable>: CustomStringConvertible {
     let minimal: T
     let maximal: T
 
-    init(minimal: T, maximal: T) throws(DeviceError) {
+    init(minimal: T, maximal: T) throws(SystemError) {
         self.minimal = minimal
         self.maximal = maximal
         if minimal > maximal {
-            throw DeviceError.boundaryViolation
+            throw SystemError.boundaryViolation
         }
     }
-}
-
-/// Car Charger Errors
-/// 
-enum DeviceError: Error {
-    case boundaryViolation
-    case dataMissing
 }
