@@ -9,7 +9,7 @@ protocol DeviceConfig {
     var systemId: String { get }
     var chargerModel: CompatibleCharger { get }
     var chargerBus: String { get }
-    var meterModel: CompatibleSmartMeter { get }
+    var meterModel: CompatiblePowerMeter { get }
     var meterBus: String { get }
     var lineLength: UInt8 { get }
 }
@@ -30,7 +30,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let systemId: String
     let chargerModel: CompatibleCharger
     let chargerBus: String
-    let meterModel: CompatibleSmartMeter
+    let meterModel: CompatiblePowerMeter
     let meterBus: String
     let lineLength: UInt8
     let lineMaxCurrentA: UInt8

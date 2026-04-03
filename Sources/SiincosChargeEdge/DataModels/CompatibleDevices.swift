@@ -12,9 +12,10 @@ enum CompatibleCharger: String, Codable, CaseIterable {
     case senecWallboxProS11kW  = "SenecWallboxProS11kW"
 }
 
-/// Compatible Smart Meters
+/// Compatible Power Meters
 ///
-/// System compatible smart meters are listed here
-enum CompatibleSmartMeter: String, Codable, CaseIterable {
+/// System compatible smart power meters are listed here. This list
+/// refers to the external power meters onyl.
+enum CompatiblePowerMeter: String, Codable, CaseIterable {
     case nope = "Nope"
 }
