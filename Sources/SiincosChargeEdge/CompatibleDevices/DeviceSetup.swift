@@ -10,37 +10,50 @@ import ModbusSerial
 
 /// Setup EV Charger and Power Meter
 ///
-/// Setup EV charger and power meter based on provided config
+/// Setup EV chargers and power meters based on provided config
 class DeviceSetup {
-    let config: DeviceConfig
+    private let config: DeviceConfig
     var evChargers: [EVCharger] = []
     var powerMeters: [PowerMeter] = []
 
     init(config: DeviceConfig) {
         self.config = config
+        self.setupEVChargers()
+        self.setupPowerMeters()
     }
 
-    /// Setup devices
-    ///
-    /// Evaluate device config and setup EV charger and
-    /// power meter accordingly.
-    private func setupDevices() {
+    private func setupEVChargers() {
+        self.evChargers.removeAll()
+        self.powerMeters.removeAll()
+
         switch config.chargerModel {
-        case .senecWallboxProS11kW:
-            let senecDeviceClient = SenecWallboxProS11kW.getModbusDeviceClient(serialPort: config.chargerBus)
-            let senecCharger: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: config.lineLength)
 
-        }
+            // Chargers with integrated power meters
+            case .senecWallboxProS11kW:
+                let senecWallboxProS11kW = self.setupSenecWallboxProS11kW(deviceConfig: self.config)
+                self.evChargers = senecWallboxProS11kW.0
+                self.powerMeters = senecWallboxProS11kW.1
+
+            // Chargers without integrated power meter
+
+            }
     }
 
-    func getEVChargers() { //-> [EVCharger] {
+    private func setupPowerMeters() {
+        switch config.meterModel {
+            case .nope:
+                break
 
+            // Setup more power meters here
+            //self.powerMeters.removeAll()
+            }
     }
 
-    func getPowerMeters() { // -> [PowerMeter] {
 
-    }
-
+    /// Init Modbus RTU devices
+    ///
+    /// Initialze modbus rtu devices based on the `lineLenght` and
+    /// `startAddress`.
     private func defineModbusRTUDeviceOnBus<T: ModbusRTUDevice>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1) -> Array<T> {
         var devices: [T] = []
         let upperBound = startAddress + lineLenght
@@ -49,5 +62,21 @@ class DeviceSetup {
             devices.append(T(modbusRTUClient: deviceClient, unitId: uid))
         }
         return devices
+    }
+
+    // MARK: Specific device setup
+
+    /// Setup SenecWallboxProS11kW
+    ///
+    /// This EV charger has an integrated Power meter. Therefore,  setup both: the EV
+    /// charger and the internal power meter.
+    /// - Parameter deviceConfig: system device configuration
+    /// - Returns: Tuple containing two arrays, the first holding the ``EVCharger``s and the
+    /// second one holding the ``PowerMeter``s
+    private func setupSenecWallboxProS11kW(deviceConfig: DeviceConfig) -> ([EVCharger], [PowerMeter]){
+        let senecDeviceClient = SenecWallboxProS11kW.getModbusDeviceClient(serialPort: deviceConfig.chargerBus)
+        let senecChargers: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)
+        let senecInternalPowerMeter: Array<SenecWallboxProSPowerMeter> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)
+        return (senecChargers, senecInternalPowerMeter)
     }
 }
