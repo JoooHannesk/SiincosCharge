@@ -17,32 +17,18 @@ import ModbusSerial
 /// To run this test, a physical charger is required.
 class GenericChargerTests {
 
-    let unitId: UInt8
-    let config: RTUClientConfiguration
-    let modbusDevice: ModbusRTUClient
-    let charger: CarCharger
+    let charger: EVCharger
 
-    init() {
-        // TODO: make dynamic by loading the device based on config from file
-        unitId = 1
-        config = RTUClientConfiguration(
-            serialConfiguration: SerialConfiguration(
-                port: "/dev/tty.usbserial-AB0O6Z7W",
-                baudRate: .b19200,
-                parity: .even,
-                stopBits: .one,
-                dataBits: .eight,
-                timeout: .seconds(3)
-            ),
-            retries: 3,
-            errorRecovery: .exponentialBackoff(
-                initialDelay: .milliseconds(500),
-                maxDelay: .seconds(10)
-            ),
-            handleLocalEcho: false  // For RS-485 half-duplex adapters
-        )
-        modbusDevice = ModbusRTUClient(configuration: config)
-        charger = SenecWallboxProS11kW(modbusDevice: modbusDevice, unitId: unitId)
+    init() throws {
+
+        let systemConfig = try ComponentSupplier.getSystemConfig()
+        let devices = try ComponentSupplier.getDevices(for: systemConfig)
+
+        // Take the first charger on the bus
+        guard let charger = devices.0.first else {
+            throw SystemError.chargersMissing
+        }
+        self.charger = charger
     }
 
     @Test("Software-Lock-State")
