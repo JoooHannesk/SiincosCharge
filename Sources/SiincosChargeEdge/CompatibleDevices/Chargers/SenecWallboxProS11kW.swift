@@ -64,7 +64,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// - Note: Refers to register address 5 in corresponding modbus mapping
     func getChargingState() async throws -> ChargerState {
         let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
-        guard let state = response.signedValue(at: 0) else {
+        guard let state = response.value(at: 0) else {
             throw SystemError.dataMissing
         }
         switch state {
@@ -118,7 +118,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
         let responseMinimalCurrent = try await self.modbusDevice.readInputRegisters(address: 101, count: 1, unitId: self.unitId)
         let responseMaximalCurrent = try await self.modbusDevice.readInputRegisters(address: 100, count: 1, unitId: self.unitId)
-        guard let minimalCurrentValue = responseMinimalCurrent.signedValue(at: 0), let maximalCurrentValue = responseMaximalCurrent.signedValue(at: 0)  else {
+        guard let minimalCurrentValue = responseMinimalCurrent.value(at: 0), let maximalCurrentValue = responseMaximalCurrent.value(at: 0)  else {
             throw SystemError.dataMissing
         }
         return try Boundaries(minimal: Measurement(value: Double(minimalCurrentValue), unit: UnitElectricCurrent.amperes),
@@ -135,7 +135,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// will not survive a power cylce!
     func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
         let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 261, count: 1, unitId: self.unitId)
-        guard var responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
+        guard var responseCurrentSetpointValue = responseCurrentSetpoint.value(at: 0) else {
             throw SystemError.dataMissing
         }
         responseCurrentSetpointValue /= 10 // Required per modbus documentation
@@ -171,7 +171,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// - Note: Refers to register address 13 in corresponding modbus mapping.
     func getHardwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readInputRegisters(address: 13, count: 1, unitId: self.unitId)
-        guard let lockStateValue = lockState.signedValue(at: 0) else {
+        guard let lockStateValue = lockState.value(at: 0) else {
             throw SystemError.dataMissing
         }
         return LockState(rawValue: UInt(lockStateValue)) ?? .unknown
@@ -187,7 +187,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
     func getSoftwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readHoldingRegisters(address: 259, count: 1, unitId: self.unitId)
-        guard let lockStateValue = lockState.signedValue(at: 0) else {
+        guard let lockStateValue = lockState.value(at: 0) else {
             throw SystemError.dataMissing
         }
         return LockState(rawValue: UInt(lockStateValue)) ?? .unknown
@@ -212,11 +212,13 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 
     /// Get device power saving state
     ///
+    /// The charger will only enter powersaving mode (if enabled) in case no EV is plugged in.
+    ///
     /// - Returns: Power saving status as ``Status``
-    /// - Note: Referred to as *Standby Mode* in modbus mapping manual
+    /// - Note: Referred to as *Standby Mode* in modbus mapping manual (register address 258)
     func getPowerSavingState() async throws -> Status {
         let status = try await self.modbusDevice.readHoldingRegisters(address: 258, count: 1, unitId: self.unitId)
-        guard let statusValue = status.signedValue(at: 0) else {
+        guard let statusValue = status.value(at: 0) else {
             throw SystemError.dataMissing
         }
         switch statusValue {
@@ -234,8 +236,10 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Providing any other argument instead of `.enabled` or `.disabled` results in
     /// power saving mode being disabled.
     ///
+    /// The charger will only enter powersaving mode (if enabled) in case no EV is plugged in.
+    ///
     /// - Parameter to: Power saving status as ``Status``
-    /// - Note: Referred to as *Standby Mode* in modbus mapping manual
+    /// - Note: Referred to as *Standby Mode* in modbus mapping manual (register address 258)
     func setPowerSavingState(to: Status) async throws -> Status {
         let powerSavingState: UInt16
         if to == .enabled {
