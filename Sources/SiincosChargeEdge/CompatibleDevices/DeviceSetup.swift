@@ -12,6 +12,7 @@ import ModbusSerial
 ///
 /// Setup EV chargers and power meters based on provided config
 class DeviceSetup {
+    private let logger = ComponentSupplier.mainLogger
     private let config: DeviceConfig
     var evChargers: [EVCharger] = []
     var powerMeters: [PowerMeter] = []
@@ -20,11 +21,10 @@ class DeviceSetup {
         self.config = config
         self.setupEVChargers()
         self.setupPowerMeters()
-
-        // TODO: add logger
     }
 
     private func setupEVChargers() {
+        logger.info("Setting up Charger: \(self.config.chargerModel.rawValue)")
         self.evChargers.removeAll()
         self.powerMeters.removeAll()
 
@@ -40,6 +40,7 @@ class DeviceSetup {
     }
 
     private func setupPowerMeters() {
+        logger.info("Setting up Power Meter: \(self.config.meterModel.rawValue)")
         switch config.meterModel {
             case .nope:
                 break
@@ -74,7 +75,6 @@ class DeviceSetup {
     /// - Returns: Tuple containing two arrays, the first holding the ``EVCharger``s and the
     /// second one holding the ``PowerMeter``s
     private func setupSenecWallboxProS11kW(deviceConfig: DeviceConfig) -> ([EVCharger], [PowerMeter]){
-        // TODO: add logging like "setup charger: <chargerNameHere>"
         let senecDeviceClient = SenecWallboxProS11kW.getModbusDeviceClient(serialPort: deviceConfig.chargerBus)
         let senecChargers: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)
         let senecInternalPowerMeter: Array<SenecWallboxProSPowerMeter> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)

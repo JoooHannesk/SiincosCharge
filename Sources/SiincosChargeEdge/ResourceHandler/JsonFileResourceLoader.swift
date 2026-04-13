@@ -15,11 +15,9 @@ import Logging
 /// and transforming it to the desired data type
 struct JsonFileResourceLoader {
 
-    let logger: Logger?
+    let logger: Logger = ComponentSupplier.mainLogger
 
-    init(logger: Logger? = nil) {
-        self.logger = logger
-    }
+    init() { }
 
     /**
      Load data from file
@@ -37,7 +35,7 @@ struct JsonFileResourceLoader {
             textData = try loadTextFromFile(fromFile: fromFile)
             fileContentInstance = try decoder.decode(T.self, from: textData)
         } catch {
-            self.logger?.error("Error loading product config from file: \(fromFile)", metadata: ["error": "\(error)"])
+            self.logger.error("Error loading product config from file: \(fromFile)", metadata: ["error": "\(error)"])
         }
         return fileContentInstance
     }
