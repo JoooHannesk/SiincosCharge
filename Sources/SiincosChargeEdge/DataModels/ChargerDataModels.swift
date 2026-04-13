@@ -122,10 +122,30 @@ protocol PowerMeter: Sendable {
     /// Unique id for identifying the device and its data within the local infrastructure.
     /// Power meters and car chargers belonging logically togehter have to share the same unit id.
     var unitId: UInt8 { get }
-    func getElectricCurrent() -> ElectricCurrent3PhaseGrid
-    func getGridVoltage() -> ElectricVoltage3PhaseGrid
-    func getPower() -> ElectricPower3PhaseGrid
-    func getTotalEnergy() -> Measurement<UnitEnergy>
+
+    /// Get Electric Current
+    ///
+    /// Return electric current drawn by the EV.
+    /// - Returns: Electric current for a 3-phase grid
+    func getElectricCurrent() async throws -> ElectricCurrent3PhaseGrid
+
+    /// Get Grid Voltage
+    ///
+    /// Return electric grid voltage.
+    /// - Returns: electric voltage provided by the 3-phase power grid.
+    func getGridVoltage() async throws -> ElectricVoltage3PhaseGrid
+
+    /// Get Electric Power
+    ///
+    /// Return current drawn power by the EV.
+    /// - Returns: Electric power drawn by the EV for a 3-phase power grid
+    func getPower() async throws -> ElectricPower3PhaseGrid
+
+    /// Get Total Energy
+    ///
+    /// Return total energy provided by the EV charger (energy since installation).
+    /// - Returns: Total energy provided by the EV charger since installation
+    func getTotalEnergy() async throws -> Measurement<UnitEnergy>
 }
 
 /// Generic Car Charger States

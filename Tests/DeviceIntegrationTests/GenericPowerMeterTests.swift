@@ -1,0 +1,48 @@
+//
+//  GenericPowerMeterTests.swift
+//  SiincosChargeEdge
+//
+//  Created by Johannes Kinzig on 13.04.26.
+//
+
+import Testing
+import Foundation
+import ModbusSerial
+@testable import SiincosChargeEdge
+
+
+/// Generic Power Meter Device Tests
+///
+/// Generic tests for the power meters
+/// To run this test, a physical power meter or charger with integrated power meter is required.
+class GenericPowerMeterTests {
+
+    let powerMeter: PowerMeter
+
+    init() throws {
+
+        let systemConfig = try ComponentSupplier.getSystemConfig()
+        let devices = try ComponentSupplier.getDevices(for: systemConfig)
+
+        // Take the first power meter on the bus
+        guard let powerMeter = devices.1.first else {
+            throw SystemError.chargersMissing
+        }
+        self.powerMeter = powerMeter
+    }
+
+    @Test("Get-Electric-Current")
+    func getElectricCurrentDrawn() async throws {
+        let current = try await self.powerMeter.getElectricCurrent()
+        print(current)
+        #expect(current.currentL1!.value >= 0.0 && current.currentL2!.value >= 0.0 && current.currentL3!.value >= 0.0)
+    }
+
+    @Test("Get-Electric-Grid-Voltage")
+    func getElectricGridVoltage() async throws {
+        let gridVoltage = try await self.powerMeter.getGridVoltage()
+        print(gridVoltage)
+        #expect(gridVoltage.voltageL1!.value > 200 && gridVoltage.voltageL2!.value > 200 && gridVoltage.voltageL3!.value > 200)
+    }
+
+}

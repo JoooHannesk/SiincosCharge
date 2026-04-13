@@ -41,7 +41,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Instance requires a modbus client configuration and the specific unit id on the bus system
     ///
     /// - Parameters:
-    ///    - modbusClient: Configured modbus client, connected
+    ///    - modbusRTUClient: Configured modbus client, connected
     ///    - unitId: Device unit id on the modbus bus
     init(modbusRTUClient: ModbusRTUClient, unitId: UInt8) {
         self.modbusDevice = modbusRTUClient
@@ -325,8 +325,9 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 /// Power Meter inside Senec Wallbox Pro S
 ///
 /// Senec Wallbox Pro S has an integrated power meter.
-/// - Note: Power meter and charger are separated in case an external,
-/// dedicated power meter is used
+/// - Note: Power meter and charger are separated because the system architecutre allows to
+/// use an external, dedicated power meter instead of the integrated one
+///
 struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
@@ -336,14 +337,52 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
         self.unitId = unitId
     }
 
-    func getElectricCurrent() -> ElectricCurrent3PhaseGrid {
-        // TODO: implement
-        return ElectricCurrent3PhaseGrid()
+    /// Get Electric Current
+    ///
+    /// Return electric current drawn by the EV.
+    /// - Returns: Electric current drawn by the EV on a 3-phase grid
+    /// - Note: Refers to the following register addresses in corresponding modbus mapping:
+    ///     * L1: Register 6
+    ///     * L2: Register 7
+    ///     * L3: Register 8
+    func getElectricCurrent() async throws -> ElectricCurrent3PhaseGrid {
+        let il1 = try await self.modbusDevice.readInputRegisters(address: 6, count: 1, unitId: self.unitId)
+        let il2 = try await self.modbusDevice.readInputRegisters(address: 7, count: 1, unitId: self.unitId)
+        let il3 = try await self.modbusDevice.readInputRegisters(address: 8, count: 1, unitId: self.unitId)
+
+        guard let il1Value = il1.value(at: 0), let il2Value = il2.value(at: 0), let il3Value = il3.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+        let currentDrawn = ElectricCurrent3PhaseGrid(
+            currentL1: Measurement(value: Double(il1Value)/10, unit: UnitElectricCurrent.amperes),
+            currentL2: Measurement(value: Double(il2Value)/10, unit: UnitElectricCurrent.amperes),
+            currentL3: Measurement(value: Double(il3Value)/10, unit: UnitElectricCurrent.amperes)
+        )
+        return currentDrawn
     }
-    
-    func getGridVoltage() -> ElectricVoltage3PhaseGrid {
-        // TODO: implement
-        return ElectricVoltage3PhaseGrid()
+
+    /// Get Electric Grid Voltage
+    ///
+    /// Return electric voltage provided by the power grid.
+    /// - Returns: Electric voltage for a 3-phase grid
+    /// - Note: Refers to the following register addresses in the corresponding modbus mapping:
+    ///     * L1: Register 10
+    ///     * L2: Register 11
+    ///     * L3: Register 12
+    func getGridVoltage() async throws -> ElectricVoltage3PhaseGrid {
+        let ul1 = try await self.modbusDevice.readInputRegisters(address: 10, count: 1, unitId: self.unitId)
+        let ul2 = try await self.modbusDevice.readInputRegisters(address: 11, count: 1, unitId: self.unitId)
+        let ul3 = try await self.modbusDevice.readInputRegisters(address: 12, count: 1, unitId: self.unitId)
+
+        guard let ul1Value = ul1.value(at: 0), let ul2Value = ul2.value(at: 0), let ul3Value = ul3.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+        let gridVoltage3phase = ElectricVoltage3PhaseGrid(
+            voltageL1: Measurement(value: Double(ul1Value), unit: UnitElectricPotentialDifference.volts),
+            voltageL2: Measurement(value: Double(ul2Value), unit: UnitElectricPotentialDifference.volts),
+            voltageL3: Measurement(value: Double(ul3Value), unit: UnitElectricPotentialDifference.volts)
+        )
+        return gridVoltage3phase
     }
     
     func getPower() -> ElectricPower3PhaseGrid {
