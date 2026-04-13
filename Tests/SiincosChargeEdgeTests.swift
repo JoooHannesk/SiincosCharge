@@ -7,6 +7,10 @@ import ModbusSerial
 
 struct SiincosChargeEdgeTests {
 
+    /// Test Component Supplier
+    ///
+    /// Test component supplier to deliver the configuration
+    /// instance as described by the configuration file.
     @Test("Load-System-Config-From-File")
     func loadConfig() async throws {
         let config = try ComponentSupplier.getSystemConfig()
@@ -15,6 +19,10 @@ struct SiincosChargeEdgeTests {
         #expect(CompatiblePowerMeter.allCases.contains(config.meterModel))
     }
 
+    /// Test Component Supplier
+    ///
+    /// Test component supplier to deliver the devices as requested
+    /// by the configuration file.
     @Test("Configure-Devices")
     func configureDevices() throws {
         let config = try ComponentSupplier.getSystemConfig()

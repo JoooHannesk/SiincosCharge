@@ -1,7 +1,7 @@
 {
     "systemId": "HTS1Proto1",
     "chargerModel": "SenecWallboxProS11kW",
-    "chargerBus": "/dev/tty.ACM0",
+    "chargerBus": "/dev/tty.usbserial-AB0O6Z7W",
     "meterModel": "Nope",
     "meterBus": "/dev/tty.ACM1",
     "lineLength": 1,
