@@ -271,10 +271,11 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// will not survive a power cylce!
     func getCommFailureMaxCurrent() async throws -> Measurement<UnitElectricCurrent> {
         let responseCurrentSetpoint = try await self.modbusDevice.readHoldingRegisters(address: 262, count: 1, unitId: self.unitId)
-        guard var responseCurrentSetpointValue = responseCurrentSetpoint.signedValue(at: 0) else {
+        guard var responseCurrentSetpointValue = responseCurrentSetpoint.value(at: 0) else {
             throw SystemError.dataMissing
         }
-        responseCurrentSetpointValue /= 10 // Required per modbus documentation
+        // Divison by 10 per modbus documentation
+        responseCurrentSetpointValue /= 10
         return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }
 
@@ -291,7 +292,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         let hardwareLimits = try await self.getHardwareCurrentLimits()
         // ensure to not exceed the hardware current constraints
         let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal)
-        // Factory required per modbus documentation
+        // Multiplication with 10 required per modbus documentation
         let newSetpointInt = UInt16(newSetpoint.value * 10)
         let _ = try await self.modbusDevice.writeMultipleRegisters(address: 262, values: [newSetpointInt], unitId: self.unitId)
         let newSetpointProcessedByCharger = try await self.getCommFailureMaxCurrent()
