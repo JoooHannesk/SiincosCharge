@@ -162,6 +162,16 @@ enum LockState: UInt {
     case unknown = 2
 }
 
+/// Status
+///
+/// Represent a simple status: `.enabled` or `.disabled` and `.unknown`
+/// if not supported by a device or functionality
+enum Status: UInt8 {
+    case enabled
+    case disabled
+    case unknown
+}
+
 /// Electric Current
 ///
 /// Electric current in a 3-phase grid

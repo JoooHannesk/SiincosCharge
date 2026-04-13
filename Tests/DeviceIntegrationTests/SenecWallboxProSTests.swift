@@ -52,4 +52,14 @@ class SenecWallboxProSTests {
             #expect(currentSetpoint == expected)
         }
     }
+
+
+    @Test("Test-Power-Saving-Mode")
+    func togglePowerSavingMode() async throws {
+        let statusEn = try await self.charger.setPowerSavingState(to: .enabled)
+        #expect(statusEn == .enabled)
+        let statusDis = try await self.charger.setPowerSavingState(to: .disabled)
+        #expect(statusDis == .disabled)
+    }
+
 }

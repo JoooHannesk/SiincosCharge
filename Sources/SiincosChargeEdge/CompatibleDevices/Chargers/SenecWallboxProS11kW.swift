@@ -209,16 +209,43 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     }
 
     // MARK: Device specific functionality
-    func getPowerSavingMode() -> Bool {
-        // referred to as standby mode in modbus mapping manual
-        // TODO: implement
-        return false
+
+    /// Get device power saving state
+    ///
+    /// - Returns: Power saving status as ``Status``
+    /// - Note: Referred to as *Standby Mode* in modbus mapping manual
+    func getPowerSavingState() async throws -> Status {
+        let status = try await self.modbusDevice.readHoldingRegisters(address: 258, count: 1, unitId: self.unitId)
+        guard let statusValue = status.signedValue(at: 0) else {
+            throw SystemError.dataMissing
+        }
+        switch statusValue {
+        case 0:
+            return .enabled
+        case 4:
+            return .disabled
+        default:
+            return .unknown
+        }
     }
 
-    func setPowerSavingMode(to: Bool) -> Bool {
-        // referred to as standby mode in modbus mapping manual
-        // TODO: implement
-        return false
+    /// Set device power saving state
+    ///
+    /// Providing any other argument instead of `.enabled` or `.disabled` results in
+    /// power saving mode being disabled.
+    ///
+    /// - Parameter to: Power saving status as ``Status``
+    /// - Note: Referred to as *Standby Mode* in modbus mapping manual
+    func setPowerSavingState(to: Status) async throws -> Status {
+        let powerSavingState: UInt16
+        if to == .enabled {
+            powerSavingState = 0
+        } else {
+            powerSavingState = 4
+        }
+        let _ = try await self.modbusDevice.writeMultipleRegisters(address: 258, values: [powerSavingState], unitId: self.unitId)
+        let newPowerSavingState = try await self.getPowerSavingState()
+        return newPowerSavingState
     }
 
     func getModbusWatchdogTimeout() -> UInt16 {
