@@ -252,13 +252,34 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         return newPowerSavingState
     }
 
-    func getModbusWatchdogTimeout() -> UInt16 {
-        // TODO: implement
-        return 0
+    /// Get Modbus Watchdog Timeout
+    ///
+    /// In case of a communication failure on the modbus line, the charger goes into failsafe mode
+    /// after the defined timeout. The failsafe mode reduces to charging current to the configured failsafe-maximum
+    /// and indicates an error through its LED display.
+    ///
+    /// - Returns: Timeout in milliseconds as `UInt16`. Max value: 65535
+    /// - Note: Refers to register address 257 in corresponding modbus mapping.
+    func getModbusWatchdogTimeout() async throws -> UInt16 {
+        let wdTimeout = try await self.modbusDevice.readHoldingRegisters(address: 257, count: 1, unitId: self.unitId)
+        guard let wdTimeoutValue = wdTimeout.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+        return UInt16(wdTimeoutValue)
     }
 
-    func setModbusWatchdogTimeout(to seconds: UInt16) {
-        // TODO: implement
+    /// Set Modbus Watchdog Timeout
+    ///
+    /// In case of a communication failure on the modbus line, the charger goes into failsafe mode
+    /// after the defined timeout. The failsafe mode reduces to charging current to the configured failsafe-maximum
+    /// and indicates an error through its LED display.
+    ///
+    /// - Parameter milliseconds: Timeout in milliseconds as `UInt16`. Max value: 65535
+    /// - Note: Refers to register address 257 in corresponding modbus mapping.
+    func setModbusWatchdogTimeout(to milliseconds: UInt16) async throws -> UInt16 {
+        let _ = try await self.modbusDevice.writeMultipleRegisters(address: 257, values: [milliseconds], unitId: self.unitId)
+        let newWdTimeout = try await self.getModbusWatchdogTimeout()
+        return newWdTimeout
     }
 
     /// Get Modbus Communication Failure Current Limit

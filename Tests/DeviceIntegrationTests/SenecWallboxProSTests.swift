@@ -62,4 +62,13 @@ class SenecWallboxProSTests {
         #expect(statusDis == .disabled)
     }
 
+    @Test("Test-Modbus-Watchdog-Timeout")
+    func setModbusWatchdogTimeoutValues() async throws {
+        let timeoutCollection: Array<UInt16> = [1000, 2000, 23255, 30000, 65535]
+        for singleTimeout in timeoutCollection {
+            let responsTimeout = try await self.charger.setModbusWatchdogTimeout(to: singleTimeout)
+            #expect(responsTimeout == singleTimeout)
+        }
+    }
+
 }
