@@ -384,10 +384,32 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
         )
         return gridVoltage3phase
     }
-    
-    func getPower() -> ElectricPower3PhaseGrid {
-        // TODO: implement
-        return ElectricPower3PhaseGrid()
+
+    /// Get Electric Power
+    ///
+    /// Get electric power drawn from EV charger and delivered by grid.
+    /// This power meter provides the total power (L1+L2+L3) only, therefore requesting `powerTotal` from
+    /// the power meter and calculating L1, L2, L3 power based on current and grid voltage.
+    func getElectricPower() async throws -> ElectricPower3PhaseGrid {
+        let voltage = try await self.getGridVoltage()
+        let current = try await self.getElectricCurrent()
+        let pl123 = try await self.modbusDevice.readInputRegisters(address: 6, count: 1, unitId: self.unitId)
+
+        guard let pl123Value = pl123.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+
+        let powerL1 = (voltage.voltageL1?.value ?? 0.0) * (current.currentL1?.value ?? 0.0)
+        let powerL2 = (voltage.voltageL2?.value ?? 0.0) * (current.currentL2?.value ?? 0.0)
+        let powerL3 = (voltage.voltageL3?.value ?? 0.0) * (current.currentL3?.value ?? 0.0)
+
+        let currentPower = ElectricPower3PhaseGrid(
+            powerL1: Measurement(value: powerL1, unit: UnitPower.watts),
+            powerL2: Measurement(value: powerL2, unit: UnitPower.watts),
+            powerL3: Measurement(value: powerL3, unit: UnitPower.watts),
+            powerTotal: Measurement(value: Double(pl123Value), unit: UnitPower.watts)
+        )
+        return currentPower
     }
     
     func getTotalEnergy() -> Measurement<UnitEnergy> {

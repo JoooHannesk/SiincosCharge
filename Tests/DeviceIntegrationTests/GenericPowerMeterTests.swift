@@ -45,4 +45,10 @@ class GenericPowerMeterTests {
         #expect(gridVoltage.voltageL1!.value > 200 && gridVoltage.voltageL2!.value > 200 && gridVoltage.voltageL3!.value > 200)
     }
 
+    @Test("Get-Electric-Power")
+    func getElectricPower() async throws {
+        let power = try await self.powerMeter.getElectricPower()
+        print(power)
+        #expect(power.powerL1!.value >= 0.0 && power.powerL2!.value >= 0.0 && power.powerL3!.value >= 0.0 && power.powerTotal!.value >= 0.0)
+    }
 }
