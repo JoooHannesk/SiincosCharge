@@ -31,6 +31,11 @@ class GenericChargerTests {
         self.charger = charger
     }
 
+    @Test("Setup-Device-Configuration")
+    func setupDeviceConfiguration() async throws {
+        try await self.charger.setupConfig()
+    }
+
     @Test("Software-Lock-State")
     func softwareLockState() async throws {
         try await setLockState(to: .unlocked, expected: .unlocked)

@@ -15,6 +15,7 @@ enum SystemError: Error {
     case dataMissing
     case chargersMissing
     case powerMetersMissing
+    case deviceConfigurationError
 }
 
 
@@ -31,6 +32,8 @@ extension SystemError: LocalizedError {
             return "No chargers found! Config invalid?"
         case .powerMetersMissing:
             return "No power meters found! Config invalid?"
+        case .deviceConfigurationError:
+            return "Device did not acknowledge desired configuration! Aborting!"
         }
     }
 }

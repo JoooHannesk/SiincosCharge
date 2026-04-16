@@ -38,8 +38,8 @@ protocol EVCharger: Sendable {
 
     /// Setup Configuration
     ///
-    /// Setup device by loading device specific default configuration required
-    /// for operation
+    /// Setup device by loading device specific default configuration which
+    /// is required for proper operation
     func setupConfig() async throws
 
     /// Get Charging State

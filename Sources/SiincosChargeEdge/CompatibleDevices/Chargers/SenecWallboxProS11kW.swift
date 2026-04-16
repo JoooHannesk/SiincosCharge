@@ -50,10 +50,28 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 
     /// Setup Configuration
     ///
-    /// Setup device by loading device specific configuration such as
-    /// power saving mode, modbus watchdog timeout, communication failure behavior
+    /// Setup device by loading device specific default configuration which
+    /// is required for proper operation.
+    /// Setting the following device specific parameters:
+    /// - Power Saving Mode: Enable power saving mode when idle (no car connected)
+    /// - Watchdog Timeout: 60 seconds (prevent watchdog to trigger failsafe mode too early, e.g. the gateway power-cycles should not trigger the watchdog)
+    /// - Failsafe Mode max. Current: 8A (for most cases assuming at most 2 chargers on the line – with 8 amps each, the circuit breaker will not trip)
     func setupConfig() async throws {
-        // TODO: implement required mechanisms here
+        // Power Saving Mode: enabled
+        let powerSavingModeSetpoint: Status = .enabled
+        let powerSavingModeActual = try await self.setPowerSavingState(to: powerSavingModeSetpoint)
+
+        // Watchdog Timeout: 60sec
+        let watchDogTimeOutSetpoint: UInt16 = 60000
+        let watchdogTimeoutActual = try await self.setModbusWatchdogTimeout(to: watchDogTimeOutSetpoint)
+
+        // Failsafe Mode: 8A max. current
+        let failsafeCurrentSetpoint = Measurement(value: Double(8.0), unit: UnitElectricCurrent.amperes)
+        let failsafeCurrentActual = try await self.setCommFailureMaxCurrent(to: failsafeCurrentSetpoint)
+
+        guard powerSavingModeActual == powerSavingModeSetpoint, watchdogTimeoutActual == watchDogTimeOutSetpoint, failsafeCurrentActual == failsafeCurrentSetpoint else {
+            throw SystemError.deviceConfigurationError
+        }
     }
 
     /// Get Charging State
