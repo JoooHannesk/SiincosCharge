@@ -34,21 +34,28 @@ class GenericPowerMeterTests {
     @Test("Get-Electric-Current")
     func getElectricCurrentDrawn() async throws {
         let current = try await self.powerMeter.getElectricCurrent()
-        print(current)
+        print("Currently drawn current: \(current)")
         #expect(current.currentL1!.value >= 0.0 && current.currentL2!.value >= 0.0 && current.currentL3!.value >= 0.0)
     }
 
     @Test("Get-Electric-Grid-Voltage")
     func getElectricGridVoltage() async throws {
         let gridVoltage = try await self.powerMeter.getGridVoltage()
-        print(gridVoltage)
+        print("Current grid voltage: \(gridVoltage)")
         #expect(gridVoltage.voltageL1!.value > 200 && gridVoltage.voltageL2!.value > 200 && gridVoltage.voltageL3!.value > 200)
     }
 
     @Test("Get-Electric-Power")
     func getElectricPower() async throws {
         let power = try await self.powerMeter.getElectricPower()
-        print(power)
+        print("Currently drawn power: \(power)")
         #expect(power.powerL1!.value >= 0.0 && power.powerL2!.value >= 0.0 && power.powerL3!.value >= 0.0 && power.powerTotal!.value >= 0.0)
+    }
+
+    @Test("Get-Electric-Energy-Since-Installation")
+    func getTotalEnergyConsumedSinceInstallation() async throws {
+        let energy = try await self.powerMeter.getElectricEnergy()
+        print("Energy since installation: \(energy)")
+        #expect(energy.value >= 0.0)
     }
 }

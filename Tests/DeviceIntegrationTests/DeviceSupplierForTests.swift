@@ -23,5 +23,16 @@ enum DeviceSupplierForTests {
         }
         return charger
     }
-    
+
+    static func getSpecificPowerMeter<T>() -> T? {
+        var meter: T? = nil
+        do {
+            let systemConfig = try ComponentSupplier.getSystemConfig()
+            let devices = try ComponentSupplier.getDevices(for: systemConfig)
+            meter = devices.1.first as? T
+        } catch {
+            Issue.record("Unable to get system configuration: \(error.localizedDescription)")
+        }
+        return meter
+    }
 }

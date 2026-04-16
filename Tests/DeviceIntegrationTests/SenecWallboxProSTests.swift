@@ -12,6 +12,7 @@ import ModbusSerial
 
 
 let chargerSenec: SenecWallboxProS11kW? = DeviceSupplierForTests.getSpecificCharger()
+let powerMeterSenec: SenecWallboxProSPowerMeter? = DeviceSupplierForTests.getSpecificPowerMeter()
 
 
 /// Senec Wallbox Pro S Device Tests
@@ -24,7 +25,7 @@ class SenecWallboxProSTests {
 
     init() throws {
         guard let chargerSenec else {
-            try Test.cancel("SenecWallboxProS11kW not properly configured")
+            try Test.cancel("SenecWallboxProS11kW not properly configured.")
         }
         self.charger = chargerSenec
     }
@@ -69,6 +70,29 @@ class SenecWallboxProSTests {
             let responsTimeout = try await self.charger.setModbusWatchdogTimeout(to: singleTimeout)
             #expect(responsTimeout == singleTimeout)
         }
+    }
+}
+
+/// Senec Wallbox Pro S Device Tests - Integrated Power Meter
+///
+/// Specific device tests for the charger Wallbox Pro S from SENEC.
+/// To run this test, a physical charger is required.
+@Suite("Senec-Wallbox-Pro-S-Specific-Power-Meter-Tests", .enabled(if: powerMeterSenec != nil ))
+class SenecWallboxProSIntegratedPowerMeterTests {
+    var powerMeter: SenecWallboxProSPowerMeter
+
+    init() throws {
+        guard let powerMeterSenec else {
+            try Test.cancel("SenecWallboxProS11kW (with integrated power meter) not properly configured.")
+        }
+        self.powerMeter = powerMeterSenec
+    }
+
+    @Test("Get-Electric-Energy-Since-PowerOn")
+    func getTotalEnergyConsumedSincePowerOn() async throws {
+        let energy = try await self.powerMeter.getElectricEnergySincePowerOn()
+        print("Energy since power on: \(energy)")
+        #expect(energy.value >= 0.0)
     }
 
 }

@@ -141,11 +141,11 @@ protocol PowerMeter: Sendable {
     /// - Returns: Electric power drawn by the EV for a 3-phase power grid
     func getElectricPower() async throws -> ElectricPower3PhaseGrid
 
-    /// Get Total Energy
+    /// Get Electric Energy (total)
     ///
     /// Return total energy provided by the EV charger (energy since installation).
     /// - Returns: Total energy provided by the EV charger since installation
-    func getTotalEnergy() async throws -> Measurement<UnitEnergy>
+    func getElectricEnergy() async throws -> Measurement<UnitEnergy>
 }
 
 /// Generic Car Charger States

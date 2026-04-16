@@ -53,7 +53,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Setup device by loading device specific configuration such as
     /// power saving mode, modbus watchdog timeout, communication failure behavior
     func setupConfig() async throws {
-        // TODO: implement required mechanisms herer
+        // TODO: implement required mechanisms here
     }
 
     /// Get Charging State
@@ -390,10 +390,16 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
     /// Get electric power drawn from EV charger and delivered by grid.
     /// This power meter provides the total power (L1+L2+L3) only, therefore requesting `powerTotal` from
     /// the power meter and calculating L1, L2, L3 power based on current and grid voltage.
+    ///
+    /// - Returns: Electric power currently drawn by the EV (power for a 3-phase grid).
+    ///
+    /// - Note: The total power `powerTotal` refers to register 14 in modbus mapping. Voltage and Current
+    /// is provided by ``getGridVoltage()`` and ``getElectricCurrent()``.
+    ///
     func getElectricPower() async throws -> ElectricPower3PhaseGrid {
         let voltage = try await self.getGridVoltage()
         let current = try await self.getElectricCurrent()
-        let pl123 = try await self.modbusDevice.readInputRegisters(address: 6, count: 1, unitId: self.unitId)
+        let pl123 = try await self.modbusDevice.readInputRegisters(address: 14, count: 1, unitId: self.unitId)
 
         guard let pl123Value = pl123.value(at: 0) else {
             throw SystemError.dataMissing
@@ -411,13 +417,44 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
         )
         return currentPower
     }
-    
-    func getTotalEnergy() -> Measurement<UnitEnergy> {
-        // TODO: implement
-        return Measurement(value: 0, unit: UnitEnergy.kilowattHours)
+
+    /// Get Electric Energy (total)
+    ///
+    /// Return total energy provided by the EV charger (energy since installation).
+    /// - Returns: Total energy provided by the EV charger since installation
+    /// - Note: Refers to register address 17 and 18 in corresponding modbus mapping.
+    func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
+        let tEnergyHighByte = try await self.modbusDevice.readInputRegisters(address: 17, count: 1, unitId: self.unitId)
+        let tEnergyLowByte = try await self.modbusDevice.readInputRegisters(address: 18, count: 1, unitId: self.unitId)
+
+        guard let tEnergyHighByteValue = tEnergyHighByte.value(at: 0), let tEnergyLowByteValue = tEnergyLowByte.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+
+        // This does the following: << 16 shifts high bytes to the left by a full 16-bit register, | adds the lower bytes
+        // Math behind this: totalEnergy = (high * 65536) + low --> high << 16: multiply by 65536, | low: add the lower bits
+        let totalEnergyVAhSinceInstallation = UInt32(tEnergyHighByteValue) << 16 | UInt32(tEnergyLowByteValue)
+        return Measurement(value: Double(totalEnergyVAhSinceInstallation)/1000, unit: UnitEnergy.kilowattHours)
     }
 
     // MARK: Device specific functionality
 
-    // TODO: implement total energy, energy since power on
+    /// Get Electric Energy (since power on)
+    ///
+    /// Return total energy provided by the EV charger (energy since power on).
+    /// - Returns: Total energy provided by the EV charger since power on
+    /// - Note: Refers to register address 15 and 16 in corresponding modbus mapping.
+    func getElectricEnergySincePowerOn() async throws -> Measurement<UnitEnergy> {
+        let spoEnergyHighByte = try await self.modbusDevice.readInputRegisters(address: 15, count: 1, unitId: self.unitId)
+        let spoEnergyLowByte = try await self.modbusDevice.readInputRegisters(address: 16, count: 1, unitId: self.unitId)
+
+        guard let spoEnergyHighByteValue = spoEnergyHighByte.value(at: 0), let spoEnergyLowByteValue = spoEnergyLowByte.value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+
+        // This does the following: << 16 shifts high bytes to the left by a full 16-bit register, | adds the lower bytes
+        // Math behind this: totalEnergy = (high * 65536) + low --> high << 16: multiply by 65536, | low: add the lower bits
+        let totalEnergyVAhSincePowerOn = UInt32(spoEnergyHighByteValue) << 16 | UInt32(spoEnergyLowByteValue)
+        return Measurement(value: Double(totalEnergyVAhSincePowerOn)/1000, unit: UnitEnergy.kilowattHours)
+    }
 }
