@@ -9,6 +9,7 @@
 ///
 /// System compatible EV chargers are listed here
 enum CompatibleCharger: String, Codable, CaseIterable {
+    case mockCharger = "MockCharger"
     case senecWallboxProS11kW  = "SenecWallboxProS11kW"
 }
 

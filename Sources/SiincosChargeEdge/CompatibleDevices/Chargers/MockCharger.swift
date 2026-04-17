@@ -1,0 +1,123 @@
+//
+//  MockCharger.swift
+//  SiincosChargeEdge
+//
+//  Created by Johannes Kinzig on 17.04.26.
+//
+
+import Foundation
+import ModbusSerial
+
+
+struct MockCharger: EVCharger {
+    let unitId: UInt8
+
+    func setupConfig() async throws {
+        print("Config Setup completed!")
+    }
+    
+    func getChargingState() async throws -> ChargerState {
+        let chargingState: ChargerState = .vehiclePresentRequestChargerReady
+        print("Current charging state: \(chargingState)")
+        return chargingState
+    }
+    
+    func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
+        let internalTemperature = Measurement(value: 32.4, unit: UnitTemperature.celsius)
+        print("Internal Temperature: \(internalTemperature)")
+        return internalTemperature
+    }
+    
+    func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
+        let boundaries = try Boundaries(
+            minimal: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
+            maximal: Measurement(value: 20.0, unit: UnitElectricCurrent.amperes))
+        print("Hardware electric current limits: \(boundaries)")
+        return boundaries
+    }
+    
+    func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
+        print("Currently set max. current: \(await MockChargerDataStore.maxCurrentLimit)")
+        return await MockChargerDataStore.maxCurrentLimit
+    }
+    
+    func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
+        await MainActor.run {
+            MockChargerDataStore.maxCurrentLimit = setpoint
+        }
+        await print("Setting max. current to: \(MockChargerDataStore.maxCurrentLimit)")
+        return await MockChargerDataStore.maxCurrentLimit
+    }
+    
+    func getHardwareLockState() async throws -> LockState {
+        let hardwareLockState: LockState = .unlocked
+        print("Hardware Lock State: \(hardwareLockState)")
+        return hardwareLockState
+    }
+    
+    func getSoftwareLockState() async throws -> LockState {
+        await print("Current lock state: \(MockChargerDataStore.softwareLockState)")
+        return await MockChargerDataStore.softwareLockState
+    }
+    
+    func setSoftwareLock(to: LockState) async throws -> LockState {
+        await MainActor.run {
+            MockChargerDataStore.softwareLockState = to
+        }
+        await print("Setting lock state to: \(MockChargerDataStore.softwareLockState)")
+        return await MockChargerDataStore.softwareLockState
+    }
+}
+
+
+struct MockChargerPowerMeter: PowerMeter {
+    let unitId: UInt8
+    
+    func getElectricCurrent() async throws -> ElectricCurrent3PhaseGrid {
+        let current = ElectricCurrent3PhaseGrid(
+            currentL1: Measurement(value: 7.3, unit: UnitElectricCurrent.amperes),
+            currentL2: Measurement(value: 8.1, unit: UnitElectricCurrent.amperes),
+            currentL3: Measurement(value: 6.9, unit: UnitElectricCurrent.amperes)
+        )
+        print("Current: \(current)")
+        return current
+    }
+    
+    func getGridVoltage() async throws -> ElectricVoltage3PhaseGrid {
+        let voltage = ElectricVoltage3PhaseGrid(
+            voltageL1: Measurement(value: 228.8, unit: UnitElectricPotentialDifference.volts),
+            voltageL2: Measurement(value: 236.4, unit: UnitElectricPotentialDifference.volts),
+            voltageL3: Measurement(value: 231.1, unit: UnitElectricPotentialDifference.volts)
+            )
+        print("Voltage: \(voltage)")
+        return voltage
+    }
+    
+    func getElectricPower() async throws -> ElectricPower3PhaseGrid {
+        let power = ElectricPower3PhaseGrid(
+            powerL1: Measurement(value: 5.2, unit: UnitPower.kilowatts),
+            powerL2: Measurement(value: 4.8, unit: UnitPower.kilowatts),
+            powerL3: Measurement(value: 5.3, unit: UnitPower.kilowatts),
+            powerTotal: Measurement(value: 15.3, unit: UnitPower.kilowatts)
+        )
+        print("Power: \(power)")
+        return power
+    }
+    
+    func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
+        await MainActor.run {
+            MockChargerDataStore.energy.value += 0.5
+        }
+        await print("Energy drawn since installation: \(MockChargerDataStore.energy)")
+        return await MockChargerDataStore.energy
+    }
+}
+
+
+@MainActor
+enum MockChargerDataStore {
+    static var maxCurrentLimit = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
+    static var softwareLockState: LockState = .locked
+    static var energy = Measurement(value: 1.0, unit: UnitEnergy.kilowattHours)
+}
+

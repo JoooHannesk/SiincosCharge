@@ -30,24 +30,31 @@ class DeviceSetup {
 
         switch config.chargerModel {
 
-            // Chargers with integrated power meters
-            case .senecWallboxProS11kW:
+        // Chargers with integrated power meters
+        case .mockCharger:
+            (self.evChargers, self.powerMeters) = self.setupMockChargerWithPowerMeter(deviceConfig: self.config)
+
+        case .senecWallboxProS11kW:
             (self.evChargers, self.powerMeters) = self.setupSenecWallboxProS11kW(deviceConfig: self.config)
 
-            // Chargers without integrated power meter
+        // Chargers without integrated power meter
 
-            }
+        }
     }
 
     private func setupPowerMeters() {
-        logger.info("Setting up Power Meter: \(self.config.meterModel.rawValue)")
+        logger.info(
+            "Setting up Power Meter: \(self.config.meterModel.rawValue)"
+        )
         switch config.meterModel {
-            case .nope:
-                break
 
-            // Setup more power meters here
-            //self.powerMeters.removeAll()
-            }
+        // No external power meter in use:
+        case .nope:
+            break
+
+            // Setup for external power meter:
+            self.powerMeters.removeAll()
+        }
     }
 
 
@@ -66,6 +73,26 @@ class DeviceSetup {
     }
 
     // MARK: Specific device setup
+
+    /// Setup Mock Charger
+    ///
+    /// - Parameter deviceConfig: system device configuration
+    /// - Returns: Tuple containing two arrays, the first holding the ``EVCharger``s and the
+    /// second one holding the ``PowerMeter``s
+    private func setupMockChargerWithPowerMeter(deviceConfig: DeviceConfig) -> ([EVCharger], [PowerMeter]) {
+        var mockChargers: [MockCharger] = []
+        var mockChargersWithPowerMeters: [MockChargerPowerMeter] = []
+
+        let startAddress: UInt8 = 1
+        let lineLength = deviceConfig.lineLength
+        let upperBound = startAddress + lineLength
+        for uid in startAddress..<upperBound {
+            print("UID: \(uid)")
+            mockChargers.append(MockCharger(unitId: uid))
+            mockChargersWithPowerMeters.append(MockChargerPowerMeter(unitId: uid))
+        }
+        return (mockChargers, mockChargersWithPowerMeters)
+    }
 
     /// Setup SenecWallboxProS11kW
     ///
