@@ -16,12 +16,18 @@ struct MockCharger: EVCharger {
         print("Config Setup completed!")
     }
     
-    func getChargingState() async throws -> ChargerState {
-        let chargingState: ChargerState = .vehiclePresentRequestChargerReady
+    func getChargerState() async throws -> ChargerState {
+        let chargingState: ChargerState = .notCharging
         print("Current charging state: \(chargingState)")
         return chargingState
     }
-    
+
+    func getEVPluggedState() async throws -> EVState {
+        let evState: EVState = .pluggedIn
+        print("EV is currently: \(evState)")
+        return evState
+    }
+
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         let internalTemperature = Measurement(value: 32.4, unit: UnitTemperature.celsius)
         print("Internal Temperature: \(internalTemperature)")

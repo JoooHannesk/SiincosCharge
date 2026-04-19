@@ -57,9 +57,16 @@ class GenericChargerTests {
 
     @Test("Get-Charging-State")
     func getChargingState() async throws {
-        let state = try await self.charger.getChargingState()
+        let state = try await self.charger.getChargerState()
         #expect(state != .unknown)
         print("Charger State: \(state)")
+    }
+
+    @Test("Get-EV-Plugged-State")
+    func getEVPluggedState() async throws {
+        let state = try await self.charger.getEVPluggedState()
+        print("Charger EV Plugged State: \(state)")
+        #expect(state != .unknown)
     }
 
     @Test("Get-Internal-Temperature")

@@ -36,7 +36,7 @@ struct SiincosChargeEdge {
         let charger = SenecWallboxProS11kW(modbusRTUClient: modbusDevice, unitId: unitId)
 
         while true {
-            print(try! await charger.getChargingState())
+            print(try! await charger.getChargerState())
             try! await Task.sleep(for: .seconds(2))
             print(try! await charger.setSoftwareLock(to: .unlocked))
             print(try! await charger.setMaxCurrentLimitSetpoint(to: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)))

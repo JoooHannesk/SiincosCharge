@@ -74,41 +74,45 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         }
     }
 
-    /// Get Charging State
+
+    /// Get specific Charger State
     ///
-    /// Retrieve the charger state from device
-    ///
-    /// - Returns: ``ChargerState``
+    /// Retrieve device specific charger state
+    /// - Returns: ``SenecWallboxProSChargerState``
     /// - Note: Refers to register address 5 in corresponding modbus mapping
-    func getChargingState() async throws -> ChargerState {
+    private func getSpecificChargerState() async throws -> SenecWallboxProSChargerState {
         let response = try await self.modbusDevice.readInputRegisters(address: 5, count: 1, unitId: self.unitId)
         guard let state = response.value(at: 0) else {
             throw SystemError.dataMissing
         }
-        switch state {
-        case 2:
-            return .vehicleNotPresentChargerNotReady
-        case 3:
-            return .vehicleNotPresentChargerReady
-        case 4:
-            return .vehiclePresentNoRequestChargerNotReady
-        case 5:
-            return .vehiclePresentNoRequestChargerReady
-        case 6:
-            return .vehiclePresentRequestChargerNotReady
-        case 7:
-            return .vehiclePresentRequestChargerReady
-        case 8:
-            return .chargingDerated
-        case 9:
-            return .e
-        case 10:
-            return .f
-        case 11:
-            return .chargingError
-        default:
-            return .unknown
-        }
+        let specificChargerState = SenecWallboxProSChargerState.getSpecificChargerStateForModbusValue(state)
+        return specificChargerState
+    }
+
+    /// Get Charging State
+    ///
+    /// Retrieve the charger state from device and translate it to
+    /// harmonized charging state
+    ///
+    /// - Returns: ``ChargerState``
+    /// - Note: Refers to register address 5 in corresponding modbus mapping
+    func getChargerState() async throws -> ChargerState {
+        let specificChargerState = try await self.getSpecificChargerState()
+        let harmonizedChargerState = SenecWallboxProSChargerState.getHarmonizedChargerStateForSpecificChargerState(specificChargerState)
+        return harmonizedChargerState
+    }
+
+    /// Get EV Plugged State
+    ///
+    /// Retrieve the EV plugged state from device and translate it to
+    /// harmonized states
+    ///
+    /// - Returns: ``EVState``
+    /// - Note: Refers to register address 5 in corresponding modbus mapping
+    func getEVPluggedState() async throws -> EVState {
+        let specificChargerState = try await self.getSpecificChargerState()
+        let harmonizedPluggedStates = SenecWallboxProSChargerState.getHarmonizedEVPluggedStateForSpecificChargerState(specificChargerState)
+        return harmonizedPluggedStates
     }
 
     /// Get Internal Temperature
@@ -475,4 +479,119 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
         let totalEnergyVAhSincePowerOn = UInt32(spoEnergyHighByteValue) << 16 | UInt32(spoEnergyLowByteValue)
         return Measurement(value: Double(totalEnergyVAhSincePowerOn)/1000, unit: UnitEnergy.kilowattHours)
     }
+}
+
+/// Senec Wallbox Pro S Specific Car Charger States
+///
+enum SenecWallboxProSChargerState {
+
+    case unknown
+
+    // vehicle not present
+    case vehicleNotPresentChargerReady
+    case vehicleNotPresentChargerNotReady
+
+    // vehicle present no charging request
+    case vehiclePresentNoRequestChargerReady
+    case vehiclePresentNoRequestChargerNotReady
+
+    // vehicle present charging request
+    case vehiclePresentRequestChargerReady
+    case vehiclePresentRequestChargerNotReady
+
+    // other states
+    case chargingDerated // TODO: check status name and description
+    case e // TODO: check status name and description
+    case f // TODO: check status name and description
+    case chargingError
+
+    /// Get charger specific state
+    ///
+    /// Get specific charger state based on integer value provided through modbus rtu register
+    /// - Parameter value: Integer value retrieved from device via Modbus
+    /// - Returns: Specific charger state as ``SenecWallboxProSChargerState``
+    static func getSpecificChargerStateForModbusValue(_ value: UInt16) -> SenecWallboxProSChargerState {
+        let specificChargerState: SenecWallboxProSChargerState
+        switch value {
+        case 2:
+            specificChargerState = .vehicleNotPresentChargerNotReady
+        case 3:
+            specificChargerState = .vehicleNotPresentChargerReady
+        case 4:
+            specificChargerState = .vehiclePresentNoRequestChargerNotReady
+        case 5:
+            specificChargerState = .vehiclePresentNoRequestChargerReady
+        case 6:
+            specificChargerState = .vehiclePresentRequestChargerNotReady
+        case 7:
+            specificChargerState = .vehiclePresentRequestChargerReady
+        case 8:
+            specificChargerState = .chargingDerated
+        case 9:
+            specificChargerState = .e
+        case 10:
+            specificChargerState = .f
+        case 11:
+            specificChargerState = .chargingError
+        default:
+            specificChargerState = .unknown
+        }
+        return specificChargerState
+    }
+
+    /// Get Harmonized Charger State
+    ///
+    /// Get harmonized charger state based on the specific charger state.
+    /// It is required to treat multiple different charger models technically equal.
+    static func getHarmonizedChargerStateForSpecificChargerState(_ specificChargerState: SenecWallboxProSChargerState) -> ChargerState {
+        let harmonizedChargerState: ChargerState
+
+        switch specificChargerState {
+        case unknown: harmonizedChargerState = .unknown
+        // vehicle not present
+        case vehicleNotPresentChargerReady: harmonizedChargerState = .notCharging
+        case vehicleNotPresentChargerNotReady: harmonizedChargerState = .notCharging
+        // vehicle present no charging request
+        case vehiclePresentNoRequestChargerReady: harmonizedChargerState = .notCharging
+        case vehiclePresentNoRequestChargerNotReady: harmonizedChargerState = .notCharging
+        // vehicle present charging request
+        case vehiclePresentRequestChargerReady: harmonizedChargerState = .charging
+        case vehiclePresentRequestChargerNotReady: harmonizedChargerState = .notCharging
+        // other states
+        case chargingDerated: harmonizedChargerState = .charging
+        case e: harmonizedChargerState = .unknown
+        case f: harmonizedChargerState = .unknown
+        case chargingError: harmonizedChargerState = .error
+        }
+
+        return harmonizedChargerState
+    }
+
+    /// Get harmonized EV Plugged State
+    ///
+    /// Get harmonized EV plugged state based on the specific charger state.
+    /// It is required to treat multiple different charger models technically equal.
+    static func getHarmonizedEVPluggedStateForSpecificChargerState(_ specificChargerState: SenecWallboxProSChargerState) -> EVState {
+        let evPluggedState: EVState
+
+        switch specificChargerState {
+        case unknown: evPluggedState = .unknown
+        // vehicle not present
+        case vehicleNotPresentChargerReady: evPluggedState = .unplugged
+        case vehicleNotPresentChargerNotReady: evPluggedState = .unplugged
+        // vehicle present no charging request
+        case vehiclePresentNoRequestChargerReady: evPluggedState = .pluggedIn
+        case vehiclePresentNoRequestChargerNotReady: evPluggedState = .pluggedIn
+        // vehicle present charging request
+        case vehiclePresentRequestChargerReady: evPluggedState = .pluggedIn
+        case vehiclePresentRequestChargerNotReady: evPluggedState = .pluggedIn
+        // other states
+        case chargingDerated: evPluggedState = .pluggedIn
+        case e: evPluggedState = .unknown
+        case f: evPluggedState = .unknown
+        case chargingError: evPluggedState = .error
+        }
+        return evPluggedState
+    }
+
 }

@@ -47,7 +47,13 @@ protocol EVCharger: Sendable {
     /// Retrieve the charger state from device
     ///
     /// - Returns: ``ChargerState``
-    func getChargingState() async throws -> ChargerState
+    func getChargerState() async throws -> ChargerState
+
+    /// Get EV Plugged State
+    ///
+    /// Retrieve the current EV Plugged State
+    /// - Returns: ``EVState``
+    func getEVPluggedState() async throws -> EVState
 
     /// Get Internal Temperature
     ///
@@ -148,29 +154,42 @@ protocol PowerMeter: Sendable {
     func getElectricEnergy() async throws -> Measurement<UnitEnergy>
 }
 
-/// Generic Car Charger States
+/// Harmonized Charger States
 ///
+/// Siincos Charge Edge supports the following harmonized charger states.
 enum ChargerState {
 
+    /// Charger state is unknown
     case unknown
 
-    // vehicle not present
-    case vehicleNotPresentChargerReady
-    case vehicleNotPresentChargerNotReady
+    /// EV is charging
+    case charging
 
-    // vehicle present no charging request
-    case vehiclePresentNoRequestChargerReady
-    case vehiclePresentNoRequestChargerNotReady
+    /// EV is not charging
+    case notCharging
 
-    // vehicle present charging request
-    case vehiclePresentRequestChargerReady
-    case vehiclePresentRequestChargerNotReady
+    /// Charger encountered an error
+    case error
+}
 
-    // other states
-    case chargingDerated // TODO: check status name and description
-    case e // TODO: check status name and description
-    case f // TODO: check status name and description
-    case chargingError
+/// Harmonized EV States
+///
+/// Siincos Charge Edge supports the following harmonized EV states.
+enum EVState {
+
+    /// EV state is unknown (not good, but we may need this state)
+    case unknown
+
+    /// EV is plugged into charger
+    case pluggedIn
+
+    /// EV is not plugged into charger
+    case unplugged
+
+    /// Unclear, as it is either plugged or unplugged, but leave this case
+    /// for some sort of communication error between charger and EV
+    case error
+
 }
 
 /// Lock States
