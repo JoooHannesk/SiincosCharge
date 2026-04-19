@@ -159,14 +159,14 @@ protocol PowerMeter: Sendable {
 /// Siincos Charge Edge supports the following harmonized charger states.
 enum ChargerState {
 
-    /// Charger state is unknown
-    case unknown
-
     /// EV is charging
     case charging
 
     /// EV is not charging
     case notCharging
+
+    /// Charger state is unknown
+    case unknown
 
     /// Charger encountered an error
     case error
@@ -177,14 +177,14 @@ enum ChargerState {
 /// Siincos Charge Edge supports the following harmonized EV states.
 enum EVState {
 
-    /// EV state is unknown (not good, but we may need this state)
-    case unknown
-
     /// EV is plugged into charger
     case pluggedIn
 
     /// EV is not plugged into charger
     case unplugged
+
+    /// EV state is unknown (not good, but we may need this state)
+    case unknown
 
     /// Unclear, as it is either plugged or unplugged, but leave this case
     /// for some sort of communication error between charger and EV
