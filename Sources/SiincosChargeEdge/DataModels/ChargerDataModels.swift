@@ -199,6 +199,15 @@ enum LockState: UInt {
     case locked = 0
     case unlocked = 1
     case unknown = 2
+
+    /// Represent ``LockState`` as ``Status``.
+    var asStatus: Status {
+        switch self {
+        case .locked: return .disabled
+        case .unlocked: return .enabled
+        case .unknown: return .unknown
+        }
+    }
 }
 
 /// Status

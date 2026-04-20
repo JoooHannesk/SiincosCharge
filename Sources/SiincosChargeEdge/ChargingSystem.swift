@@ -10,24 +10,22 @@ import Foundation
 
 /// Charging System
 ///
-/// A charging system consists of a specific EV charger device and a specific power meter.
+/// A charging system consists of a specific EV charger device and a specific power meter device.
 /// It represents an abstraction layer for different physical chargers and power meters from different
-/// vendors — allowing the app to interact with chargers and meters in a uniform, type-safe way.
+/// vendors – allowing the app to interact with these chargers and power meters in a uniform, type-safe way.
 ///
-/// This type composes a concrete `EVCharger` together with a concrete `PowerMeter` and tracks
-/// their respective supported models via ``SupportedCharger`` and ``SupportedPowerMeter``.
+/// This type composes a specific ``EVCharger`` together with a specific ``PowerMeter`` and implements
+/// the following responsibilities:
+/// - Initializing and wiring the selected charger and meter implementations
+/// - Querying and updating charging and vehicle state
+/// - Bridging vendor-specific capabilities behind a common interface
 ///
-/// - Concurrency: `ChargingSystem` is an `actor`, which serializes access to its mutable state
-///   and coordinates asynchronous interactions with the underlying hardware and networking layers.
+/// - Concurrency: ``ChargingSystem`` is an `actor`, which serializes access to its mutable state
+///   and coordinates asynchronous interactions with the underlying RS485 bus layers (based on serial/UART).
 ///   Interact with it using `await` from concurrent contexts to ensure thread safety.
 ///
 /// - Note: When using a charger with an integrated (non-MID) power meter, set ``powerMeterModel`` to
 ///   ``SupportedPowerMeter/nope`` to indicate that no separate MID-conforming meter is present.
-///
-/// Typical responsibilities include:
-/// - Initializing and wiring the selected charger and meter implementations
-/// - Querying and updating charging and vehicle state
-/// - Bridging vendor-specific capabilities behind a common interface
 actor ChargingSystem {
 
     /// Specific EV Charger
@@ -63,14 +61,16 @@ actor ChargingSystem {
     /// EV plugged state: `.pluggedIn`, `.unplugged`, `.unknown` or `.error`
     var evState: EVState = .unknown
 
-    /// Lock State
+    /// Charging Permission
     ///
-    /// Indicate if the charger is locked. In case it is locked, no charging sessions can
-    /// be initiated from the EV. The charger needs to be unlocked at first.
-    /// When the EV is charging and the charger is set to locked state, the charging session will be terminated cleanly.
+    /// Indicate if charging is `.enabled` or `.disabled` for this charger.
+    ///
+    /// - Note: In case it is disabled, no charging sessions can
+    /// be initiated from the EV. The charger needs to be enabled (unlocked) at first.
+    /// When a charging session gets disabled while in progress, the session is terminated gracefully.
     ///
     /// Refer to ``ChargingSystem/enableCharging()`` and ``ChargingSystem/disableCharging()``
-    var locked: LockState = .locked
+    var chargingPermission: Status = .disabled
 
     init(evCharger: EVCharger, evChargerModel: SupportedCharger, powerMeter: PowerMeter, powerMeterModel: SupportedPowerMeter) {
         self.evCharger = evCharger
@@ -85,17 +85,21 @@ actor ChargingSystem {
 
     /// Enable Charging
     ///
-    /// Unlock the charger and therefore enable charging
-    func enableCharging() async throws {
-
+    /// Unlock the charger and enable charging
+    func enableCharging() async throws -> Status {
+        let lockState = try await self.evCharger.setSoftwareLock(to: .unlocked)
+        self.chargingPermission = lockState.asStatus
+        return self.chargingPermission
     }
 
     /// Disable Charging
     ///
-    /// Lock the charger and therefore disable charging.
-    /// Any running charger session will be terminated cleanly.
-    func disableCharging() async throws {
-
+    /// Lock the charger and disable charging.
+    /// Any running charging session will be terminated gracefully.
+    func disableCharging() async throws -> Status {
+        let lockState = try await self.evCharger.setSoftwareLock(to: .locked)
+        self.chargingPermission = lockState.asStatus
+        return self.chargingPermission
     }
 
     /// Set Charging Current Setpoint
@@ -112,5 +116,4 @@ actor ChargingSystem {
         let currentLimitAcknowleged = try await evCharger.setMaxCurrentLimitSetpoint(to: currentLimit)
         return currentLimitAcknowleged.value
     }
-
 }
