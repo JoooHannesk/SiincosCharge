@@ -1,22 +1,39 @@
 //
-//  SiincosChargingSystem.swift
+//  ChargingSystem.swift
 //  SiincosChargeEdge
 //
 //  Created by Johannes Kinzig on 20.04.26.
 //
+
+import Foundation
 
 
 /// Charging System
 ///
 /// A charging system consists of a specific EV charger device and a specific power meter.
 /// It represents an abstraction layer for different physical chargers and power meters from different
-/// vendors – allowing 
+/// vendors — allowing the app to interact with chargers and meters in a uniform, type-safe way.
+///
+/// This type composes a concrete `EVCharger` together with a concrete `PowerMeter` and tracks
+/// their respective supported models via ``SupportedCharger`` and ``SupportedPowerMeter``.
+///
+/// - Concurrency: `ChargingSystem` is an `actor`, which serializes access to its mutable state
+///   and coordinates asynchronous interactions with the underlying hardware and networking layers.
+///   Interact with it using `await` from concurrent contexts to ensure thread safety.
+///
+/// - Note: When using a charger with an integrated (non-MID) power meter, set ``powerMeterModel`` to
+///   ``SupportedPowerMeter/nope`` to indicate that no separate MID-conforming meter is present.
+///
+/// Typical responsibilities include:
+/// - Initializing and wiring the selected charger and meter implementations
+/// - Querying and updating charging and vehicle state
+/// - Bridging vendor-specific capabilities behind a common interface
 actor ChargingSystem {
 
     /// Specific EV Charger
     ///
     /// The specific ev charger used for this charging system
-    let evCharger: EVCharger
+    private let evCharger: EVCharger
 
     /// EV Charger Model
     ///
@@ -26,26 +43,74 @@ actor ChargingSystem {
     /// Specific Power Meter
     ///
     /// The specific power meter used for this charging system.
-    let powerMeter: PowerMeter
+    private let powerMeter: PowerMeter
 
     /// Power Meter Model
     ///
     /// Supported power meter model as described in ``SupportedPowerMeter``.
+    ///
     /// - Note: When the charger integrated power meter is in use, the model member equals `.nope`. This
     /// means that no MID conforming power meter is in use!
     var powerMeterModel: SupportedPowerMeter
 
     /// Charging State
+    ///
+    /// Charger charging state: `.charging`, `.notCharging`, `.unknown` or `.error`
     var chargingState: ChargerState = .unknown
+
+    /// EV State
+    ///
+    /// EV plugged state: `.pluggedIn`, `.unplugged`, `.unknown` or `.error`
     var evState: EVState = .unknown
+
+    /// Lock State
+    ///
+    /// Indicate if the charger is locked. In case it is locked, no charging sessions can
+    /// be initiated from the EV. The charger needs to be unlocked at first.
+    /// When the EV is charging and the charger is set to locked state, the charging session will be terminated cleanly.
+    ///
+    /// Refer to ``ChargingSystem/enableCharging()`` and ``ChargingSystem/disableCharging()``
+    var locked: LockState = .locked
 
     init(evCharger: EVCharger, evChargerModel: SupportedCharger, powerMeter: PowerMeter, powerMeterModel: SupportedPowerMeter) {
         self.evCharger = evCharger
         self.evChargerModel = evChargerModel
         self.powerMeter = powerMeter
         self.powerMeterModel = powerMeterModel
+
+        // self.evCharger.setupConfig() // TODO: try to call somewhere in this context
     }
 
+    // MARK: - Public Charger Functions
 
+    /// Enable Charging
+    ///
+    /// Unlock the charger and therefore enable charging
+    func enableCharging() async throws {
+
+    }
+
+    /// Disable Charging
+    ///
+    /// Lock the charger and therefore disable charging.
+    /// Any running charger session will be terminated cleanly.
+    func disableCharging() async throws {
+
+    }
+
+    /// Set Charging Current Setpoint
+    ///
+    /// The charging current is mainly controlled by the EV but the charger can limit the charging current.
+    /// This function is limitting the charging current to the defined maximum.
+    ///
+    /// - Parameter amperes: Limit charging to the given maximum current
+    /// - Returns: Charging current setpoint accepted by device
+    func setChargingCurrent(to amperes: Double) async throws -> Double {
+        let chargerHardwareCurrentLimits = try await evCharger.getHardwareCurrentLimits()
+        let setpoint = Measurement(value: amperes, unit: UnitElectricCurrent.amperes)
+        let currentLimit = max(min(setpoint, chargerHardwareCurrentLimits.maximal), chargerHardwareCurrentLimits.minimal)
+        let currentLimitAcknowleged = try await evCharger.setMaxCurrentLimitSetpoint(to: currentLimit)
+        return currentLimitAcknowleged.value
+    }
 
 }

@@ -190,7 +190,6 @@ enum EVState {
     /// Unclear, as it is either plugged or unplugged, but leave this case
     /// for some sort of communication error between charger and EV
     case error
-
 }
 
 /// Lock States
