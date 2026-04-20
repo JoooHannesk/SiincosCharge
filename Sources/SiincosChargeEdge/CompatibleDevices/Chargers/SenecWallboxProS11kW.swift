@@ -13,6 +13,8 @@ import ModbusSerial
 /// Senec Wallbox Pro S as Modbus Device
 struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 
+    static let logger = ComponentSupplier.mainLogger
+
     static func getModbusDeviceClient(serialPort: String) -> ModbusRTUClient {
         let config = RTUClientConfiguration(
             serialConfiguration: SerialConfiguration(
@@ -99,6 +101,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     func getChargerState() async throws -> ChargerState {
         let specificChargerState = try await self.getSpecificChargerState()
         let harmonizedChargerState = SenecWallboxProSChargerState.getHarmonizedChargerStateForSpecificChargerState(specificChargerState)
+        Self.logger.info("Translating specific charger state \(specificChargerState) to harmonized charger state \(harmonizedChargerState)")
         return harmonizedChargerState
     }
 
@@ -112,6 +115,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     func getEVPluggedState() async throws -> EVState {
         let specificChargerState = try await self.getSpecificChargerState()
         let harmonizedPluggedStates = SenecWallboxProSChargerState.getHarmonizedEVPluggedStateForSpecificChargerState(specificChargerState)
+        Self.logger.info("Translating specific charger plugged state \(specificChargerState) to harmonized plugged state \(harmonizedPluggedStates)")
         return harmonizedPluggedStates
     }
 

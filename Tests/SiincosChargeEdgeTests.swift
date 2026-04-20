@@ -15,8 +15,8 @@ struct SiincosChargeEdgeTests {
     func loadConfig() async throws {
         let config = try ComponentSupplier.getSystemConfig()
         #expect(!config.systemId.isEmpty)
-        #expect(CompatibleCharger.allCases.contains(config.chargerModel))
-        #expect(CompatiblePowerMeter.allCases.contains(config.meterModel))
+        #expect(SupportedCharger.allCases.contains(config.chargerModel))
+        #expect(SupportedPowerMeter.allCases.contains(config.meterModel))
     }
 
     /// Test Component Supplier

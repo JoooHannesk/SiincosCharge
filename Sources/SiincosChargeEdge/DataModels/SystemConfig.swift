@@ -7,9 +7,9 @@
 
 protocol DeviceConfig {
     var systemId: String { get }
-    var chargerModel: CompatibleCharger { get }
+    var chargerModel: SupportedCharger { get }
     var chargerBus: String { get }
-    var meterModel: CompatiblePowerMeter { get }
+    var meterModel: SupportedPowerMeter { get }
     var meterBus: String { get }
     var lineLength: UInt8 { get }
 }
@@ -28,9 +28,9 @@ protocol CloudConfig {
 /// System configuration for the Siincos Charge Edge system
 struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible {
     let systemId: String
-    let chargerModel: CompatibleCharger
+    let chargerModel: SupportedCharger
     let chargerBus: String
-    let meterModel: CompatiblePowerMeter
+    let meterModel: SupportedPowerMeter
     let meterBus: String
     let lineLength: UInt8
     let lineMaxCurrentA: UInt8
