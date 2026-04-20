@@ -597,5 +597,4 @@ enum SenecWallboxProSChargerState {
         }
         return evPluggedState
     }
-
 }

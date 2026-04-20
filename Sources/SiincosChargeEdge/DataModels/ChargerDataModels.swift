@@ -33,7 +33,8 @@ protocol EVCharger: Sendable {
     /// Unit ID
     ///
     /// Unique id for identifying the device and its data within the local infrastructure.
-    /// Power meters ``PowerMeter`` and car chargers ``CarCharger`` belonging logically togehter have to share the same unit id.
+    /// Power meters ``PowerMeter`` and car chargers ``ChargingSystem`` belonging logically togehter
+    /// and therefore have to share the same unit id. (Both are lockated on two different RS485 lines and transceivers).
     var unitId: UInt8 { get }
 
     /// Setup Configuration
@@ -100,7 +101,7 @@ protocol EVCharger: Sendable {
     /// Get Software Lock State
     ///
     /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
-    /// function returns the actual lock state. Refer to ``CarCharger/setSoftwareLock(to:)`` for unlocking the
+    /// function returns the actual lock state. Refer to ``EVCharger/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
     /// - Returns: lock state as type ``LockState``
