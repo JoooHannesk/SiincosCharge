@@ -36,7 +36,9 @@ actor ChargingSystem {
     /// EV Charger Model
     ///
     /// Supported ev charger model as described in ``SupportedCharger``.
-    var evChargerModel: SupportedCharger
+    var evChargerModel: SupportedCharger {
+        self.evCharger.modelName
+    }
 
     /// Specific Power Meter
     ///
@@ -49,7 +51,9 @@ actor ChargingSystem {
     ///
     /// - Note: When the charger integrated power meter is in use, the model member equals `.nope`. This
     /// means that no MID conforming power meter is in use!
-    var powerMeterModel: SupportedPowerMeter
+    var powerMeterModel: SupportedPowerMeter {
+        self.powerMeter.modelName
+    }
 
     /// Charging State
     ///
@@ -72,11 +76,20 @@ actor ChargingSystem {
     /// Refer to ``ChargingSystem/enableCharging()`` and ``ChargingSystem/disableCharging()``
     var chargingPermission: Status = .disabled
 
-    init(evCharger: EVCharger, evChargerModel: SupportedCharger, powerMeter: PowerMeter, powerMeterModel: SupportedPowerMeter) {
+    /// Logger
+    ///
+    /// The application-wide main logger
+    let logger = ComponentSupplier.mainLogger
+
+    init(evCharger: EVCharger, powerMeter: PowerMeter) {
         self.evCharger = evCharger
-        self.evChargerModel = evChargerModel
         self.powerMeter = powerMeter
-        self.powerMeterModel = powerMeterModel
+
+        self.logger.info("""
+                         Charging System initialized with
+                         - EV Charger: \(self.evCharger.modelName.rawValue) (Unit ID: \(self.evCharger.unitId))
+                         - Power Meter: \(self.powerMeter.modelName.rawValue) (Unit ID: \(self.powerMeter.unitId))
+                        """)
 
         // self.evCharger.setupConfig() // TODO: try to call somewhere in this context
     }

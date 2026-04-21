@@ -21,7 +21,8 @@ protocol ModbusRTUDevice: Sendable {
     /// - Parameters:
     ///    - modbusRTUClient: Configured modbus rtu client
     ///    - unitId: Device unit id on the modbus rtu bus
-    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8)
+///        - modelName: Device model name (as defined in config)
+    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8, modelName: String)
 }
 
 /// Generic EV Charger
@@ -29,6 +30,12 @@ protocol ModbusRTUDevice: Sendable {
 /// This describes a generic car charger. Every car charger needs to implement these
 /// functions to work within the SiincosCharge infrastructure
 protocol EVCharger: Sendable {
+
+    /// Charger Model Name
+    ///
+    /// Provide charger model name for better identification, statistics,
+    /// troubleshooting and logging.
+    var modelName: SupportedCharger { get }
 
     /// Unit ID
     ///
@@ -123,6 +130,12 @@ protocol EVCharger: Sendable {
 /// functions to work within the SiincosCharge infrastructure.
 /// Power meter and charger are separated in case an external, dedicated power meter is used
 protocol PowerMeter: Sendable {
+
+    /// Power Meter Model Name
+    ///
+    /// Provide power meter model name for better identification, statistics,
+    /// troubleshooting and logging.
+    var modelName: SupportedPowerMeter { get }
 
     /// Unit ID
     ///

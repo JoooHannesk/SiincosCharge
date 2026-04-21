@@ -11,6 +11,7 @@ import ModbusSerial
 
 struct MockCharger: EVCharger {
     let unitId: UInt8
+    let modelName: SupportedCharger
 
     func setupConfig() async throws {
         print("Config Setup completed!")
@@ -89,7 +90,8 @@ struct MockCharger: EVCharger {
 
 struct MockChargerPowerMeter: PowerMeter {
     let unitId: UInt8
-    
+    let modelName: SupportedPowerMeter
+
     func getElectricCurrent() async throws -> ElectricCurrent3PhaseGrid {
         let current = ElectricCurrent3PhaseGrid(
             currentL1: Measurement(value: 7.3, unit: UnitElectricCurrent.amperes),

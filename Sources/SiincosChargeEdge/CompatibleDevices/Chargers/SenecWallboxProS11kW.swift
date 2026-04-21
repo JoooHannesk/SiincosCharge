@@ -37,17 +37,21 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
+    let modelName: SupportedCharger
 
     /// Initializer
     ///
-    /// Instance requires a modbus client configuration and the specific unit id on the bus system
+    /// Instance requires a modbus client configuration, the specific unit id on the bus system
+    /// and the specific device model name
     ///
     /// - Parameters:
     ///    - modbusRTUClient: Configured modbus client, connected
     ///    - unitId: Device unit id on the modbus bus
-    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8) {
+    ///    - modelName: Specific device model name for better identification
+    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8, modelName: String) {
         self.modbusDevice = modbusRTUClient
         self.unitId = unitId
+        self.modelName = SupportedCharger.init(rawValue: modelName) ?? .unknown
     }
 
     /// Setup Configuration
@@ -357,10 +361,22 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
 struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
     let modbusDevice: ModbusRTUClient
     let unitId: UInt8
+    let modelName: SupportedPowerMeter
 
-    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8) {
+
+    /// Initializer
+    ///
+    /// Instance requires a modbus client configuration, the specific unit id on the bus system
+    /// and the specific device model name
+    ///
+    /// - Parameters:
+    ///    - modbusRTUClient: Configured modbus client, connected
+    ///    - unitId: Device unit id on the modbus bus
+    ///    - modelName: Specific device model name for better identification
+    init(modbusRTUClient: ModbusRTUClient, unitId: UInt8, modelName: String) {
         self.modbusDevice = modbusRTUClient
         self.unitId = unitId
+        self.modelName = SupportedPowerMeter.init(rawValue: modelName) ?? .unknown
     }
 
     /// Get Electric Current

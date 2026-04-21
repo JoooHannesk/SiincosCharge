@@ -39,6 +39,10 @@ class DeviceSetup {
 
         // Chargers without integrated power meter
 
+
+        // Unsupported charger defined in configuration
+        case .unknown:
+            break
         }
     }
 
@@ -52,8 +56,12 @@ class DeviceSetup {
         case .nope:
             break
 
-            // Setup for external power meter:
-            self.powerMeters.removeAll()
+        // Unsupported power meter defined in configuration
+        case .unknown:
+            break
+
+        // Setup for external power meter:
+        self.powerMeters.removeAll()
         }
     }
 
@@ -62,12 +70,12 @@ class DeviceSetup {
     ///
     /// Initialze modbus rtu devices based on the `lineLenght` and
     /// `startAddress`.
-    private func defineModbusRTUDeviceOnBus<T: ModbusRTUDevice>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1) -> Array<T> {
+    private func defineModbusRTUDeviceOnBus<T: ModbusRTUDevice>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1, modelName: String) -> Array<T> {
         var devices: [T] = []
         let upperBound = startAddress + lineLenght
         for uid in startAddress..<upperBound {
             print("UID: \(uid)")
-            devices.append(T(modbusRTUClient: deviceClient, unitId: uid))
+            devices.append(T(modbusRTUClient: deviceClient, unitId: uid, modelName: modelName))
         }
         return devices
     }
@@ -87,9 +95,8 @@ class DeviceSetup {
         let lineLength = deviceConfig.lineLength
         let upperBound = startAddress + lineLength
         for uid in startAddress..<upperBound {
-            print("UID: \(uid)")
-            mockChargers.append(MockCharger(unitId: uid))
-            mockChargersWithPowerMeters.append(MockChargerPowerMeter(unitId: uid))
+            mockChargers.append(MockCharger(unitId: uid, modelName: deviceConfig.chargerModel))
+            mockChargersWithPowerMeters.append(MockChargerPowerMeter(unitId: uid, modelName: deviceConfig.meterModel))
         }
         return (mockChargers, mockChargersWithPowerMeters)
     }
@@ -103,8 +110,8 @@ class DeviceSetup {
     /// second one holding the ``PowerMeter``s
     private func setupSenecWallboxProS11kW(deviceConfig: DeviceConfig) -> ([EVCharger], [PowerMeter]){
         let senecDeviceClient = SenecWallboxProS11kW.getModbusDeviceClient(serialPort: deviceConfig.chargerBus)
-        let senecChargers: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)
-        let senecInternalPowerMeter: Array<SenecWallboxProSPowerMeter> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength)
+        let senecChargers: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength, modelName: deviceConfig.chargerModel.rawValue)
+        let senecInternalPowerMeter: Array<SenecWallboxProSPowerMeter> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength, modelName: deviceConfig.chargerModel.rawValue)
         return (senecChargers, senecInternalPowerMeter)
     }
 }
