@@ -26,7 +26,7 @@ class GenericPowerMeterTests {
 
         // Take the first power meter on the bus
         guard let powerMeter = devices.1.first else {
-            throw SystemError.chargersMissing
+            throw SystemError.powerMetersMissing
         }
         self.powerMeter = powerMeter
     }
