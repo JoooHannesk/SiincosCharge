@@ -146,7 +146,28 @@ actor ChargingSystem {
 
     // MARK: - Power Meter Functions
 
-    // TODO: implement
+    func getChargingCurrent() {
+        // TODO: implement
+        // average over three phases without 0 (in amperes)
+    }
+
+    func getChargingPower() {
+        // TODO: implement
+        // total power over three phases (in kW)
+    }
+
+    func getMeterReading() {
+        // TODO: implement
+        // getElectricEnergy
+        // in kWh
+    }
+
+    func getRawData() {
+        // TODO: implement
+        // getElectricCurrent
+        // getGridVoltage
+        // getElectricPower
+    }
 
     // MARK: - Private Helper Functions
 

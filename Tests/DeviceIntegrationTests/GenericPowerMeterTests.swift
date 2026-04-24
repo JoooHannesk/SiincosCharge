@@ -49,7 +49,7 @@ class GenericPowerMeterTests {
     func getElectricPower() async throws {
         let power = try await self.powerMeter.getElectricPower()
         print("Currently drawn power: \(power)")
-        #expect(power.powerL1!.value >= 0.0 && power.powerL2!.value >= 0.0 && power.powerL3!.value >= 0.0 && power.powerTotal!.value >= 0.0)
+        #expect(power.powerL1!.value >= 0.0 && power.powerL2!.value >= 0.0 && power.powerL3!.value >= 0.0 && power.powerTotal.value >= 0.0)
     }
 
     @Test("Get-Electric-Energy-Since-Installation")

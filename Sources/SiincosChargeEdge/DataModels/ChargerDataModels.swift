@@ -258,7 +258,7 @@ struct ElectricPower3PhaseGrid {
     var powerL1: Measurement<UnitPower>?
     var powerL2: Measurement<UnitPower>?
     var powerL3: Measurement<UnitPower>?
-    var powerTotal: Measurement<UnitPower>?
+    var powerTotal: Measurement<UnitPower>
 }
 
 /// Boundary
