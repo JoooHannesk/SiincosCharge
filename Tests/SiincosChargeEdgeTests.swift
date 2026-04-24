@@ -1,11 +1,36 @@
 
 
 import Testing
-import ModbusSerial
+import Foundation
 @testable import SiincosChargeEdge
 
 
 struct SiincosChargeEdgeTests {
+
+    @Test("Test-Average-Current-Calculation")
+    func averageCurrent() {
+        let testValueFrame = [
+            // ([L1, L2, L3], expected)
+            ([6.0, 6.0, 6.0], 6.0),
+            ([6.0, 0.0, 6.0], 6.0),
+            ([4.0, 3.0, 2.0], 3.0),
+            ([4.0, 0.0, 2.0], 3.0),
+            ([2.5, 5.5, 0.0], 4.0),
+            ([2.5, nil, 2.5], 2.5),
+            ([3.0, 9.0, nil], 6.0),
+            ([3.0, 0.0, nil], 3.0),
+            ([3.0, nil, nil], 3.0),
+            ([4.5, 0.0, 0.0], 4.5),
+        ]
+        for testValue in testValueFrame {
+            let current = ElectricCurrent3PhaseGrid(
+                currentL1: testValue.0[0] != nil ? Measurement(value: testValue.0[0]!, unit: .amperes) : nil,
+                currentL2: testValue.0[1] != nil ? Measurement(value: testValue.0[1]!, unit: .amperes) : nil,
+                currentL3: testValue.0[2] != nil ? Measurement(value: testValue.0[2]!, unit: .amperes) : nil,
+                )
+            #expect(current.currentAverage.value == testValue.1)
+        }
+    }
 
     /// Test Component Supplier
     ///
