@@ -81,7 +81,11 @@ actor ChargingSystem {
     /// The application-wide main logger
     let logger = ComponentSupplier.mainLogger
 
-    init(evCharger: EVCharger, powerMeter: PowerMeter) {
+    /// Init Charging System
+    ///
+    /// Ensure that charger and power meter share the same unit id.
+    /// (This is possible as by design power meter and charger use two different RS485 bus transceivers!)
+    init(evCharger: EVCharger, powerMeter: PowerMeter) async throws {
         self.evCharger = evCharger
         self.powerMeter = powerMeter
 
@@ -91,10 +95,12 @@ actor ChargingSystem {
                          - Power Meter: \(self.powerMeter.modelName.rawValue) (Unit ID: \(self.powerMeter.unitId))
                         """)
 
+        try self.checkDeviceConsistency()
+
         // self.evCharger.setupConfig() // TODO: try to call somewhere in this context
     }
 
-    // MARK: - Public Charger Functions
+    // MARK: - Charger Functions
 
     /// Enable Charging
     ///
@@ -129,4 +135,24 @@ actor ChargingSystem {
         let currentLimitAcknowleged = try await evCharger.setMaxCurrentLimitSetpoint(to: currentLimit)
         return currentLimitAcknowleged.value
     }
+
+    // MARK: - Power Meter Functions
+
+    // MARK: - Private Helper Functions
+
+
+    /// Check Device Consistency
+    ///
+    /// Ensure that charger and power meter share the same unit id.
+    /// (This is possible as by design power meter and charger use two different RS485 bus transceivers!)
+    ///
+    /// - Throws: ``SystemError/unitIdMissmatch``
+    private func checkDeviceConsistency() throws {
+        if self.evCharger.unitId != self.powerMeter.unitId {
+            let err = SystemError.unitIdMissmatch
+            self.logger.critical("\(err.localizedDescription ?? String(describing: err))")
+            throw err
+        }
+    }
+
 }

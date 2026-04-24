@@ -16,6 +16,7 @@ enum SystemError: Error {
     case chargersMissing
     case powerMetersMissing
     case deviceConfigurationError
+    case unitIdMissmatch
 }
 
 
@@ -34,6 +35,8 @@ extension SystemError: LocalizedError {
             return "No power meters found! Config invalid?"
         case .deviceConfigurationError:
             return "Device did not acknowledge desired configuration! Aborting!"
+        case .unitIdMissmatch:
+            return "Charger and power meter unit ID missmatch! Aborting!"
         }
     }
 }

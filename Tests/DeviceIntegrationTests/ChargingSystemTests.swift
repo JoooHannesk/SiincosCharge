@@ -15,13 +15,23 @@ class ChargingSystemTests {
 
     var chargingSystems: [ChargingSystem] = []
 
-    init() throws {
+    init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
 
         for (evCharger, powerMeter) in zip(devices.0, devices.1) {
-            self.chargingSystems.append(ChargingSystem(evCharger: evCharger, powerMeter: powerMeter))
+            self.chargingSystems.append(try await ChargingSystem(evCharger: evCharger, powerMeter: powerMeter))
         }
+    }
+
+    @Test("Charging-System-Consistency-Check")
+    func chargingSystemConsistencyCheck() async throws {
+        let mockCharger = MockCharger(unitId: 2, modelName: .mockCharger)
+        let mockChargerPowerMeter = MockChargerPowerMeter(unitId: 1, modelName: .nope)
+        let error = await #expect(throws: SystemError.unitIdMissmatch) {
+            let _ = try await ChargingSystem(evCharger: mockCharger, powerMeter: mockChargerPowerMeter)
+        }
+        #expect(error == .unitIdMissmatch)
     }
 
     @Test("Charging-System-Initializer")
