@@ -58,12 +58,20 @@ actor ChargingSystem {
     /// Charging State
     ///
     /// Charger charging state: `.charging`, `.notCharging`, `.unknown` or `.error`
-    var chargingState: ChargerState = .unknown
+    var chargingState: ChargerState {
+        get async throws {
+            try await self.evCharger.getChargerState()
+        }
+    }
 
     /// EV State
     ///
     /// EV plugged state: `.pluggedIn`, `.unplugged`, `.unknown` or `.error`
-    var evState: EVState = .unknown
+    var evState: EVState {
+        get async throws {
+            try await self.evCharger.getEVPluggedState()
+        }
+    }
 
     /// Charging Permission
     ///
@@ -79,7 +87,7 @@ actor ChargingSystem {
     /// Logger
     ///
     /// The application-wide main logger
-    let logger = ComponentSupplier.mainLogger
+    private let logger = ComponentSupplier.mainLogger
 
     /// Init Charging System
     ///
@@ -137,6 +145,8 @@ actor ChargingSystem {
     }
 
     // MARK: - Power Meter Functions
+
+    // TODO: implement
 
     // MARK: - Private Helper Functions
 

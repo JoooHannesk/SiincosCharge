@@ -34,6 +34,17 @@ class ChargingSystemTests {
         #expect(error == .unitIdMissmatch)
     }
 
+    @Test("Test-Charging-System-Properties")
+    func chargingSystemProperties() async throws {
+        for chargingSystem in chargingSystems {
+            let chargingState = try await chargingSystem.chargingState
+            #expect(chargingState != .unknown)
+            let pluggedState = try await chargingSystem.evState
+            #expect(pluggedState != .unknown)
+            #expect(await chargingSystem.chargingPermission == .disabled)
+        }
+    }
+
     @Test("Charging-System-Initializer")
     func chargingSystemInit() throws {
         #expect(self.chargingSystems.count > 0)
