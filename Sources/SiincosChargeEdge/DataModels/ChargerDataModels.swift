@@ -244,7 +244,7 @@ struct ElectricCurrent3PhaseGrid {
     /// Get Average Current
     ///
     /// Get average current for a 3-phase power grid based on the current on each phase.
-    /// Ignore phases with 0.0 current, as it is common that they are not in use.
+    /// Ignore phases with 0.0 current, as this indicates that they are not in use.
     var currentAverage: Measurement<UnitElectricCurrent> {
         let valid: [Measurement<UnitElectricCurrent>] = [currentL1, currentL2, currentL3]
             .compactMap { $0 }

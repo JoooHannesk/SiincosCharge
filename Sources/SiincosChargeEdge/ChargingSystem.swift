@@ -84,6 +84,48 @@ actor ChargingSystem {
     /// Refer to ``ChargingSystem/enableCharging()`` and ``ChargingSystem/disableCharging()``
     var chargingPermission: Status = .disabled
 
+
+    /// Power Meter Reading
+    ///
+    /// Get actual power meter reading
+    var meterReading: Measurement<UnitEnergy> {
+        get async throws {
+            let reading = try await self.powerMeter.getElectricEnergy()
+            return reading
+        }
+    }
+
+    /// Charging current
+    ///
+    /// Charging current as provided by power meter over three phases
+    var chargingCurrent: ElectricCurrent3PhaseGrid {
+        get async throws {
+            let current = try await self.powerMeter.getElectricCurrent()
+            return current
+        }
+    }
+
+    /// Charging Power
+    ///
+    /// Return total charging power reported by power meter. The total power is
+    /// provided by the power meter and represents the sum over the three phases.
+    var chargingPower: ElectricPower3PhaseGrid {
+        get async throws {
+            let power = try await self.powerMeter.getElectricPower()
+            return power
+        }
+    }
+
+    /// Grid Voltage
+    ///
+    /// Return actual grid voltage
+    var gridVoltage: ElectricVoltage3PhaseGrid {
+        get async throws {
+            let voltage = try await self.powerMeter.getGridVoltage()
+            return voltage
+        }
+    }
+
     /// Logger
     ///
     /// The application-wide main logger
@@ -104,8 +146,7 @@ actor ChargingSystem {
                         """)
 
         try self.checkDeviceConsistency()
-
-        // self.evCharger.setupConfig() // TODO: try to call somewhere in this context
+        try await self.evCharger.setupConfig()
     }
 
     // MARK: - Charger Functions
@@ -134,39 +175,13 @@ actor ChargingSystem {
     /// The charging current is mainly controlled by the EV but the charger can limit the charging current.
     /// This function is limitting the charging current to the defined maximum.
     ///
-    /// - Parameter amperes: Limit charging to the given maximum current
+    /// - Parameter current: Limit charging to the given maximum current
     /// - Returns: Charging current setpoint accepted by device
-    func setChargingCurrent(to amperes: Double) async throws -> Double {
+    func setChargingCurrent(to current: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         let chargerHardwareCurrentLimits = try await evCharger.getHardwareCurrentLimits()
-        let setpoint = Measurement(value: amperes, unit: UnitElectricCurrent.amperes)
-        let currentLimit = max(min(setpoint, chargerHardwareCurrentLimits.maximal), chargerHardwareCurrentLimits.minimal)
+        let currentLimit = max(min(current, chargerHardwareCurrentLimits.maximal), chargerHardwareCurrentLimits.minimal)
         let currentLimitAcknowleged = try await evCharger.setMaxCurrentLimitSetpoint(to: currentLimit)
-        return currentLimitAcknowleged.value
-    }
-
-    // MARK: - Power Meter Functions
-
-    func getChargingCurrent() {
-        // TODO: implement
-        // average over three phases without 0 (in amperes)
-    }
-
-    func getChargingPower() {
-        // TODO: implement
-        // total power over three phases (in kW)
-    }
-
-    func getMeterReading() {
-        // TODO: implement
-        // getElectricEnergy
-        // in kWh
-    }
-
-    func getRawData() {
-        // TODO: implement
-        // getElectricCurrent
-        // getGridVoltage
-        // getElectricPower
+        return currentLimitAcknowleged
     }
 
     // MARK: - Private Helper Functions

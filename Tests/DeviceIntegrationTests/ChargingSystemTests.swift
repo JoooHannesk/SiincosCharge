@@ -42,6 +42,18 @@ class ChargingSystemTests {
             let pluggedState = try await chargingSystem.evState
             #expect(pluggedState != .unknown)
             #expect(await chargingSystem.chargingPermission == .disabled)
+
+            let chargingCurrent = try await chargingSystem.chargingCurrent
+            #expect(chargingCurrent.currentL1!.value >= 0.0 && chargingCurrent.currentL2!.value >= 0.0 && chargingCurrent.currentL3!.value >= 0.0 && chargingCurrent.currentAverage.value >= 0.0)
+
+            let chargingPower = try await chargingSystem.chargingPower
+            #expect(chargingPower.powerL1!.value >= 0.0 && chargingPower.powerL2!.value >= 0.0 && chargingPower.powerL3!.value >= 0.0 && chargingPower.powerTotal.value >= 0.0)
+
+            let gridVoltage = try await chargingSystem.gridVoltage
+            #expect(gridVoltage.voltageL1!.value > 200 && gridVoltage.voltageL2!.value > 200 && gridVoltage.voltageL3!.value > 200)
+
+            let meterReading = try await chargingSystem.meterReading
+            #expect(meterReading.value >= 0.0)
         }
     }
 
@@ -55,6 +67,7 @@ class ChargingSystemTests {
         for chargingSystem in self.chargingSystems {
             let charging = try await chargingSystem.enableCharging()
             #expect(charging == .enabled)
+            #expect(await chargingSystem.chargingPermission == .enabled)
         }
     }
 
@@ -63,6 +76,7 @@ class ChargingSystemTests {
         for chargingSystem in self.chargingSystems {
             let charging = try await chargingSystem.disableCharging()
             #expect(charging == .disabled)
+            #expect(await chargingSystem.chargingPermission == .disabled)
         }
     }
 
@@ -79,8 +93,8 @@ class ChargingSystemTests {
         ]
         for chargingSystem in self.chargingSystems {
             for testValue in testValuesFrame {
-                let chargerAckCurrent = try await chargingSystem.setChargingCurrent(to: testValue.0)
-                #expect(testValue.1 == chargerAckCurrent)
+                let chargerAckCurrent = try await chargingSystem.setChargingCurrent(to: Measurement(value: testValue.0, unit: .amperes))
+                #expect(testValue.1 == chargerAckCurrent.value)
             }
         }
     }
