@@ -11,16 +11,15 @@ import Foundation
 @testable import SiincosChargeEdge
 
 
-class ChargingSystemTests {
+class ChargingPointTests {
 
-    var chargingSystems: [ChargingPoint] = []
+    var chargingPoints: [ChargingPoint] = []
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
-
         for (evCharger, powerMeter) in zip(devices.0, devices.1) {
-            self.chargingSystems.append(try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter))
+            self.chargingPoints.append(try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter))
         }
     }
 
@@ -36,47 +35,47 @@ class ChargingSystemTests {
 
     @Test("Test-Charging-System-Properties")
     func chargingSystemProperties() async throws {
-        for chargingSystem in chargingSystems {
-            let chargingState = try await chargingSystem.chargingState
+        for chargingPoint in chargingPoints {
+            let chargingState = try await chargingPoint.chargingState
             #expect(chargingState != .unknown)
-            let pluggedState = try await chargingSystem.evState
+            let pluggedState = try await chargingPoint.evState
             #expect(pluggedState != .unknown)
-            #expect(await chargingSystem.chargingPermission == .disabled)
+            #expect(await chargingPoint.chargingPermission == .disabled)
 
-            let chargingCurrent = try await chargingSystem.chargingCurrent
+            let chargingCurrent = try await chargingPoint.chargingCurrent
             #expect(chargingCurrent.currentL1!.value >= 0.0 && chargingCurrent.currentL2!.value >= 0.0 && chargingCurrent.currentL3!.value >= 0.0 && chargingCurrent.currentAverage.value >= 0.0)
 
-            let chargingPower = try await chargingSystem.chargingPower
+            let chargingPower = try await chargingPoint.chargingPower
             #expect(chargingPower.powerL1!.value >= 0.0 && chargingPower.powerL2!.value >= 0.0 && chargingPower.powerL3!.value >= 0.0 && chargingPower.powerTotal.value >= 0.0)
 
-            let gridVoltage = try await chargingSystem.gridVoltage
+            let gridVoltage = try await chargingPoint.gridVoltage
             #expect(gridVoltage.voltageL1!.value > 200 && gridVoltage.voltageL2!.value > 200 && gridVoltage.voltageL3!.value > 200)
 
-            let meterReading = try await chargingSystem.meterReading
+            let meterReading = try await chargingPoint.meterReading
             #expect(meterReading.value >= 0.0)
         }
     }
 
     @Test("Charging-System-Initializer")
     func chargingSystemInit() throws {
-        #expect(self.chargingSystems.count > 0)
+        #expect(self.chargingPoints.count > 0)
     }
 
     @Test("Enable-Charging")
     func enableCharging() async throws {
-        for chargingSystem in self.chargingSystems {
-            let charging = try await chargingSystem.enableCharging()
+        for chargingPoint in self.chargingPoints {
+            let charging = try await chargingPoint.enableCharging()
             #expect(charging == .enabled)
-            #expect(await chargingSystem.chargingPermission == .enabled)
+            #expect(await chargingPoint.chargingPermission == .enabled)
         }
     }
 
     @Test("Disable-Charging")
     func disableCharging() async throws {
-        for chargingSystem in self.chargingSystems {
-            let charging = try await chargingSystem.disableCharging()
+        for chargingPoint in self.chargingPoints {
+            let charging = try await chargingPoint.disableCharging()
             #expect(charging == .disabled)
-            #expect(await chargingSystem.chargingPermission == .disabled)
+            #expect(await chargingPoint.chargingPermission == .disabled)
         }
     }
 
@@ -91,9 +90,9 @@ class ChargingSystemTests {
             (16.0, 16.0),
             (18.0, 16.0),
         ]
-        for chargingSystem in self.chargingSystems {
+        for chargingPoint in self.chargingPoints {
             for testValue in testValuesFrame {
-                let chargerAckCurrent = try await chargingSystem.setChargingCurrent(to: Measurement(value: testValue.0, unit: .amperes))
+                let chargerAckCurrent = try await chargingPoint.setChargingCurrent(to: Measurement(value: testValue.0, unit: .amperes))
                 #expect(testValue.1 == chargerAckCurrent.value)
             }
         }

@@ -8,9 +8,9 @@
 import Foundation
 
 
-/// Charging System
+/// Charging Point
 ///
-/// A charging system consists of a specific EV charger device and a specific power meter device.
+/// A charging point consists of a specific EV charger device and a specific power meter device.
 /// It represents an abstraction layer for different physical chargers and power meters from different
 /// vendors – allowing the app to interact with these chargers and power meters in a uniform, type-safe way.
 ///
@@ -139,14 +139,14 @@ actor ChargingPoint {
         self.evCharger = evCharger
         self.powerMeter = powerMeter
 
+        try self.checkDeviceConsistency()
+        try await self.evCharger.setupConfig()
+
         self.logger.info("""
-                         Charging System initialized with
+                         Charging Point initialized with
                          - EV Charger: \(self.evCharger.modelName.rawValue) (Unit ID: \(self.evCharger.unitId))
                          - Power Meter: \(self.powerMeter.modelName.rawValue) (Unit ID: \(self.powerMeter.unitId))
                         """)
-
-        try self.checkDeviceConsistency()
-        try await self.evCharger.setupConfig()
     }
 
     // MARK: - Charger Functions
@@ -192,10 +192,18 @@ actor ChargingPoint {
     /// Ensure that charger and power meter share the same unit id.
     /// (This is possible as by design power meter and charger use two different RS485 bus transceivers!)
     ///
+    /// Ensure that charger and power meter are not set to `.unknown`. This indicates an unsupported device.
+    ///
     /// - Throws: ``SystemError/unitIdMissmatch``
     private func checkDeviceConsistency() throws {
         if self.evCharger.unitId != self.powerMeter.unitId {
             let err = SystemError.unitIdMissmatch
+            self.logger.critical("\(err.localizedDescription ?? String(describing: err))")
+            throw err
+        }
+
+        if self.evCharger.modelName == .unknown || self.powerMeter.modelName == .unknown {
+            let err = SystemError.unsupportedDevice
             self.logger.critical("\(err.localizedDescription ?? String(describing: err))")
             throw err
         }

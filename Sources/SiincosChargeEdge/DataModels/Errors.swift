@@ -17,6 +17,7 @@ enum SystemError: Error {
     case powerMetersMissing
     case deviceConfigurationError
     case unitIdMissmatch
+    case unsupportedDevice
 }
 
 
@@ -37,6 +38,8 @@ extension SystemError: LocalizedError {
             return "Device did not acknowledge desired configuration! Aborting!"
         case .unitIdMissmatch:
             return "Charger and power meter unit ID missmatch! Aborting!"
+        case .unsupportedDevice:
+            return "Provided device not supported! Aborting!"
         }
     }
 }
