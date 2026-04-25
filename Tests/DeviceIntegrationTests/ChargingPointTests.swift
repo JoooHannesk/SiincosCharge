@@ -13,14 +13,14 @@ import Foundation
 
 class ChargingSystemTests {
 
-    var chargingSystems: [ChargingSystem] = []
+    var chargingSystems: [ChargingPoint] = []
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
 
         for (evCharger, powerMeter) in zip(devices.0, devices.1) {
-            self.chargingSystems.append(try await ChargingSystem(evCharger: evCharger, powerMeter: powerMeter))
+            self.chargingSystems.append(try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter))
         }
     }
 
@@ -29,7 +29,7 @@ class ChargingSystemTests {
         let mockCharger = MockCharger(unitId: 2, modelName: .mockCharger)
         let mockChargerPowerMeter = MockChargerPowerMeter(unitId: 1, modelName: .nope)
         let error = await #expect(throws: SystemError.unitIdMissmatch) {
-            let _ = try await ChargingSystem(evCharger: mockCharger, powerMeter: mockChargerPowerMeter)
+            let _ = try await ChargingPoint(evCharger: mockCharger, powerMeter: mockChargerPowerMeter)
         }
         #expect(error == .unitIdMissmatch)
     }

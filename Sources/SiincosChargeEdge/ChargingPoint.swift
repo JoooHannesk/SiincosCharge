@@ -26,7 +26,7 @@ import Foundation
 ///
 /// - Note: When using a charger with an integrated (non-MID) power meter, set ``powerMeterModel`` to
 ///   ``SupportedPowerMeter/nope`` to indicate that no separate MID-conforming meter is present.
-actor ChargingSystem {
+actor ChargingPoint {
 
     /// Specific EV Charger
     ///
