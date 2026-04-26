@@ -21,6 +21,8 @@ struct SiincosChargeEdgeTests {
             ([3.0, 0.0, nil], 3.0),
             ([3.0, nil, nil], 3.0),
             ([4.5, 0.0, 0.0], 4.5),
+            ([8.8, 0.0, 0.0], 8.8),
+            ([8.8, nil, nil], 8.8),
         ]
         for testValue in testValueFrame {
             let current = ElectricCurrent3PhaseGrid(
