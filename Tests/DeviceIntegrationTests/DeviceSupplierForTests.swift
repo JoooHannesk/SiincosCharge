@@ -17,7 +17,7 @@ enum DeviceSupplierForTests {
         do {
             let systemConfig = try ComponentSupplier.getSystemConfig()
             let devices = try ComponentSupplier.getDevices(for: systemConfig)
-            charger = devices.0.first as? T
+            charger = devices.evChargers.first as? T
         } catch {
             Issue.record("Unable to get system configuration: \(error.localizedDescription)")
         }
@@ -29,7 +29,7 @@ enum DeviceSupplierForTests {
         do {
             let systemConfig = try ComponentSupplier.getSystemConfig()
             let devices = try ComponentSupplier.getDevices(for: systemConfig)
-            meter = devices.1.first as? T
+            meter = devices.powerMeters.first as? T
         } catch {
             Issue.record("Unable to get system configuration: \(error.localizedDescription)")
         }

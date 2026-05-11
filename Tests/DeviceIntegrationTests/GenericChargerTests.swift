@@ -25,7 +25,7 @@ class GenericChargerTests {
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
 
         // Take the first charger on the bus
-        guard let charger = devices.0.first else {
+        guard let charger = devices.evChargers.first else {
             throw SystemError.chargersMissing
         }
         self.charger = charger

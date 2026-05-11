@@ -25,7 +25,7 @@ class GenericPowerMeterTests {
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
 
         // Take the first power meter on the bus
-        guard let powerMeter = devices.1.first else {
+        guard let powerMeter = devices.powerMeters.first else {
             throw SystemError.powerMetersMissing
         }
         self.powerMeter = powerMeter

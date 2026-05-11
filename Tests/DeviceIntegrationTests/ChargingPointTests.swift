@@ -18,7 +18,7 @@ class ChargingPointTests {
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
         let devices = try ComponentSupplier.getDevices(for: systemConfig)
-        for (evCharger, powerMeter) in zip(devices.0, devices.1) {
+        for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
             self.chargingPoints.append(try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter))
         }
     }
