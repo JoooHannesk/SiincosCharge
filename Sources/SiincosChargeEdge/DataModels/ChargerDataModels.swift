@@ -14,6 +14,9 @@ import Foundation
 /// Generic Modbus RTU device attached to the bus line
 protocol ModbusRTUDevice: Sendable {
 
+    /// Modbus RTU Client
+    var modbusDevice: ModbusRTUClient { get }
+
     /// Initializer
     ///
     /// Instance requires a modbus rtu client and a specific unit id to
@@ -21,7 +24,7 @@ protocol ModbusRTUDevice: Sendable {
     /// - Parameters:
     ///    - modbusRTUClient: Configured modbus rtu client
     ///    - unitId: Device unit id on the modbus rtu bus
-///        - modelName: Device model name (as defined in config)
+    ///    - modelName: Device model name (as defined in config)
     init(modbusRTUClient: ModbusRTUClient, unitId: UInt8, modelName: String)
 }
 
@@ -259,6 +262,7 @@ struct ElectricCurrent3PhaseGrid {
 /// Electric Voltage
 ///
 /// Electric voltage in a 3-Phase grid
+/// - Note: Assuming potential difference between L and N, not between Lx and Ly
 struct ElectricVoltage3PhaseGrid {
     var voltageL1: Measurement<UnitElectricPotentialDifference>?
     var voltageL2: Measurement<UnitElectricPotentialDifference>?

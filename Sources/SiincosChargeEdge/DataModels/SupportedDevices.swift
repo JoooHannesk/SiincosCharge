@@ -37,6 +37,11 @@ enum SupportedCharger: String, Codable, CaseIterable {
 /// This list refers to the external power meters onyl.
 enum SupportedPowerMeter: String, Codable, CaseIterable {
 
+    /// Janitza Smart Meter B23 312-10J
+    ///
+    /// Dedicated Modbus RTU power meter
+    case janitzaSmartMeterB2331210J = "JanitzaSmartMeterB2331210J"
+
     /// No Power Meter
     ///
     /// No dedicated power meter is installed.

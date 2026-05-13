@@ -1,9 +1,9 @@
 {
     "systemId": "HTS1Proto1",
-    "chargerModel": "MockCharger",
+    "chargerModel": "SenecWallboxProS11kW",
     "chargerBus": "/dev/tty.usbserial-AB0O6Z7W",
-    "meterModel": "Nope",
-    "meterBus": "/dev/tty.ACM1",
+    "meterModel": "JanitzaSmartMeterB2331210J",
+    "meterBus": "/dev/tty.usbserial-AB0O6Z89",
     "lineLength": 1,
     "lineMaxCurrentA": 16,
     "cloudHost": "kinzig-solutions.de",

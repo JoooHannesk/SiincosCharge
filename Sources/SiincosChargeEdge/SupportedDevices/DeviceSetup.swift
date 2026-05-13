@@ -61,7 +61,9 @@ class DeviceSetup {
             break
 
         // Setup for external power meter:
-        self.powerMeters.removeAll()
+        case .janitzaSmartMeterB2331210J:
+            self.powerMeters.removeAll()
+            self.powerMeters = self.setupJanitzaSmartMeterB2331210J(deviceConfig: self.config)
         }
     }
 
@@ -80,7 +82,7 @@ class DeviceSetup {
         return devices
     }
 
-    // MARK: Specific device setup
+    // MARK: Specific device setup - EV Chargers
 
     /// Setup Mock Charger
     ///
@@ -113,5 +115,18 @@ class DeviceSetup {
         let senecChargers: Array<SenecWallboxProS11kW> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength, modelName: deviceConfig.chargerModel.rawValue)
         let senecInternalPowerMeter: Array<SenecWallboxProSPowerMeter> = self.defineModbusRTUDeviceOnBus(deviceClient: senecDeviceClient, lineLenght: deviceConfig.lineLength, modelName: deviceConfig.meterModel.rawValue)
         return (senecChargers, senecInternalPowerMeter)
+    }
+
+
+    // MARK: Specific device setup - Dedicated Power Meters
+
+    /// Setup Janitza Smar tMeter B23 312-10J
+    ///
+    /// - Parameter deviceConfig: system device configuration
+    /// - Returns: Array with power meters
+    private func setupJanitzaSmartMeterB2331210J(deviceConfig: DeviceConfig) -> [PowerMeter] {
+        let janitzaDeviceClient = JanitzaSmartMeterB2331210J.getModbusDeviceClient(serialPort: deviceConfig.meterBus)
+        let janitzaPowerMeters: Array<JanitzaSmartMeterB2331210J> = self.defineModbusRTUDeviceOnBus(deviceClient: janitzaDeviceClient, lineLenght: deviceConfig.lineLength, modelName: deviceConfig.meterModel.rawValue)
+        return janitzaPowerMeters
     }
 }
