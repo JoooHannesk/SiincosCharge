@@ -107,11 +107,23 @@ struct JanitzaSmartMeterB2331210J: PowerMeter, ModbusRTUDevice {
         return gridVoltage3phase
     }
 
+    /// Get Electric Power
+    ///
+    /// Get electric power drawn from EV charger and delivered by grid.
+    /// This power meter provides the total power (L1+L2+L3) only, therefore requesting `powerTotal` from
+    /// the power meter and calculating L1, L2, L3 power based on current and grid voltage.
+    ///
+    /// - Returns: Electric power currently drawn by the EV (power for a 3-phase grid).
+    ///
+    /// - Note: The total power `powerTotal` refers to register 14 in modbus mapping. Voltage and Current
+    /// is provided by ``getGridVoltage()`` and ``getElectricCurrent()``.
     func getElectricPower() async throws -> ElectricPower3PhaseGrid {
+        // TODO: implement
         ElectricPower3PhaseGrid(powerTotal: Measurement(value: 1.0, unit: .kilowatts))
     }
 
     func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
+        // TODO: implement
         Measurement(value: 1.0, unit: .kilowattHours)
     }
 }

@@ -29,7 +29,6 @@ class JanitzaSmartMeterB2331210JTests {
         self.powerMeter = powerMeterJanitza
     }
 
-
     @Test("Test-Get-Current-Drawn")
     func getCurrentDrawn() async throws {
         let currentDrawn = try await powerMeter.getElectricCurrent()
