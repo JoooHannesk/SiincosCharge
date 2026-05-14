@@ -429,7 +429,7 @@ struct SenecWallboxProSPowerMeter: PowerMeter, ModbusRTUDevice {
 
     /// Get Electric Power
     ///
-    /// Get electric power drawn from EV charger and delivered by grid.
+    /// Get electric power drawn from EV charger and delivered by grid: Active Power
     /// This power meter provides the total power (L1+L2+L3) only, therefore requesting `powerTotal` from
     /// the power meter and calculating L1, L2, L3 power based on current and grid voltage.
     ///

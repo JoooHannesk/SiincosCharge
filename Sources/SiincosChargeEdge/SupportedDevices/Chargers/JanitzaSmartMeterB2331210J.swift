@@ -109,21 +109,40 @@ struct JanitzaSmartMeterB2331210J: PowerMeter, ModbusRTUDevice {
 
     /// Get Electric Power
     ///
-    /// Get electric power drawn from EV charger and delivered by grid.
-    /// This power meter provides the total power (L1+L2+L3) only, therefore requesting `powerTotal` from
-    /// the power meter and calculating L1, L2, L3 power based on current and grid voltage.
+    /// Get electric power drawn from EV charger and delivered by grid: Active Power
+    /// This power meter provides the total power (L1+L2+L3) and the power per phase in
+    /// individual registers.
     ///
-    /// - Returns: Electric power currently drawn by the EV (power for a 3-phase grid).
-    ///
-    /// - Note: The total power `powerTotal` refers to register 14 in modbus mapping. Voltage and Current
-    /// is provided by ``getGridVoltage()`` and ``getElectricCurrent()``.
+    /// - Returns: Electric power currently drawn by the EV (power for a 3-phase power grid).
+    /// - Note: Refers to the following register addresses in the corresponding modbus mapping:
+    ///     * L1: Registers 23318, 23319
+    ///     * L2: Registers 23320, 23321
+    ///     * L3: Registers 23322, 23323
+    ///     * L1+L2+L3: Registers 23316, 23317
     func getElectricPower() async throws -> ElectricPower3PhaseGrid {
-        // TODO: implement
-        ElectricPower3PhaseGrid(powerTotal: Measurement(value: 1.0, unit: .kilowatts))
+        let pL123 = try await self.modbusDevice.readHoldingRegisters(address: 23316, count: 2, unitId: self.unitId)
+        let pL1 = try await self.modbusDevice.readHoldingRegisters(address: 23318, count: 2, unitId: self.unitId)
+        let pL2 = try await self.modbusDevice.readHoldingRegisters(address: 23320, count: 2, unitId: self.unitId)
+        let pL3 = try await self.modbusDevice.readHoldingRegisters(address: 23322, count: 2, unitId: self.unitId)
+
+        guard let pL123Value = pL123.int32Value(at: 0),
+              let pL1Value = pL1.int32Value(at: 0),
+              let pL2Value = pL2.int32Value(at: 0),
+              let pL3Value = pL3.int32Value(at: 0) else {
+            throw SystemError.dataMissing
+        }
+
+        let currentPower = ElectricPower3PhaseGrid(
+            powerL1: Measurement(value: Double(pL1Value)/100, unit: UnitPower.watts),
+            powerL2: Measurement(value: Double(pL2Value)/100, unit: UnitPower.watts),
+            powerL3: Measurement(value: Double(pL3Value)/100, unit: UnitPower.watts),
+            powerTotal: Measurement(value: Double(pL123Value)/100, unit: UnitPower.watts)
+        )
+        return currentPower
     }
 
     func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
-        // TODO: implement
+        #warning("Implement")
         Measurement(value: 1.0, unit: .kilowattHours)
     }
 }

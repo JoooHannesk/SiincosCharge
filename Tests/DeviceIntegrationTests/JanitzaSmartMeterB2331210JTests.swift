@@ -40,4 +40,10 @@ class JanitzaSmartMeterB2331210JTests {
         let gridVoltage = try await powerMeter.getGridVoltage()
         print(gridVoltage)
     }
+
+    @Test("Test-Get-Electric-Power")
+    func getElectricPower() async throws {
+        let electricPower = try await powerMeter.getElectricPower()
+        print(electricPower)
+    }
 }

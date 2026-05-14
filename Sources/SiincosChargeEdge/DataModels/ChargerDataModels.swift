@@ -160,7 +160,7 @@ protocol PowerMeter: Sendable {
 
     /// Get Electric Power
     ///
-    /// Return electric power drawn by the EV.
+    /// Return electric power drawn by the EV: Active Power
     /// - Returns: Electric power drawn by the EV for a 3-phase power grid
     func getElectricPower() async throws -> ElectricPower3PhaseGrid
 
