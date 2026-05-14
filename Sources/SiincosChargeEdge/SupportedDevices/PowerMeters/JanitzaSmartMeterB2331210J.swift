@@ -141,8 +141,18 @@ struct JanitzaSmartMeterB2331210J: PowerMeter, ModbusRTUDevice {
         return currentPower
     }
 
+    /// Get Electric Energy (total)
+    ///
+    /// Return total energy provided by the EV charger (energy since installation).
+    /// Refers to the total energy on all three phases!
+    /// - Returns: Total energy provided by the EV charger since installation
+    /// - Note: Refers to register address 20480 in corresponding modbus mapping.
     func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
-        #warning("Implement")
-        Measurement(value: 1.0, unit: .kilowattHours)
+        let tEnergy = try await self.modbusDevice.readHoldingRegisters(address: 20480, count: 4, unitId: self.unitId)
+
+        guard let tEnergyValue = tEnergy.uint64Value(at: 0, order: .abcd) else {
+            throw SystemError.dataMissing
+        }
+        return Measurement(value: Double(tEnergyValue)/100, unit: UnitEnergy.kilowattHours)
     }
 }
