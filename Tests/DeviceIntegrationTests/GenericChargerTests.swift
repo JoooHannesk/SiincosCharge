@@ -13,8 +13,13 @@ import ModbusSerial
 
 /// Generic Charger Device Tests
 ///
-/// Generic tests for the car chargers
-/// To run this test, a physical charger is required.
+/// Generic tests for the EV chargers.
+/// This test can (and should) be used as an integration test for compatible chargers. Therefore, a
+/// physical connected charger is required.
+///
+/// - Note: As the tests involve device communication via ModbusRTU/TCP, they have to be serialized.
+/// Both, ModbusTCP and ModbusRTU are not designed to handle multiple connections in parallel.
+@Suite("Generic-Charger-Tests", .serialized)
 class GenericChargerTests {
 
     let charger: EVCharger
@@ -104,6 +109,9 @@ class GenericChargerTests {
         ]
         for testValue in testValueFrame {
             try await setSetpoint(to: Measurement(value: testValue.0, unit: UnitElectricCurrent.amperes), expected: Measurement(value: testValue.1, unit: UnitElectricCurrent.amperes))
+            // Make sure to wait a bit after each call, especially when working with real devices. These devices most likely need some time to internally set the new setpoints and
+            // bring the new values on the bus.
+            try await Task.sleep(nanoseconds: 100_000_000)
         }
 
         func setSetpoint(to value: Measurement<UnitElectricCurrent>, expected: Measurement<UnitElectricCurrent>) async throws {

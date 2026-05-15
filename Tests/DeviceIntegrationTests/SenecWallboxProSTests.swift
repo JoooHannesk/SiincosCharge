@@ -19,7 +19,10 @@ let powerMeterSenec: SenecWallboxProSPowerMeter? = DeviceSupplierForTests.getSpe
 ///
 /// Specific device tests for the charger Wallbox Pro S from SENEC.
 /// To run this test, a physical charger is required.
-@Suite("Senec-Wallbox-Pro-S-Specific-Tests", .enabled(if: chargerSenec != nil ))
+///
+/// - Note: As the tests involve device communication via ModbusRTU/TCP, they have to be serialized.
+/// Both, ModbusTCP and ModbusRTU are not designed to handle multiple connections in parallel.
+@Suite("Senec-Wallbox-Pro-S-Specific-Tests", .enabled(if: chargerSenec != nil ), .serialized)
 class SenecWallboxProSTests {
     var charger: SenecWallboxProS11kW
 
@@ -77,7 +80,7 @@ class SenecWallboxProSTests {
 ///
 /// Specific device tests for the charger Wallbox Pro S from SENEC.
 /// To run this test, a physical charger is required.
-@Suite("Senec-Wallbox-Pro-S-Specific-Power-Meter-Tests", .enabled(if: powerMeterSenec != nil ))
+@Suite("Senec-Wallbox-Pro-S-Specific-Power-Meter-Tests", .enabled(if: powerMeterSenec != nil ), .serialized)
 class SenecWallboxProSIntegratedPowerMeterTests {
     var powerMeter: SenecWallboxProSPowerMeter
 

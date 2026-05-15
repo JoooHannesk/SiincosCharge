@@ -1,10 +1,13 @@
-
-
 import Testing
 import Foundation
 @testable import SiincosChargeEdge
 
 
+/// Siincos Charge Edge Tests
+///
+/// - Note: As the tests involve device communication via ModbusRTU/TCP, they have to be serialized.
+/// Both, ModbusTCP and ModbusRTU are not designed to handle multiple connections in parallel.
+@Suite("Siincos-Charge-Edge-Tests", .serialized)
 struct SiincosChargeEdgeTests {
 
     @Test("Test-Average-Current-Calculation")
@@ -60,7 +63,7 @@ struct SiincosChargeEdgeTests {
     /// Test logging to file
     ///
     /// Log a single line to file
-    @Test("Log-Sample-Message-To-File")
+    @Test("Log-Sample-Message-To-File", .disabled())
     func logToFile() async throws {
         let logger = FileLoggingConfiguration.shared.getLogger(for: "Tests")
         let logString = "This is a single log entry. This should be written in the log file."

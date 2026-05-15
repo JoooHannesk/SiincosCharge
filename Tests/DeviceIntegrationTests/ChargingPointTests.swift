@@ -10,7 +10,11 @@ import Testing
 import Foundation
 @testable import SiincosChargeEdge
 
-
+/// Charging Point Tests
+///
+/// - Note: As the tests involve device communication via ModbusRTU/TCP, they have to be serialized.
+/// Both, ModbusTCP and ModbusRTU are not designed to handle multiple connections in parallel.
+@Suite("Charging-Point-Tests", .serialized)
 class ChargingPointTests {
 
     var chargingPoints: [ChargingPoint] = []

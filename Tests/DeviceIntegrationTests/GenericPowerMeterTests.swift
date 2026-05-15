@@ -13,8 +13,13 @@ import ModbusSerial
 
 /// Generic Power Meter Device Tests
 ///
-/// Generic tests for the power meters
-/// To run this test, a physical power meter or charger with integrated power meter is required.
+/// Generic tests for the power meters.
+/// This test can (and should) be used as an integration test for compatible smart power meters. Therefore, a
+/// physical connected power meter is required.
+///
+/// - Note: As the tests involve device communication via ModbusRTU/TCP, they have to be serialized.
+/// Both, ModbusTCP and ModbusRTU are not designed to handle multiple connections in parallel.
+@Suite("Generic-Power-Meter-Tests", .serialized)
 class GenericPowerMeterTests {
 
     let powerMeter: PowerMeter
