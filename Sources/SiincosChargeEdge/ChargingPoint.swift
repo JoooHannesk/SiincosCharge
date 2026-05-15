@@ -55,6 +55,17 @@ actor ChargingPoint {
         self.powerMeter.modelName
     }
 
+    /// Charging Point ID
+    ///
+    /// Canonical charging-point identifier used across app/backend and the physical site.
+    /// Mirrors the charger's Modbus unit ID for simplicity reasons.
+    ///
+    /// - Note: The ``EVCharger`` unit ID is used here because a ``ChargingPoint`` can exist without
+    /// a dedicated ``PowerMeter``. If no dedicated ``PowerMeter`` is used, only one bus exists.
+    var cpId: UInt8 {
+        return self.evCharger.unitId
+    }
+
     /// Charging State
     ///
     /// Charger charging state: `.charging`, `.notCharging`, `.unknown` or `.error`
