@@ -13,7 +13,7 @@ import Logging
 enum AppConstants {
 
     /// Configuration file location
-    static let configFileLocation = "/opt/SiincosChargeEdge/config.json"
+    static let configFileLocation = "/opt/SiincosChargeEdge/Assets/config.json"
 
     /// Logger configuration
     static let mainLoggerLabel = "SiincosChargeEdge"

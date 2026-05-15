@@ -6,6 +6,16 @@
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "export PROJECT_HOME=~/git/SiincosChargeEdge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;&#10;"
+               shellToInvoke = "/bin/zsh">
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"

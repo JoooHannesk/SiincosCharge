@@ -30,17 +30,17 @@ class DeviceSetup {
 
         switch config.chargerModel {
 
-        // Chargers with integrated power meters
+        // MARK: - Chargers with integrated Power Meters
         case .mockCharger:
             (self.evChargers, self.powerMeters) = self.setupMockChargerWithPowerMeter(deviceConfig: self.config)
 
         case .senecWallboxProS11kW:
             (self.evChargers, self.powerMeters) = self.setupSenecWallboxProS11kW(deviceConfig: self.config)
 
-        // Chargers without integrated power meter
+        // MARK: - Chargers without integrated Power Meters
 
 
-        // Unsupported charger defined in configuration
+        // MARK: - Unsupported charger defined in configuration
         case .unknown:
             break
         }
@@ -52,15 +52,15 @@ class DeviceSetup {
         )
         switch config.meterModel {
 
-        // No external power meter in use:
+        // MARK: - No external power meter in use
         case .nope:
             break
 
-        // Unsupported power meter defined in configuration
+        // MARK: - Unsupported Power Meter defined in configuration
         case .unknown:
             break
 
-        // Setup for external power meter:
+        // MARK: - Setup for external power meter
         case .janitzaSmartMeterB2331210J:
             self.powerMeters.removeAll()
             self.powerMeters = self.setupJanitzaSmartMeterB2331210J(deviceConfig: self.config)

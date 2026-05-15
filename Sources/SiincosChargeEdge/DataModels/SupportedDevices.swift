@@ -10,6 +10,9 @@
 /// System compatible EV chargers are listed here
 enum SupportedCharger: String, Codable, CaseIterable {
 
+
+    // MARK: - Chargers with integrated Power Meters
+
     /// Senec Wallbox Pro S
     ///
     /// Charger with ModbusRTU connectivity and integrated power meter.
@@ -24,6 +27,10 @@ enum SupportedCharger: String, Codable, CaseIterable {
     /// EV charger.
     case mockCharger = "MockCharger"
 
+    // MARK: - Chargers without integrated Power Meters
+
+    // MARK: - Unsupported charger defined in configuration
+    
     /// Unknown Charger
     ///
     /// In case an unsupported charger is defined, it will be referenced as `.unknown`. This
@@ -48,6 +55,8 @@ enum SupportedPowerMeter: String, Codable, CaseIterable {
     /// This working mode is possible, but indicates that no MID compatible power
     /// meter is present.
     case nope = "Nope"
+
+    // MARK: - Unsupported Power Meter defined in configuration
 
     /// Unknown Power Meter
     ///
