@@ -43,8 +43,11 @@ protocol EVCharger: Sendable {
     /// Unit ID
     ///
     /// Unique id for identifying the device and its data within the local infrastructure.
-    /// Power meters ``PowerMeter`` and car chargers ``ChargingSystem`` belonging logically togehter
-    /// and therefore have to share the same unit id. (Both are lockated on two different RS485 lines and transceivers).
+    /// Power meters ``PowerMeter`` and EV chargers ``EVCharger`` belonging logically togehter
+    /// have to share the same unit id.
+    ///
+    /// - Note:``PowerMeter`` and  ``EVCharger`` sharing the same unit id is not a conflict here, as
+    /// this system is designed to use two different RS485 lines with two different transceivers (one for each group).
     var unitId: UInt8 { get }
 
     /// Setup Configuration
@@ -73,31 +76,34 @@ protocol EVCharger: Sendable {
     /// - Returns: internal system temperature
     func getInternalTemperature() async throws -> Measurement<UnitTemperature>
 
-    /// Get Hardware Current Limits
+    /// Get Fixed Current Limits
     ///
-    /// The charger is bound to specific electric current limits, constraint by the overall hardware design and the installation limits.
+    /// The charger is bound to specific, fixed electric current limits, constraint by the overall hardware design and the installation limits.
     /// These limits are required to ensure proper system functionality such as load balancing, equal current distribution, etc.
     ///
-    /// - Returns: Current limites (given by hardware and/or installation)
-    func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>>
+    /// - Returns: Fixed current limits (given by hardware and/or installation)
+    /// - Note: The **upper limit** is mainly dominated by the installation capabilities and the maximum EV charger power. The
+    /// **lower limit** is mainly defined manually and can most likely be set inside the EV charger (e.g. via DIP/rotatable switch).
+    /// Chose wisely, as a lot of EVs refuse to charge if the current is under their minimum threshold.
+    func getFixedCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>>
 
     /// Get Max Current Limit Setpoint
     ///
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function retrieves the
     /// current setpoint from the charger and returns it.
     ///
-    /// - Returns: acutal electrical current setpoint
-    func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent>
+    /// - Returns: acutal max  current limit setpoint
+    func getCurrentLimit() async throws -> Measurement<UnitElectricCurrent>
 
     /// Set Max Current Limit Setpoint
     ///
     /// The charger can dynamically adapt the maximum electrical current drawn from the grid and delivered to the vehicle. This function sets the
-    /// maximum current setpoint in the charger.
+    /// maximum current setpoint in the charger. The setpoint has to be in the ``getFixedCurrentLimits()`` bounds.
     ///
     /// - Parameter setpoint: Current limit setpoint to transfer to the charger
     /// - Returns: Acutal electrical current setpoint as type, processed by the charger.
     /// - Note: In case the provided current setpoint exceeds the maximum hardware current limit, the hardware specific limit is transferred to the charger.
-    @discardableResult func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
+    @discardableResult func setCurrentLimit(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent>
 
     /// Get Hardware Lock State
     ///

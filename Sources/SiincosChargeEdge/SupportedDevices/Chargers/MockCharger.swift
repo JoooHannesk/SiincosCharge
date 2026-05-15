@@ -35,7 +35,7 @@ struct MockCharger: EVCharger {
         return internalTemperature
     }
     
-    func getHardwareCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
+    func getFixedCurrentLimits() async throws -> Boundaries<Measurement<UnitElectricCurrent>> {
         let boundaries = try Boundaries(
             minimal: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
             maximal: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes))
@@ -43,7 +43,7 @@ struct MockCharger: EVCharger {
         return boundaries
     }
     
-    func getMaxCurrentLimitSetpoint() async throws -> Measurement<UnitElectricCurrent> {
+    func getCurrentLimit() async throws -> Measurement<UnitElectricCurrent> {
         print("Currently set max. current: \(await MockChargerDataStore.maxCurrentLimit)")
         return await MockChargerDataStore.maxCurrentLimit
     }
@@ -51,7 +51,7 @@ struct MockCharger: EVCharger {
     /// Set maximum current limit
     ///
     /// ``MockCharger`` has to make sure that current limit setpoint stays within the predefined bounds (6A...16A)
-    func setMaxCurrentLimitSetpoint(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
+    func setCurrentLimit(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         await MainActor.run {
             if setpoint.value >= 16.0 {
                 MockChargerDataStore.maxCurrentLimit.value = 16.0
@@ -64,7 +64,7 @@ struct MockCharger: EVCharger {
             }
         }
         await print("Setting max. current to: \(MockChargerDataStore.maxCurrentLimit)")
-        return await MockChargerDataStore.maxCurrentLimit
+        return try await self.getCurrentLimit()
     }
     
     func getHardwareLockState() async throws -> LockState {

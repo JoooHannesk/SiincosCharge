@@ -85,7 +85,7 @@ class GenericChargerTests {
 
     @Test("Get-Hardware-Current-Limits")
     func getHardwareCurrentLimits() async throws {
-        let currLimits = try await self.charger.getHardwareCurrentLimits()
+        let currLimits = try await self.charger.getFixedCurrentLimits()
         let currLow = Measurement(value: 6.0, unit: UnitElectricCurrent.amperes) // Lower limits won't be accepted by the vehicles, as they'd result in the vehicle rejectes charging
         let currHigh = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
         print("Charger hardware current limits: \(currLimits)")
@@ -115,7 +115,7 @@ class GenericChargerTests {
         }
 
         func setSetpoint(to value: Measurement<UnitElectricCurrent>, expected: Measurement<UnitElectricCurrent>) async throws {
-            let currentSetpoint = try await self.charger.setMaxCurrentLimitSetpoint(to: value)
+            let currentSetpoint = try await self.charger.setCurrentLimit(to: value)
             print("Actual charger current limit setpoint: \(currentSetpoint), Expected: \(expected) - Fullfilled: \(currentSetpoint == expected ? "✔" : "✘")")
             #expect(currentSetpoint == expected)
         }

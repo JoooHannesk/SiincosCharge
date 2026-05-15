@@ -20,7 +20,7 @@ import Foundation
 /// - Querying and updating charging and vehicle state
 /// - Bridging vendor-specific capabilities behind a common interface
 ///
-/// - Concurrency: ``ChargingSystem`` is an `actor`, which serializes access to its mutable state
+/// - Concurrency: ``ChargingPoint`` is an `actor`, which serializes access to its mutable state
 ///   and coordinates asynchronous interactions with the underlying RS485 bus layers (based on serial/UART).
 ///   Interact with it using `await` from concurrent contexts to ensure thread safety.
 ///
@@ -81,7 +81,7 @@ actor ChargingPoint {
     /// be initiated from the EV. The charger needs to be enabled (unlocked) at first.
     /// When a charging session gets disabled while in progress, the session is terminated gracefully.
     ///
-    /// Refer to ``ChargingSystem/enableCharging()`` and ``ChargingSystem/disableCharging()``
+    /// Refer to ``ChargingPoint/enableCharging()`` and ``ChargingPoint/disableCharging()``
     var chargingPermission: Status = .disabled
 
 
@@ -178,9 +178,9 @@ actor ChargingPoint {
     /// - Parameter current: Limit charging to the given maximum current
     /// - Returns: Charging current setpoint accepted by device
     func setChargingCurrent(to current: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
-        let chargerHardwareCurrentLimits = try await evCharger.getHardwareCurrentLimits()
+        let chargerHardwareCurrentLimits = try await evCharger.getFixedCurrentLimits()
         let currentLimit = max(min(current, chargerHardwareCurrentLimits.maximal), chargerHardwareCurrentLimits.minimal)
-        let currentLimitAcknowleged = try await evCharger.setMaxCurrentLimitSetpoint(to: currentLimit)
+        let currentLimitAcknowleged = try await evCharger.setCurrentLimit(to: currentLimit)
         return currentLimitAcknowleged
     }
 
