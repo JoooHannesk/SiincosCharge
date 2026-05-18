@@ -5,6 +5,9 @@
 //  Created by Johannes Kinzig on 31.03.26.
 //
 
+/// Device Configutation
+///
+/// Device Configuration for ModbusRTU based EV chargers and power meters.
 protocol DeviceConfig {
     var systemId: String { get }
     var chargerModel: SupportedCharger { get }
@@ -12,8 +15,12 @@ protocol DeviceConfig {
     var meterModel: SupportedPowerMeter { get }
     var meterBus: String { get }
     var lineLength: UInt8 { get }
+    var lineMaxCurrentA: UInt8 { get }
 }
 
+/// Cloud Configuration
+///
+/// Cloud configuration for MQTT client.
 protocol CloudConfig {
     var cloudHost: String { get }
     var cloudPort: UInt16 { get }
