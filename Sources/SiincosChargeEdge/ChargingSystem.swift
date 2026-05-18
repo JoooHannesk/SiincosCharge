@@ -5,6 +5,8 @@
 //  Created by Johannes Kinzig on 14.05.26.
 //
 
+import Foundation
+
 
 /// Charging System
 ///
@@ -26,40 +28,43 @@ final class ChargingSystem {
         self.systemTotalMaxCurrent = config.lineMaxCurrentA
     }
 
-    func getChargingState() {
+    func getEvState(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func getEvState() {
+    func getChargingState(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func getMeterReading() {
+    func getChargingPermission(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func getChargingCurren() {
+    func enableCharging(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func getChargingPower() {
+    func disableCharging(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func getGridVoltage() {
+    func getChargingCurren(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func enableCharging() {
+    func setChargingCurrent(to current: Measurement<UnitElectricCurrent>, for chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func disableCharging() {
+    func getMeterReading(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
-    func setChargingCurrent() {
+    func getChargingPower(chargerUnitId: UInt8) {
         #warning("Implement")
     }
 
+    func getGridVoltage(chargerUnitId: UInt8) {
+        #warning("Implement")
+    }
 }

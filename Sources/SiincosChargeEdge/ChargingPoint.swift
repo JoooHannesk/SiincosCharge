@@ -181,7 +181,7 @@ actor ChargingPoint {
         return self.chargingPermission
     }
 
-    /// Set Charging Current Setpoint
+    /// Set Charging Current Limitter Setpoint
     ///
     /// The charging current is mainly controlled by the EV but the charger can limit the charging current.
     /// This function is limitting the charging current to the defined maximum.
