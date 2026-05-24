@@ -19,7 +19,7 @@ on run argv
 
     tell application "Terminal"
         activate
-        set newWindow to do script "ssh -t " & targetUser & "@" & targetHost & " 'cd /opt/SiincosChargeEdge; bash -l'"
+        set newWindow to do script "ssh -t " & targetUser & "@" & targetHost & " 'cd /opt/SiincosCharge; bash -l'"
         -- Set window size (width x height in characters)
         set number of columns of front window to 180
         set number of rows of front window to 60

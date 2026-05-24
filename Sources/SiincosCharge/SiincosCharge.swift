@@ -9,7 +9,7 @@ import ModbusSerial
 import Foundation
 
 @main
-struct SiincosChargeEdge {
+struct SiincosCharge {
     static func main() async {
         print("Hello, world!")
 

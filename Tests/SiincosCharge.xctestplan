@@ -21,8 +21,8 @@
       "parallelizable" : false,
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "SiincosChargeEdgeTests",
-        "name" : "SiincosChargeEdgeTests"
+        "identifier" : "SiincosChargeTests",
+        "name" : "SiincosChargeTests"
       }
     }
   ],

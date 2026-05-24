@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2640"
+   LastUpgradeVersion = "2650"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "export PROJECT_HOME=~/git/SiincosCharge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;&#10;"
+               shellToInvoke = "/bin/zsh">
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -15,9 +25,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SiincosChargeEdge"
-               BuildableName = "SiincosChargeEdge"
-               BlueprintName = "SiincosChargeEdge"
+               BlueprintIdentifier = "SiincosCharge"
+               BuildableName = "SiincosCharge"
+               BlueprintName = "SiincosCharge"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SiincosChargeTests"
+               BuildableName = "SiincosChargeTests"
+               BlueprintName = "SiincosChargeTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,22 +54,10 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/SiincosChargeEdge.xctestplan"
+            reference = "container:Tests/SiincosCharge.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SiincosChargeEdgeTests"
-               BuildableName = "SiincosChargeEdgeTests"
-               BlueprintName = "SiincosChargeEdgeTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -62,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SiincosChargeEdge"
-            BuildableName = "SiincosChargeEdge"
-            BlueprintName = "SiincosChargeEdge"
+            BlueprintIdentifier = "SiincosCharge"
+            BuildableName = "SiincosCharge"
+            BlueprintName = "SiincosCharge"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -79,9 +91,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SiincosChargeEdge"
-            BuildableName = "SiincosChargeEdge"
-            BlueprintName = "SiincosChargeEdge"
+            BlueprintIdentifier = "SiincosCharge"
+            BuildableName = "SiincosCharge"
+            BlueprintName = "SiincosCharge"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>

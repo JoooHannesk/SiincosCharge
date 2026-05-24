@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import ModbusSerial
-@testable import SiincosChargeEdge
+@testable import SiincosCharge
 
 
 /// Generic Charger Device Tests

@@ -8,7 +8,7 @@
 
 import Testing
 import Foundation
-@testable import SiincosChargeEdge
+@testable import SiincosCharge
 
 /// Charging Point Tests
 ///

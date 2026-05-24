@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import ModbusSerial
-@testable import SiincosChargeEdge
+@testable import SiincosCharge
 
 
 let powerMeterJanitza: JanitzaSmartMeterB2331210J? = DeviceSupplierForTests.getSpecificPowerMeter()

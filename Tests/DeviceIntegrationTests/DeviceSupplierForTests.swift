@@ -7,7 +7,7 @@
 
 
 import Testing
-@testable import SiincosChargeEdge
+@testable import SiincosCharge
 
 
 enum DeviceSupplierForTests {

@@ -5,7 +5,7 @@
 2. Set Hostname: `siincoschargeedge`
 3. Set Username: `evchargermanager`
 4. Set Password: `solut2026AdvProdCharge`
-(Or set according to your liking)
+(Or set according to your needs.)
 
 ## Set Network settings
 Set network settings according to your needs, e.g.
