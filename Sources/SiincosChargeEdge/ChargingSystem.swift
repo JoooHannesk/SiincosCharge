@@ -28,16 +28,19 @@ final class ChargingSystem {
         self.systemTotalMaxCurrent = config.lineMaxCurrentA
     }
 
-    func getEvState(chargerUnitId: UInt8) {
+    func getEvState(chargerUnitId: UInt8) -> EVState {
         #warning("Implement")
+        return .unplugged
     }
 
-    func getChargingState(chargerUnitId: UInt8) {
+    func getChargingState(chargerUnitId: UInt8) -> ChargerState {
         #warning("Implement")
+        return .charging
     }
 
-    func getChargingPermission(chargerUnitId: UInt8) {
+    func getChargingPermission(chargerUnitId: UInt8) -> Status {
         #warning("Implement")
+        return .disabled
     }
 
     func enableCharging(chargerUnitId: UInt8) {

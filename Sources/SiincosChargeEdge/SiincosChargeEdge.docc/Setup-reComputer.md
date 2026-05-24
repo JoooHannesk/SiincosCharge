@@ -1,4 +1,4 @@
-# Setup reComputer as Edge Device for SiincosChargeEdge
+# Setup reComputer as Edge Device for SiincosCharge
 
 ## Flash Raspberry Pi OS (using Raspberry Pi Imager)
 1. Use: Raspberry Pi OS Lite, 64-bit
