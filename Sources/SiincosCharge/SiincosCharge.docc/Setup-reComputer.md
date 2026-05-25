@@ -1,5 +1,7 @@
 # Setup reComputer as Edge Device for SiincosCharge
 
+This documentation is written for a reComputer R1124-10.
+
 ## Flash Raspberry Pi OS (using Raspberry Pi Imager)
 1. Use: Raspberry Pi OS Lite, 64-bit
 2. Set Hostname: `siincoschargeedge`
