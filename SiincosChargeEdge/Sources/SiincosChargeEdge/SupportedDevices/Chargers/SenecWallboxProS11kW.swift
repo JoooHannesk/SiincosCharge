@@ -213,7 +213,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// function returns the actual lock state. Refer to ``SenecWallboxProS11kW/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
-    /// - Returns: lock state as type ``SiincosCharge/LockState``
+    /// - Returns: lock state as type ``SiincosChargeEdge/LockState``
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
     func getSoftwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readHoldingRegisters(address: 259, count: 1, unitId: self.unitId)

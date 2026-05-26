@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import ModbusSerial
-@testable import SiincosCharge
+@testable import SiincosChargeEdge
 
 
 let chargerSenec: SenecWallboxProS11kW? = DeviceSupplierForTests.getSpecificCharger()

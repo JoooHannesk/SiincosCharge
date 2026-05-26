@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "2650"
-   version = "1.7">
+   version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
@@ -11,11 +11,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-<<<<<<<< HEAD:SiincosChargeEdge/.swiftpm/xcode/xcshareddata/xcschemes/SiincosChargeTarget.xcscheme
-               scriptText = "export PROJECT_HOME=~/git/SiincosCharge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;&#10;"
-========
                scriptText = "export PROJECT_HOME=~/git/SiincosCharge/SiincosChargeEdge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME&#10;"
->>>>>>>> Restructured-Repo:SiincosChargeEdge/.swiftpm/xcode/xcshareddata/xcschemes/SiincosChargeEdgeTarget.xcscheme
                shellToInvoke = "/bin/zsh">
             </ActionContent>
          </ExecutionAction>
@@ -29,9 +25,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SiincosCharge"
-               BuildableName = "SiincosCharge"
-               BlueprintName = "SiincosCharge"
+               BlueprintIdentifier = "SiincosChargeEdge"
+               BuildableName = "SiincosChargeEdge"
+               BlueprintName = "SiincosChargeEdge"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -41,11 +37,21 @@
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
+            <TestPlanReference
+               reference = "container:Tests/SiincosChargeEdge.xctestplan">
+            </TestPlanReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SiincosChargeTests"
-               BuildableName = "SiincosChargeTests"
-               BlueprintName = "SiincosChargeTests"
+               BlueprintIdentifier = "SiincosChargeEdgeTests"
+               BuildableName = "SiincosChargeEdgeTests"
+               BlueprintName = "SiincosChargeEdgeTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,7 +64,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/SiincosCharge.xctestplan"
+            reference = "container:Tests/SiincosChargeEdge.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -78,9 +84,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SiincosCharge"
-            BuildableName = "SiincosCharge"
-            BlueprintName = "SiincosCharge"
+            BlueprintIdentifier = "SiincosChargeEdge"
+            BuildableName = "SiincosChargeEdge"
+            BlueprintName = "SiincosChargeEdge"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -95,9 +101,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SiincosCharge"
-            BuildableName = "SiincosCharge"
-            BlueprintName = "SiincosCharge"
+            BlueprintIdentifier = "SiincosChargeEdge"
+            BuildableName = "SiincosChargeEdge"
+            BlueprintName = "SiincosChargeEdge"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>

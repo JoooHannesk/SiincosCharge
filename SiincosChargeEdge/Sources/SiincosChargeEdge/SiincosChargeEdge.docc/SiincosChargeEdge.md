@@ -1,4 +1,4 @@
-# ``SiincosCharge``
+# ``SiincosChargeEdge``
 
 Siincos Charge Edge Documentation
 

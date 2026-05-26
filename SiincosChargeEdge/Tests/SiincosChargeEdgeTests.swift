@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import SiincosCharge
+@testable import SiincosChargeEdge
 
 
 /// Siincos Charge Edge Tests

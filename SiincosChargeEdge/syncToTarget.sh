@@ -11,4 +11,4 @@
 
 TARGET_SSH_USERNAME=$1
 TARGET_HOSTNAME=$2
-rsync -av --delete --progress --exclude '.git' --exclude '.build' ../SiincosCharge $TARGET_SSH_USERNAME@$TARGET_HOSTNAME:/opt/
+rsync -av --delete --progress --exclude '.git' --exclude '.build' ../SiincosChargeEdge $TARGET_SSH_USERNAME@$TARGET_HOSTNAME:/opt/

@@ -16,11 +16,11 @@ enum AppConstants {
     static let version = "0.0.1"
 
     /// Configuration file location
-    static let configFileLocation = "/opt/SiincosCharge/Assets/config.json"
+    static let configFileLocation = "/opt/SiincosChargeEdge/Assets/config.json"
 
     /// Logger configuration
-    static let mainLoggerLabel = "SiincosCharge"
-    static let logFolderLocation = "/opt/SiincosCharge/Logs/"
+    static let mainLoggerLabel = "SiincosChargeEdge"
+    static let logFolderLocation = "/opt/SiincosChargeEdge/Logs/"
 }
 
 

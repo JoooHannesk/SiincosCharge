@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SiincosCharge",
+    name: "SiincosChargeEdge",
     platforms: [
         .macOS(.v26),
         .custom("Linux", versionString: "6.12.34+rpt-rpi-v8")
@@ -16,7 +16,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "SiincosCharge",
+            name: "SiincosChargeEdge",
             dependencies: [
                 // For Serial RTU/ASCII:
                 .product(name: "ModbusSerial", package: "modbus-swift"),
@@ -24,8 +24,8 @@ let package = Package(
 
         ),
         .testTarget(
-            name: "SiincosChargeTests",
-            dependencies: ["SiincosCharge", ],
+            name: "SiincosChargeEdgeTests",
+            dependencies: ["SiincosChargeEdge", ],
             path: "Tests"
         )
     ]
