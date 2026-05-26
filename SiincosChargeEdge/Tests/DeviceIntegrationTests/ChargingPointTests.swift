@@ -39,6 +39,18 @@ class ChargingPointTests {
         #expect(error == .unitIdMissmatch)
     }
 
+    @Test("Test-Charging-Point-Container-Element-Access")
+    func chargingPointContainer() async throws {
+        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
+        #expect(chargingPointContainer.count == self.chargingPoints.count)
+        for chargingPoint in self.chargingPoints {
+            let cpId = await chargingPoint.cpId
+            let chargingPointContainerChargingPoint = await chargingPointContainer[cpId]
+            let chargingPointContainerChargingPointId = await chargingPointContainerChargingPoint?.cpId
+            #expect(cpId == chargingPointContainerChargingPointId)
+        }
+    }
+
     @Test("Test-Charging-System-Properties")
     func chargingSystemProperties() async throws {
         for chargingPoint in chargingPoints {
