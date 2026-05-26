@@ -4,7 +4,7 @@
     "chargerBus": "/dev/tty.usbserial-AB0O6Z7W",
     "meterModel": "Nope",
     "meterBus": "/dev/tty.usbserial-AB0O6Z89",
-    "lineLength": 47,
+    "lineLength": 27,
     "lineMaxCurrentA": 16,
     "cloudHost": "kinzig-solutions.de",
     "cloudPort": 8883,

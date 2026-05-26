@@ -1,4 +1,4 @@
-# Setup reComputer as Edge Device for SiincosCharge
+# Setup reComputer as Edge Device for SiincosChargeEdge
 
 This documentation is written for a reComputer R1124-10.
 
