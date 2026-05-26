@@ -4,7 +4,11 @@
     "chargerBus": "/dev/tty.usbserial-AB0O6Z7W",
     "meterModel": "Nope",
     "meterBus": "/dev/tty.usbserial-AB0O6Z89",
+<<<<<<< HEAD:Assets/config.json
     "lineLength": 27,
+=======
+    "lineLength": 47,
+>>>>>>> Restructured-Repo:SiincosChargeEdge/Assets/config.json
     "lineMaxCurrentA": 16,
     "cloudHost": "kinzig-solutions.de",
     "cloudPort": 8883,
