@@ -16,6 +16,9 @@ import Foundation
 /// A single Charging System is represented as a single device in the IoT cloud.
 final class ChargingSystem {
 
+    /// Hold all charging points
+    let chargingPointContainer: ChargingPointContainer
+
     /// System total maximum current
     ///
     /// Defines the maximum possible current drawn from the power grid (given in amperes) for the local installation.
@@ -31,7 +34,8 @@ final class ChargingSystem {
     /// Init a Charging System
     ///
     /// - Parameter config: Provide device configuration to setup communication for EV chargers and smart meters
-    init(config: DeviceConfig) {
+    init(config: DeviceConfig) async throws {
+        self.chargingPointContainer = try await Self.collectChargingPoints(basedOn: config)
         self.systemTotalMaxCurrent = Measurement(value: Double(config.lineMaxCurrentA), unit: UnitElectricCurrent.amperes)
         self.loadBalancedMaxCurrent = Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
     }
@@ -78,4 +82,19 @@ final class ChargingSystem {
     func getGridVoltage(chargerUnitId: UInt8) {
         #warning("Implement")
     }
+
+    /// Collect Charging Points
+    ///
+    /// Take ``DeviceConfig`` and collect the charging points accordingly
+    /// - Returns: a ``ChargingPointContainer`` instance
+    static func collectChargingPoints(basedOn deviceConfig: DeviceConfig) async throws -> ChargingPointContainer {
+        var chargingPoints = ChargingPointContainer()
+        let devices = try ComponentSupplier.getDevices(for: deviceConfig)
+        for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
+            let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
+            chargingPoints.addChargingPoint(chargingPoint)
+        }
+        return chargingPoints
+    }
+
 }

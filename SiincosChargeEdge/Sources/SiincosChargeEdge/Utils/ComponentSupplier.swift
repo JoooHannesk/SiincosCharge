@@ -37,11 +37,11 @@ enum ComponentSupplier {
     /// Setup Devices
     ///
     /// Setup ev chargers and power meters
-    /// - Parameter config: system config ``SystemConfig``
+    /// - Parameter config: system config ``DeviceConfig``
     /// - Returns: Tuple containing two arrays, the first holding the ``EVCharger``s and the
     /// second one holding the ``PowerMeter``s
     /// - Throws: ``SystemError`` in case there are no ``EVCharger`` s or ``PowerMeter``s configured
-    static func getDevices(for config: SystemConfig) throws(SystemError) -> (evChargers: Array<EVCharger>, powerMeters: Array<PowerMeter>) {
+    static func getDevices(for config: DeviceConfig) throws(SystemError) -> (evChargers: Array<EVCharger>, powerMeters: Array<PowerMeter>) {
         let deviceSetup = DeviceSetup(config: config)
         mainLogger.info("Configured devices - EVChargers: \(deviceSetup.evChargers.count), PowerMeters: \(deviceSetup.powerMeters.count)")
         if deviceSetup.evChargers.isEmpty {

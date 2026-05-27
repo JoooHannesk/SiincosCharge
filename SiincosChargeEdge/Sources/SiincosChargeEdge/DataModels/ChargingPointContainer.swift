@@ -16,7 +16,7 @@
 /// device's unit ID. Instead, access charging points by explicitly comparing their `cpId` using
 /// the provided async subscript or `getChargingPoint(by:)`.
 struct ChargingPointContainer {
-    var chargingPoints: [ChargingPoint]
+    private var chargingPoints: [ChargingPoint]
 
     var count: Int {
         chargingPoints.count
@@ -26,6 +26,19 @@ struct ChargingPointContainer {
         get async {
             return await getChargingPoint(by: cpId)
         }
+    }
+
+    init(chargingPoints: [ChargingPoint]? = nil) {
+        if let chargingPoints {
+            self.chargingPoints = chargingPoints
+        } else {
+            self.chargingPoints = []
+        }
+    }
+
+    /// Add a new charging point
+    mutating func addChargingPoint(_ cp: ChargingPoint) {
+        self.chargingPoints.append(cp)
     }
 
     /// Get charging point by ID
