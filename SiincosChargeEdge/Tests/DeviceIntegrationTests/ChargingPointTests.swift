@@ -110,8 +110,10 @@ class ChargingPointTests {
         ]
         for chargingPoint in self.chargingPoints {
             for testValue in testValuesFrame {
-                let chargerAckCurrent = try await chargingPoint.setChargingCurrent(to: Measurement(value: testValue.0, unit: .amperes))
+                let chargerAckCurrent = try await chargingPoint.setChargingCurrentSetpoint(to: Measurement(value: testValue.0, unit: .amperes))
+                let chargerCurrentSetpoint = try await chargingPoint.chargingCurrentSetpoint
                 #expect(testValue.1 == chargerAckCurrent.value)
+                #expect(testValue.1 == chargerCurrentSetpoint.value)
             }
         }
     }

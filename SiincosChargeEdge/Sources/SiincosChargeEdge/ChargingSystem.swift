@@ -40,41 +40,101 @@ final class ChargingSystem {
         self.loadBalancedMaxCurrent = Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
     }
 
-    func getEvState(chargerUnitId: UInt8) -> EVState {
-        #warning("Implement")
-        return .unplugged
+    /// Get EV State
+    ///
+    /// Get EV plugged in state.
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: ``EVState``
+    func getEvState(chargingPointId: UInt8) async throws -> EVState {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let evState = try await chargingPoint?.evState
+        return evState ?? .unknown
     }
 
-    func getChargingState(chargerUnitId: UInt8) -> ChargerState {
-        #warning("Implement")
-        return .charging
+    /// Get Charging State
+    ///
+    /// Get EV charging state
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: ``ChargerState``
+    func getChargingState(chargingPointId: UInt8) async throws -> ChargerState {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let chargingState = try await chargingPoint?.chargingState
+        return chargingState ?? .unknown
     }
 
-    func getChargingPermission(chargerUnitId: UInt8) -> Status {
-        #warning("Implement")
-        return .disabled
+    /// Get Charging Permission
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Charging permission for given charging point ``Status``
+    func getChargingPermission(chargingPointId: UInt8) async -> Status {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let chargingPermission = await chargingPoint?.chargingPermission
+        return chargingPermission ?? .unknown
     }
 
-    func enableCharging(chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Set Charging Permission
+    ///
+    /// - Parameters:
+    ///    - chargingPermission: Charging permission either granted (`.enabled`) or denied (`.disabled`)
+    ///    - chargingPointId: ChargingPoint Id
+    /// - Returns: Actual charging permission returned by charging point for provided charging point id
+    func setChargingPermission(to chargingPermission: Status, for chargingPointId: UInt8) async throws -> Status {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let newChargingPermission = try await chargingPoint?.enableCharging()
+        return newChargingPermission ?? .unknown
     }
 
-    func disableCharging(chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Get Charging Current Setpoint
+    ///
+    /// Charging current setpoint currently active in ev charger
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Charging current setpoint for given charging point ``Measurement<UnitElectricCurrent>``
+    func getChargingCurrenSetpoint(chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let currentSetpoint = try await chargingPoint?.chargingCurrentSetpoint
+        return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
     }
 
-    func getChargingCurren(chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Set Charging Current Setpoint
+    ///
+    /// Transfer charging current setpoint to charging point
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Actual charging current setpoint for given charging point ``Measurement<UnitElectricCurrent>``
+    func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>, for chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: current)
+        return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
     }
 
-    func setChargingCurrent(to current: Measurement<UnitElectricCurrent>, for chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Get charging current
+    ///
+    /// Get realtime ev charging current for provided charging point id
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Realtime charging current for given charging point ``ElectricCurrent3PhaseGrid``
+    func getChargingCurrent(chargingPointId: UInt8) async throws -> ElectricCurrent3PhaseGrid {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let chargingCurrent = try await chargingPoint?.chargingCurrent
+        return chargingCurrent ?? ElectricCurrent3PhaseGrid()
     }
 
-    func getMeterReading(chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Get Meter Reading
+    ///
+    /// Get Power Meter for given ChargingPoint Id
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Meter reading for provided charging point
+    func getMeterReading(chargingPointId: UInt8) async throws -> Measurement<UnitEnergy> {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let meterReading = try await chargingPoint?.meterReading
+        return meterReading ?? Measurement(value: 0.0, unit: UnitEnergy.kilowattHours)
     }
 
+    /// Get Charging Power
     func getChargingPower(chargerUnitId: UInt8) {
         #warning("Implement")
     }

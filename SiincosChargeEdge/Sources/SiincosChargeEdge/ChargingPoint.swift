@@ -95,6 +95,16 @@ actor ChargingPoint {
     /// Refer to ``ChargingPoint/enableCharging()`` and ``ChargingPoint/disableCharging()``
     var chargingPermission: Status = .disabled
 
+    /// Charging Current Setpoint
+    ///
+    /// Actual charging current setpoint (or charging current limiter) which is
+    /// active for the charger
+    var chargingCurrentSetpoint: Measurement<UnitElectricCurrent> {
+        get async throws {
+            let chargingCurrentSetpoint = try await self.evCharger.getCurrentLimit()
+            return chargingCurrentSetpoint
+        }
+    }
 
     /// Power Meter Reading
     ///
@@ -188,7 +198,7 @@ actor ChargingPoint {
     ///
     /// - Parameter current: Limit charging to the given maximum current
     /// - Returns: Charging current setpoint accepted by device
-    func setChargingCurrent(to current: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
+    func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
         let chargerHardwareCurrentLimits = try await evCharger.getFixedCurrentLimits()
         let currentLimit = max(min(current, chargerHardwareCurrentLimits.maximal), chargerHardwareCurrentLimits.minimal)
         let currentLimitAcknowleged = try await evCharger.setCurrentLimit(to: currentLimit)
