@@ -73,7 +73,9 @@ class DeviceSetup {
     /// Initialze modbus rtu devices based on the `lineLenght` and
     /// `startAddress`.
     private func defineModbusRTUDeviceOnBus<T: ModbusRTUDevice>(deviceClient: ModbusRTUClient, lineLenght: UInt8, startAddress: UInt8 = 1, modelName: String) -> Array<T> {
+        // TODO: improve documentation
         var devices: [T] = []
+        // TODO: use closed range instead of half open range, this saves 1 line of code
         let upperBound = startAddress + lineLenght
         for uid in startAddress..<upperBound {
             print("UID: \(uid), Model Name: \(modelName)")
