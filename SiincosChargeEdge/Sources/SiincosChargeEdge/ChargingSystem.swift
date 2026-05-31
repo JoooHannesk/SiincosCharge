@@ -96,7 +96,7 @@ final class ChargingSystem {
     /// Charging current setpoint currently active in ev charger
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Charging current setpoint for given charging point ``Measurement<UnitElectricCurrent>``
+    /// - Returns: Charging current setpoint for given charging point
     func getChargingCurrenSetpoint(chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let currentSetpoint = try await chargingPoint?.chargingCurrentSetpoint
@@ -107,8 +107,10 @@ final class ChargingSystem {
     ///
     /// Transfer charging current setpoint to charging point
     ///
-    /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Actual charging current setpoint for given charging point ``Measurement<UnitElectricCurrent>``
+    /// - Parameters:
+    ///    - current: Maximum current setpoint allowed to draw from EV charging point
+    ///    - chargingPointId: ChargingPoint Id
+    /// - Returns: Actual charging current setpoint for given charging point
     func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>, for chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: current)
@@ -178,5 +180,4 @@ final class ChargingSystem {
         }
         return chargingPoints
     }
-
 }
