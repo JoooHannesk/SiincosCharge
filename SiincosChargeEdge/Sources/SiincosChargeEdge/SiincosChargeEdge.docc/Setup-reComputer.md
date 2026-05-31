@@ -7,6 +7,7 @@ This documentation is written for a reComputer R1124-10.
 2. Set Hostname: `siincoschargeedge`
 3. Set Username: `evchargermanager`
 4. Set Password: `solut2026AdvProdCharge`
+
 (Or set according to your needs.)
 
 ## Set Network settings

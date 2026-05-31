@@ -13,18 +13,109 @@ import Foundation
 @Suite("ChargingSystemTests")
 class ChargingSystemTests {
 
-    let systemConfig: DeviceConfig
+    let deviceConfig: DeviceConfig
     let chargingSystem: ChargingSystem
+    let startingCpId: UInt8 = 1
+    let allChargingPointIds: ClosedRange<UInt8>
 
     init() async throws {
-        systemConfig = try ComponentSupplier.getSystemConfig()
-        chargingSystem = try await ChargingSystem(config: systemConfig)
+        deviceConfig = try ComponentSupplier.getSystemConfig()
+        chargingSystem = try await ChargingSystem(config: deviceConfig)
+        allChargingPointIds = startingCpId...deviceConfig.lineLength
     }
 
     @Test("Test-Charging-System-Creation")
     func testChargingSystemCreation() async throws {
-        #expect(self.chargingSystem.chargingPointContainer.count == systemConfig.lineLength)
+        #expect(self.chargingSystem.chargingPointContainer.count == deviceConfig.lineLength)
+    }
 
+    @Test("Get-EV-Plugged-State")
+    func testGetEVPluggedState() async throws {
+        for cpId in allChargingPointIds {
+            print(cpId)
+            let result = try await self.chargingSystem.getEvState(chargingPointId: cpId)
+            #expect(result != .unknown)
+        }
+    }
+
+    @Test("Get-EV-Charging-State")
+    func testGetEVChargingState() async throws {
+        for cpId in allChargingPointIds {
+            let result = try await self.chargingSystem.getChargingState(chargingPointId: cpId)
+            #expect(result != .unknown)
+        }
+    }
+
+    @Test("Get-Charging-Permission")
+    func testGetChargingPermission() async throws {
+        for cpId in allChargingPointIds {
+            let result = await self.chargingSystem.getChargingPermission(chargingPointId: cpId)
+            #expect(result != .unknown)
+        }
+    }
+
+    @Test("Set-Charging-Permission")
+    func testSetChargingPermission() async throws {
+        for cpId in allChargingPointIds {
+            var result = try await self.chargingSystem.setChargingPermission(to: .enabled, for: cpId)
+            #expect(result == .enabled)
+            result = try await self.chargingSystem.setChargingPermission(to: .disabled, for: cpId)
+            #expect(result == .disabled)
+        }
+    }
+
+    @Test("Charging-Current-Setpoint")
+    func testChargingCurrentSetpoint() async throws {
+        let testValuesFrame = [
+            // (setpoint, expected)
+            (4.0, 6.0),
+            (6.0, 6.0),
+            (8.5, 8.0),
+            (10.0, 10.0),
+            (16.0, 16.0),
+            (18.0, 16.0),
+        ]
+
+        for cpId in allChargingPointIds {
+            for setExpected in testValuesFrame {
+                var result = try await self.chargingSystem.setChargingCurrentSetpoint(to: Measurement(value: setExpected.0, unit: UnitElectricCurrent.amperes), for: cpId)
+                #expect(result == Measurement(value: setExpected.1, unit: UnitElectricCurrent.amperes))
+                result = try await self.chargingSystem.getChargingCurrenSetpoint(chargingPointId: cpId)
+                #expect(result == Measurement(value: setExpected.1, unit: UnitElectricCurrent.amperes))
+            }
+        }
+    }
+
+    @Test("Actual-Charging-Current")
+    func testActualChargingCurrent() async throws {
+        for cpId in allChargingPointIds {
+            let result = try await self.chargingSystem.getChargingCurrent(chargingPointId: cpId)
+            #expect(result.currentL1 != nil)
+        }
+    }
+
+    @Test("Get-Meter-Reading")
+    func testGetMeterReading() async throws {
+        for cpId in allChargingPointIds {
+            let result = try await self.chargingSystem.getMeterReading(chargingPointId: cpId)
+            #expect(result.value > 0.0)
+        }
+    }
+
+    @Test("Get-Charging-Power")
+    func testGetChargingPower() async throws {
+        for cpId in allChargingPointIds {
+            let result = try await self.chargingSystem.getChargingPower(chargingPointId: cpId)
+            #expect(result.powerL1 != nil)
+        }
+    }
+
+    @Test("Get-Grid-Voltage")
+    func testGetGridVoltage() async throws {
+        for cpId in allChargingPointIds {
+            let result = try await self.chargingSystem.getGridVoltage(chargingPointId: cpId)
+            #expect(result.voltageL1 != nil && result.voltageL2 != nil && result.voltageL3 != nil)
+        }
     }
 
 }

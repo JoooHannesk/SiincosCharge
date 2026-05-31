@@ -82,8 +82,13 @@ final class ChargingSystem {
     /// - Returns: Actual charging permission returned by charging point for provided charging point id
     func setChargingPermission(to chargingPermission: Status, for chargingPointId: UInt8) async throws -> Status {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let newChargingPermission = try await chargingPoint?.enableCharging()
-        return newChargingPermission ?? .unknown
+        var newChargingPermission: Status = .unknown
+        if chargingPermission == .enabled {
+            newChargingPermission = try await chargingPoint?.enableCharging() ?? .unknown
+        } else if chargingPermission == .disabled {
+            newChargingPermission = try await chargingPoint?.disableCharging() ?? .unknown
+        }
+        return newChargingPermission
     }
 
     /// Get Charging Current Setpoint
@@ -112,7 +117,7 @@ final class ChargingSystem {
 
     /// Get charging current
     ///
-    /// Get realtime ev charging current for provided charging point id
+    /// Get realtime EV charging current for provided charging point id
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Realtime charging current for given charging point ``ElectricCurrent3PhaseGrid``
@@ -124,10 +129,10 @@ final class ChargingSystem {
 
     /// Get Meter Reading
     ///
-    /// Get Power Meter for given ChargingPoint Id
+    /// Get Power Meter reading for given charging point Id
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Meter reading for provided charging point
+    /// - Returns: Power Meter reading for provided charging point
     func getMeterReading(chargingPointId: UInt8) async throws -> Measurement<UnitEnergy> {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let meterReading = try await chargingPoint?.meterReading
@@ -135,18 +140,35 @@ final class ChargingSystem {
     }
 
     /// Get Charging Power
-    func getChargingPower(chargerUnitId: UInt8) {
-        #warning("Implement")
+    ///
+    /// Get realtime EV charging power for provided charging point id
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Realtime charging power for given charging point ``ElectricPower3PhaseGrid``
+    func getChargingPower(chargingPointId: UInt8) async throws -> ElectricPower3PhaseGrid {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let chargingPower = try await chargingPoint?.chargingPower
+        return chargingPower ?? ElectricPower3PhaseGrid(powerTotal: Measurement(value: 0.0, unit: UnitPower.watts))
     }
 
-    func getGridVoltage(chargerUnitId: UInt8) {
-        #warning("Implement")
+    /// Get Grid Voltage
+    ///
+    /// Get realtime grid voltage for provided charging point id
+    ///
+    /// - Parameter chargingPointId: ChargingPoint Id
+    /// - Returns: Realtime voltage for given charging point ``ElectricVoltage3PhaseGrid``
+    func getGridVoltage(chargingPointId: UInt8) async throws -> ElectricVoltage3PhaseGrid {
+        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        let gridVoltage = try await chargingPoint?.gridVoltage
+        return gridVoltage ?? ElectricVoltage3PhaseGrid()
     }
 
     /// Collect Charging Points
     ///
-    /// Take ``DeviceConfig`` and collect the charging points accordingly
-    /// - Returns: a ``ChargingPointContainer`` instance
+    /// Take ``DeviceConfig`` and collect the charging points accordingly.
+    ///
+    /// - Parameter deviceConfig: Device config containing the charging point information
+    /// - Returns: a ``ChargingPointContainer`` instance containing all charging points described in the given ``DeviceConfig``
     static func collectChargingPoints(basedOn deviceConfig: DeviceConfig) async throws -> ChargingPointContainer {
         var chargingPoints = ChargingPointContainer()
         let devices = try ComponentSupplier.getDevices(for: deviceConfig)
