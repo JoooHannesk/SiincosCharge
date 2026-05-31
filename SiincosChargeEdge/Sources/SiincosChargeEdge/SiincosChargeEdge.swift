@@ -5,7 +5,6 @@
 //  Created by Johannes Kinzig on 23.03.26.
 //
 
-import ModbusSerial
 import Foundation
 
 @main
