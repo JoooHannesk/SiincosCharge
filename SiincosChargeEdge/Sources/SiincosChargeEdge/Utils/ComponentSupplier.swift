@@ -14,11 +14,11 @@ enum ComponentSupplier {
     ///
     /// Load system configuration from file and return a configuration instance.
     /// - Returns: System configuration as type ``SystemConfig``
+    /// - Throws: ``SystemError`` in case the config cannot be loaded.
     static func getSystemConfig() throws(SystemError) -> SystemConfig {
         let resourceLoader = JsonFileResourceLoader()
         let path = AppConstants.configFileLocation
-        if let systemConfig: SystemConfig = resourceLoader.load(fromFile: path)
-        {
+        if let systemConfig: SystemConfig = resourceLoader.load(fromFile: path) {
             mainLogger.info("Loaded system configuration from \(path)")
             return systemConfig
         } else {
