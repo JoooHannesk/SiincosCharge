@@ -22,14 +22,3 @@ enum AppConstants {
     static let mainLoggerLabel = "SiincosChargeEdge"
     static let logFolderLocation = "/opt/SiincosChargeEdge/Logs/"
 }
-
-
-/// MQTT Topics
-///
-/// Topics required to communicate with the MQTT server, e.g.
-/// topic definitions for RPCs, attributes and telemetry
-enum MQTTTopics {
-    static let telemetryTopic = "v1/devices/me/telemetry"
-    static let rpcTopic = "v1/devices/me/rpc/request/+"
-    static let attributeTopic = "v1/devices/me/attributes"
-}
