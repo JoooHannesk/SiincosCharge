@@ -115,6 +115,7 @@ final class ChargingSystem {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: current)
         return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
+        // TODO: ensure that charging current load balancing / load limitting is done properly!
     }
 
     /// Get charging current

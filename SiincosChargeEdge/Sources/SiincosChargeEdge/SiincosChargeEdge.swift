@@ -10,6 +10,9 @@ import Foundation
 @main
 struct SiincosChargeEdge {
     static func main() async {
-        print("Hello, SiincosChargeEdge!")
+
+        let siincosChargeEdge = await ChargingController()
+        await siincosChargeEdge.run()
+        
     }
 }
