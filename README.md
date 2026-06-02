@@ -32,7 +32,7 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 
 *   **SiincosCharge Edge (This Repo):** The lightweight open-source firmware running locally on your edge device (e.g., Raspberry Pi). It communicates directly with your EV chargers via Modbus (TCP/RTU) and securely pushes telemetry data to your private backend.
 *   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains all the necessary configuration assets, documentation, device profiles and pre-built IoT dashboards to get your private cloud instance up and running effortlessly.
-*   **Native Premium App (Optional, coming soon):** Our native iOS app (Android coming soon) that hooks directly into your private instance, adding improved usability for mobile usage and advanced reporting for individual users such as monthly charging session overview.
+*   **Native App (Optional, coming soon):** Our native iOS app (Android coming soon) that hooks directly into your private instance, adding improved usability for mobile devices including advanced reporting and statistics.
 
 ---
 
