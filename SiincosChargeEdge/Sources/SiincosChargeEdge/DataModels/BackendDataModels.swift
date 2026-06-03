@@ -6,6 +6,9 @@
 //
 
 
+import Logging
+
+
 /// Backend Controller
 ///
 /// Backend Controller protocol predefining functionality which is exposed to
@@ -16,6 +19,9 @@ protocol BackendController {
     ///
     /// Charging controller responsible fot managing the local charging system
     var chargingController: ChargingController { get }
+
+    /// Logger
+    var logger: Logger { get }
 
     init(chargingController: ChargingController)
 

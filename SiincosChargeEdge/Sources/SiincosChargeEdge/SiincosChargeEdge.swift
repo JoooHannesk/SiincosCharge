@@ -14,6 +14,9 @@ struct SiincosChargeEdge {
         let siincosChargeEdge = await ChargingController()
         await siincosChargeEdge.startup()
         await siincosChargeEdge.run()
-        
+
+        while true {
+            
+        }
     }
 }

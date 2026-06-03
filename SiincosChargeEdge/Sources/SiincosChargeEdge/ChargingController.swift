@@ -38,11 +38,10 @@ actor ChargingController {
         do {
             try self.backend?.startup()
         } catch {
+            self.logger.error("\(error.localizedDescription)", metadata: ["error": "\(error)"])
             self.shutdown()
         }
-
         self.updateChargingSystemInformation()
-
     }
 
     /// Shutdown

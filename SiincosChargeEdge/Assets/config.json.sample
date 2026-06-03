@@ -8,7 +8,7 @@
     "lineMaxCurrentA": 16,
     "cloudHost": "my-iot-cloud-host.com",
     "cloudPort": 8883,
-    "cloudCACertPath": "/opt/SiincosChargeEdge/my-thingsboard-ca.cert.pem",
+    "cloudCACertPath": "/opt/SiincosChargeEdge/Assets/my-thingsboard-ca.cert.pem",
     "cloudClientId": "ClientId",
     "cloudUsername": "username",
     "cloudPassword": "password"

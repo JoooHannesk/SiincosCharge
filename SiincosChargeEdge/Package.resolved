@@ -1,5 +1,5 @@
 {
-  "originHash" : "b32c493609b86c0db475d686da03ed3c8f1c84b041e24ab87a7816aea074a411",
+  "originHash" : "33a9ecfe381bf0e4026121ae3a8caa0243604e5bfea9ec50a6149360a55b4233",
   "pins" : [
     {
       "identity" : "modbus-swift",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7130151da9f7e4c20291995a8b18f6452713d465",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "mqtt-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server-community/mqtt-nio.git",
+      "state" : {
+        "revision" : "91d357875eabd63c55eee40fc6b85bc1f00839ed",
+        "version" : "2.13.0"
       }
     },
     {
@@ -74,6 +83,15 @@
       }
     },
     {
+      "identity" : "swift-nio-transport-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-transport-services.git",
+      "state" : {
+        "revision" : "67787bb645a5e67d2edcdfbe48a216cc549222d5",
+        "version" : "1.28.0"
+      }
+    },
+    {
       "identity" : "swift-service-lifecycle",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/swift-service-lifecycle.git",
@@ -89,6 +107,15 @@
       "state" : {
         "revision" : "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
         "version" : "1.6.4"
+      }
+    },
+    {
+      "identity" : "tinytbdeviceclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoooHannesk/TinyTBDeviceClient.git",
+      "state" : {
+        "revision" : "28a8ce8c72296c5708268b984d3e45304a61f7c3",
+        "version" : "0.0.3"
       }
     }
   ],
