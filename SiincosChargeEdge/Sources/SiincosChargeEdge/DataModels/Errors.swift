@@ -18,6 +18,7 @@ enum SystemError: Error {
     case deviceConfigurationError
     case unitIdMissmatch
     case unsupportedDevice
+    case mqttCommunicationError
 }
 
 
@@ -40,6 +41,8 @@ extension SystemError: LocalizedError {
             return "Charger and power meter unit ID missmatch! Aborting!"
         case .unsupportedDevice:
             return "Provided device not supported! Aborting!"
+        case .mqttCommunicationError:
+            return "Error communicating with the MQTT broker!. Aborting!"
         }
     }
 }
