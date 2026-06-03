@@ -31,7 +31,7 @@ protocol BackendController {
     /// Shutdown Backend Controller
     ///
     /// Shutdown Backend Controller gracefully
-    func shutdown()
+    func shutdown() throws
 
     /// Update Charging System Status
     ///

@@ -38,7 +38,7 @@ actor ChargingController {
         do {
             try self.backend?.startup()
         } catch {
-            self.logger.error("\(error.localizedDescription)", metadata: ["error": "\(error)"])
+            self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
             self.shutdown()
         }
         self.updateChargingSystemInformation()
@@ -48,7 +48,7 @@ actor ChargingController {
     ///
     /// Shutdown gracefully
     func shutdown() {
-        self.backend?.shutdown()
+        try? self.backend?.shutdown()
         ChargingController.shutdown()
     }
 

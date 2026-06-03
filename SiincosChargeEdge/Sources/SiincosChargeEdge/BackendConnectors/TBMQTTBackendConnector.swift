@@ -53,7 +53,8 @@ class ThingsBoardBackend: BackendController {
         )
     }
     
-    func shutdown() {
+    func shutdown() throws {
+        try self.eventLoopGroup.syncShutdownGracefully()
         // TODO: implement correctly
         print("Shuttting Down!")
     }
