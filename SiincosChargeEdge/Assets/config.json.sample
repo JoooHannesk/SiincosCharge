@@ -1,0 +1,15 @@
+{
+    "systemId": "SampleChargingLocation",
+    "chargerModel": "MockCharger",
+    "chargerBus": "/dev/tty.usbserial-AB0O6Z7W",
+    "meterModel": "Nope",
+    "meterBus": "/dev/tty.usbserial-AB0O6Z89",
+    "lineLength": 3,
+    "lineMaxCurrentA": 16,
+    "cloudHost": "my-iot-cloud-host.com",
+    "cloudPort": 8883,
+    "cloudCACertPath": "/opt/SiincosChargeEdge/my-thingsboard-ca.cert.pem",
+    "cloudClientId": "ClientId",
+    "cloudUsername": "username",
+    "cloudPassword": "password"
+}
