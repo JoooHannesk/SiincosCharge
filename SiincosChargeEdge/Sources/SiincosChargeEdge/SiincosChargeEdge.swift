@@ -12,6 +12,7 @@ struct SiincosChargeEdge {
     static func main() async {
 
         let siincosChargeEdge = await ChargingController()
+        await siincosChargeEdge.startup()
         await siincosChargeEdge.run()
         
     }

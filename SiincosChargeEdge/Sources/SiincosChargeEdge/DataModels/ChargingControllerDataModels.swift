@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Charging Session Data Model
 struct ChargingSession: Hashable {
 
     /// Charging Session Id
@@ -45,9 +46,28 @@ struct ChargingSession: Hashable {
     var chargingCurrent: Measurement<UnitElectricCurrent>
 }
 
-
+/// Charging Session Status
 enum ChargingSessionStatus {
     case running
     case finished
     case paused
+}
+
+/// Charging System Information Data Model
+struct ChargingSystemInformation: Hashable, CustomStringConvertible {
+    let appVersion: String
+    let chargerModel: SupportedCharger
+    let meterModel: SupportedPowerMeter
+    let chargingPoints: UInt8
+    let lineMaxCurrentA: UInt8
+
+    var description: String {
+        return """
+            App Version: \(appVersion)
+            Charger Model: \(chargerModel.rawValue)
+            Power Meter Model: \(meterModel.rawValue)
+            Charging Points: \(chargingPoints)
+            Line Current (A): \(lineMaxCurrentA)
+            """
+    }
 }

@@ -16,13 +16,14 @@ enum MQTTTopics {
 }
 
 class ThingsBoardBackend: BackendController {
+    
     let chargingController: ChargingController
 
     required init(chargingController: ChargingController) {
         self.chargingController = chargingController
     }
 
-    func startup() {
+    func startup() throws {
         // TODO: implement correctly
         print("Starting up!")
     }
@@ -31,6 +32,13 @@ class ThingsBoardBackend: BackendController {
         // TODO: implement correctly
         print("Shuttting Down!")
     }
-    
+
+    func updateChargingSystemStatus() {
+        // TODO: implement
+    }
+
+    func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
+        print(sysInfo)
+    }
 
 }

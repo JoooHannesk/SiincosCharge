@@ -20,11 +20,21 @@ protocol BackendController {
     init(chargingController: ChargingController)
 
     /// Start Backend Controller
-    func startup()
+    func startup() throws
 
     /// Shutdown Backend Controller
     ///
     /// Shutdown Backend Controller gracefully
     func shutdown()
 
+    /// Update Charging System Status
+    ///
+    /// Propagate charging system status to backend
+    func updateChargingSystemStatus()
+
+    /// Update Charging System Information
+    ///
+    /// Propagate charging system information to backend
+    func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation)
 }
+

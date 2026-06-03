@@ -5,12 +5,14 @@
 //  Created by Johannes Kinzig on 31.05.26.
 //
 
+import Foundation
+
 
 actor ChargingController {
 
     let systemConfig: SystemConfig
     var backend: BackendController? = nil
-    let chargingSystem: ChargingSystem? = nil
+    var chargingSystem: ChargingSystem? = nil
 
     //var error: SystemError? = nil
 
@@ -22,8 +24,33 @@ actor ChargingController {
     init() async {
         systemConfig = Self.loadSystemConfig()
         backend = ThingsBoardBackend(chargingController: self)
+
         //chargingSystem = await ChargingSystem(config: systemConfig as DeviceConfig)
-        print("Hello, I am SiincosChargeEdge charging controller!")
+
+    }
+
+    /// Start up
+    ///
+    /// Load required assets and log errors. In case of critical errors, shut down.
+    func startup() {
+        print(LogMessages.welcomMsg)
+        self.logger.info("\(LogMessages.welcomMsg)")
+        do {
+            try self.backend?.startup()
+        } catch {
+            self.shutdown()
+        }
+
+        self.updateChargingSystemInformation()
+
+    }
+
+    /// Shutdown
+    ///
+    /// Shutdown gracefully
+    func shutdown() {
+        self.backend?.shutdown()
+        ChargingController.shutdown()
     }
 
     /// Run
@@ -72,18 +99,33 @@ actor ChargingController {
 
     /// Update Charging System Status
     ///
-    /// Update charging system status information in backend. This includes all charging points
-    /// with their respective properties.
+    /// Update charging system status information in backend by
+    /// collecting all charging point status information.
     func updateChargingSystemStatus() {
         // TODO: implement
     }
 
-    /// Update Application Status
+    /// Update Charging System Information
     ///
-    /// Update application information in backend. This includes: app version
-    func updateApplicationInformation() {
-        // TODO: implement
+    /// Update charging system information in backend. This includes:
+    /// - app version
+    /// - ev charger model
+    /// - power meter model
+    /// - total number of charging points
+    func updateChargingSystemInformation() {
+        let chargingSystemInformation = ChargingSystemInformation(
+            appVersion: AppConstants.version,
+            chargerModel: self.systemConfig.chargerModel,
+            meterModel: self.systemConfig.meterModel,
+            chargingPoints: self.systemConfig.lineLength,
+            lineMaxCurrentA: self.systemConfig.lineMaxCurrentA)
+        self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")
+        self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)
     }
+
+    // MARK: - static methods
+
+    static let logger = ComponentSupplier.mainLogger
 
     /// Load System Config
     ///
@@ -94,11 +136,18 @@ actor ChargingController {
         do {
             systemConfig = try ComponentSupplier.getSystemConfig()
         } catch {
-            let logger = ComponentSupplier.mainLogger
-            logger.critical("Could not get system config.", metadata: ["error": "\(error)"])
-            fatalError("Could not get system config.")
+            logger.critical("\(String(describing: error.localizedDescription))", metadata: ["error": "\(error)"])
+            fatalError("\(String(describing: error.localizedDescription))")
         }
         return systemConfig
+    }
+
+    /// Shutdown
+    ///
+    /// Shutdown system gracefully
+    static private func shutdown() {
+        logger.info("\(LogMessages.goodbyMsg)")
+        exit(0)
     }
 
 }
