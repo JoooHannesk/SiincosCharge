@@ -33,12 +33,12 @@ actor ChargingPointContainer {
         }
     }
 
-    init(chargingPoints: [UInt8: ChargingPoint]? = nil, chargingTasks: [UInt8: ChargingTask]? = nil) {
+    init(chargingPoints: [UInt8: ChargingPoint]? = nil) {
         if let chargingPoints {
             self.chargingPoints = chargingPoints
-        }
-        if let chargingTasks {
-            self.chargingTasks = chargingTasks
+            self.chargingTasks = Dictionary(uniqueKeysWithValues: chargingPoints.map { (cpId, _) in
+                (cpId, ChargingTask(cpId: cpId))
+            })
         }
     }
 

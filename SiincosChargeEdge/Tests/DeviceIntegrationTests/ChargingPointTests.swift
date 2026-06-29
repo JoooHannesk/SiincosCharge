@@ -18,7 +18,6 @@ import Foundation
 class ChargingPointTests {
 
     var chargingPoints: [UInt8: ChargingPoint] = [:]
-    var chargingTasks: [UInt8: ChargingTask] = [:]
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
@@ -27,7 +26,6 @@ class ChargingPointTests {
             let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
             #expect(await chargingPoint.cpId == evCharger.unitId)
             await self.chargingPoints[chargingPoint.cpId] = chargingPoint
-            await self.chargingTasks[chargingPoint.cpId] = ChargingTask(cpId: chargingPoint.cpId)
         }
     }
 
@@ -41,9 +39,9 @@ class ChargingPointTests {
         #expect(error == .unitIdMissmatch)
     }
 
-    @Test("Test-Charging-Point-Container-Element-Access")
+    @Test("Test-Charging-Point-Container-Subscript-Access")
     func chargingPointContainer() async throws {
-        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints, chargingTasks: self.chargingTasks)
+        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
         #expect(await chargingPointContainer.count == self.chargingPoints.count)
         for (_, chargingPoint) in self.chargingPoints {
             let cpId = await chargingPoint.cpId
@@ -55,7 +53,15 @@ class ChargingPointTests {
             let chargingPointContainerChargingTask = await chargingPointContainer[cpId].chargingTask
             let chargingPointContainerChargingTaskChargingPointId = chargingPointContainerChargingTask?.cpId
             #expect(cpId == chargingPointContainerChargingTaskChargingPointId)
+        }
+    }
 
+    @Test("Test-Charging-Task-Container-Subscript")
+    func chargingTaskContainer() async throws {
+        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
+        #expect(await chargingPointContainer.chargingTasks.count == self.chargingPoints.count)
+        for (cpId, chargingTask) in await chargingPointContainer.chargingTasks {
+            #expect(cpId == chargingTask.cpId)
         }
     }
 
