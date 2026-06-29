@@ -8,6 +8,11 @@
 import Foundation
 
 /// Charging Session Data Model
+///
+/// Charging session data model which is maintained throughout an ongoing charging session
+/// for a single charging point.
+/// When charging has finished, this ``ChargingSession`` is used as a *Charging Session Receipt*
+/// in the backend to maintaing history of all charging sessions.
 struct ChargingSession: Hashable, Codable {
 
     /// Charging Session Id
