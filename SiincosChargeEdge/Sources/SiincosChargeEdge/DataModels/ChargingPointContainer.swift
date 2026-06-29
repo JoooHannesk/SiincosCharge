@@ -70,12 +70,7 @@ actor ChargingPointContainer {
     /// - Parameter cpId: Charging Point Id
     /// - Returns: the requested ``ChargingTask`` (if no charging point with the given `cpId` exists, nil is returned)
     func getChargingTask(by cpId: UInt8) async -> ChargingTask? {
-        for ct in chargingTasks {
-            if ct.cpId == cpId {
-                return ct
-            }
-        }
-        return nil
+        return chargingTasks.first { $0.cpId == cpId }
     }
 
 }

@@ -18,6 +18,7 @@ import Foundation
 class ChargingPointTests {
 
     var chargingPoints: [ChargingPoint] = []
+    var chargingTasks: [ChargingTask] = []
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
@@ -26,6 +27,7 @@ class ChargingPointTests {
             let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
             #expect(await chargingPoint.cpId == evCharger.unitId)
             self.chargingPoints.append(chargingPoint)
+            await self.chargingTasks.append(ChargingTask(cpId: chargingPoint.cpId))
         }
     }
 
@@ -41,13 +43,19 @@ class ChargingPointTests {
 
     @Test("Test-Charging-Point-Container-Element-Access")
     func chargingPointContainer() async throws {
-        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
+        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints, chargingTasks: self.chargingTasks)
         #expect(await chargingPointContainer.count == self.chargingPoints.count)
         for chargingPoint in self.chargingPoints {
             let cpId = await chargingPoint.cpId
+
             let chargingPointContainerChargingPoint = await chargingPointContainer[cpId].chargingPoint
             let chargingPointContainerChargingPointId = await chargingPointContainerChargingPoint?.cpId
             #expect(cpId == chargingPointContainerChargingPointId)
+
+            let chargingPointContainerChargingTask = await chargingPointContainer[cpId].chargingTask
+            let chargingPointContainerChargingTaskChargingPointId = chargingPointContainerChargingTask?.cpId
+            #expect(cpId == chargingPointContainerChargingTaskChargingPointId)
+
         }
     }
 
