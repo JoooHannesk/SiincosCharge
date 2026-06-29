@@ -14,7 +14,7 @@ struct MockCharger: EVCharger {
     let modelName: SupportedCharger
 
     func setupConfig() async throws {
-        print("Config Setup completed!")
+        print("MockCharger: Config Setup completed!")
     }
     
     func getChargerState() async throws -> ChargerState {

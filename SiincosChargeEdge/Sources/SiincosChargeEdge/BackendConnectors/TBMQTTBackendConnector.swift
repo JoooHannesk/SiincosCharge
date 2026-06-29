@@ -59,14 +59,26 @@ class ThingsBoardBackend: BackendController {
         print("Shuttting Down!")
     }
 
-    func updateChargingSystemStatus() {
-        // TODO: implement
+    func updateChargingSystemStatus(with sysStatus: ChargingSystemStatus) {
+        // TODO: implement correctly
+        // store as attributes in TB, each is a single attribute
+        print(sysStatus)
     }
 
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
         // TODO: implement correctly
         // store as attributes in TB, each is a single attribute
         print(sysInfo)
+    }
+
+    func updateChargingSystemError(with sysError: SystemError?) {
+        // TODO: implement correctly
+        // store as attributes in TB, each is a single attribute
+        if let sysError {
+            print(sysError)
+        } else {
+            print("no error")
+        }
     }
 
     // MARK: - private methods

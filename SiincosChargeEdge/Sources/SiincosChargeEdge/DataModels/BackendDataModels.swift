@@ -36,11 +36,16 @@ protocol BackendController {
     /// Update Charging System Status
     ///
     /// Propagate charging system status to backend
-    func updateChargingSystemStatus()
+    func updateChargingSystemStatus(with sysStatus: ChargingSystemStatus)
 
     /// Update Charging System Information
     ///
     /// Propagate charging system information to backend
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation)
+
+    /// Update Charging System Error
+    ///
+    /// Propagate system error to backend
+    func updateChargingSystemError(with sysError: SystemError?)
 }
 

@@ -24,24 +24,23 @@ actor ChargingController {
     init() async {
         systemConfig = Self.loadSystemConfig()
         backend = ThingsBoardBackend(chargingController: self)
-
-        //chargingSystem = await ChargingSystem(config: systemConfig as DeviceConfig)
-
     }
 
     /// Start up
     ///
     /// Load required assets and log errors. In case of critical errors, shut down.
-    func startup() {
+    func startup() async {
         print(LogMessages.welcomMsg)
         self.logger.info("\(LogMessages.welcomMsg)")
         do {
+            try self.chargingSystem = await ChargingSystem(config: systemConfig as DeviceConfig)
             try self.backend?.startup()
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
             self.shutdown()
         }
         self.updateChargingSystemInformation()
+        await self.updateChargingSystemStatus()
     }
 
     /// Shutdown
@@ -100,8 +99,31 @@ actor ChargingController {
     ///
     /// Update charging system status information in backend by
     /// collecting all charging point status information.
-    func updateChargingSystemStatus() {
-        // TODO: implement
+    func updateChargingSystemStatus() async {
+        do {
+            if let cps = await chargingSystem?.chargingPointContainer.chargingPoints {
+                for cp in cps {
+                    let chargingSystemStatus = ChargingSystemStatus(
+                        cpId: await cp.cpId,
+                        loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
+                        chargingState: try await cp.chargingState,
+                        evState: try await cp.evState,
+                        chargingPermission: await cp.chargingPermission,
+                        chargingCurrentSetpoint: try await cp.chargingCurrentSetpoint,
+                        meterReading: try await cp.meterReading,
+                        chargingCurrent: try await cp.chargingCurrent,
+                        chargingPower: try await cp.chargingPower,
+                        gridVoltage: try await cp.gridVoltage
+                    )
+                    self.backend?.updateChargingSystemStatus(with: chargingSystemStatus)
+                    self.backend?.updateChargingSystemError(with: nil)
+                }
+            }
+        } catch {
+            let sysError = error as? SystemError
+            self.backend?.updateChargingSystemError(with:sysError)
+            logger.error("\(String(describing: error.localizedDescription))", metadata: ["error": "\(error)"])
+        }
     }
 
     /// Update Charging System Information
@@ -111,6 +133,7 @@ actor ChargingController {
     /// - ev charger model
     /// - power meter model
     /// - total number of charging points
+    /// - max. installation line current (amperes)
     func updateChargingSystemInformation() {
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,

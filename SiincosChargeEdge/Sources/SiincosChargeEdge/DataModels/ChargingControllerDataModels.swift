@@ -58,6 +58,14 @@ enum ChargingSessionStatus: String, Codable {
     case paused
 }
 
+/// Charging Task
+///
+/// A charging task which is defined for each charging point
+struct ChargingTask {
+    let cpId: UInt8
+    var chargingSession: ChargingSession?
+}
+
 /// Charging System Information Data Model
 struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let appVersion: String
@@ -77,10 +85,31 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     }
 }
 
-/// Charging Task
-///
-/// A charging task which is defined for each charging point
-struct ChargingTask {
+/// Charging System Status Data Model
+struct ChargingSystemStatus: Hashable, CustomStringConvertible, Codable {
     let cpId: UInt8
-    var chargingSession: ChargingSession?
+    let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
+    let chargingState: ChargerState
+    let evState: EVState
+    let chargingPermission: Status
+    let chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
+    let meterReading: Measurement<UnitEnergy>
+    let chargingCurrent: ElectricCurrent3PhaseGrid
+    let chargingPower: ElectricPower3PhaseGrid
+    let gridVoltage: ElectricVoltage3PhaseGrid
+
+    var description: String {
+        return """
+            Charging Point ID: \(self.cpId)
+            Load Balanced max. Current: \(loadBalancedMaxCurrent)
+            Charging State: \(chargingState)
+            EV State: \(evState)
+            Charging: \(chargingPermission)
+            Charging Current (Setpoint - A): \(chargingCurrentSetpoint)
+            Meter Reading (kWh): \(meterReading)
+            Charging Current (Real - A): \(chargingCurrent)
+            Charging Power (Real - kW): \(chargingPower)
+            Grid Voltage (Real – V/AC): \(gridVoltage)
+            """
+    }
 }

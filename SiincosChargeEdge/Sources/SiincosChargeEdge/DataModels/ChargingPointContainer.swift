@@ -16,8 +16,8 @@
 /// device's unit ID. Instead, access charging points by explicitly comparing their `cpId` using
 /// the provided async subscript or `getChargingPoint(by:)`.
 actor ChargingPointContainer {
-    private var chargingPoints: [ChargingPoint] = []
-    private var chargingTasks: [ChargingTask] = []
+    private(set) var chargingPoints: [ChargingPoint] = []
+    private(set) var chargingTasks: [ChargingTask] = []
 
     var count: Int {
         chargingPoints.count
