@@ -42,10 +42,10 @@ class ChargingPointTests {
     @Test("Test-Charging-Point-Container-Element-Access")
     func chargingPointContainer() async throws {
         let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
-        #expect(chargingPointContainer.count == self.chargingPoints.count)
+        #expect(await chargingPointContainer.count == self.chargingPoints.count)
         for chargingPoint in self.chargingPoints {
             let cpId = await chargingPoint.cpId
-            let chargingPointContainerChargingPoint = await chargingPointContainer[cpId]
+            let chargingPointContainerChargingPoint = await chargingPointContainer[cpId].chargingPoint
             let chargingPointContainerChargingPointId = await chargingPointContainerChargingPoint?.cpId
             #expect(cpId == chargingPointContainerChargingPointId)
         }

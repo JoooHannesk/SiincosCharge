@@ -64,6 +64,8 @@ class ThingsBoardBackend: BackendController {
     }
 
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
+        // TODO: implement correctly
+        // store as attributes in TB, each is a single attribute
         print(sysInfo)
     }
 

@@ -76,3 +76,11 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
             """
     }
 }
+
+/// Charging Task
+///
+/// A charging task which is defined for each charging point
+struct ChargingTask {
+    let cpId: UInt8
+    var chargingSession: ChargingSession?
+}

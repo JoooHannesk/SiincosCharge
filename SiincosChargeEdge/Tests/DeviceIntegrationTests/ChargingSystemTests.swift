@@ -26,7 +26,7 @@ class ChargingSystemTests {
 
     @Test("Test-Charging-System-Creation")
     func testChargingSystemCreation() async throws {
-        #expect(self.chargingSystem.chargingPointContainer.count == deviceConfig.lineLength)
+        #expect(await self.chargingSystem.chargingPointContainer.count == deviceConfig.lineLength)
     }
 
     @Test("Get-EV-Plugged-State")

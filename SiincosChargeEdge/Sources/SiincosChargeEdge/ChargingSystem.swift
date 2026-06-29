@@ -173,11 +173,11 @@ final class ChargingSystem {
     /// - Parameter deviceConfig: Device config containing the charging point information
     /// - Returns: a ``ChargingPointContainer`` instance containing all charging points described in the given ``DeviceConfig``
     static func collectChargingPoints(basedOn deviceConfig: DeviceConfig) async throws -> ChargingPointContainer {
-        var chargingPoints = ChargingPointContainer()
+        let chargingPoints = ChargingPointContainer()
         let devices = try ComponentSupplier.getDevices(for: deviceConfig)
         for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
             let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
-            chargingPoints.addChargingPoint(chargingPoint)
+            await chargingPoints.addChargingPoint(chargingPoint)
         }
         return chargingPoints
     }
