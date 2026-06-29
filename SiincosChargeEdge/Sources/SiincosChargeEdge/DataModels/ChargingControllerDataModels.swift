@@ -58,14 +58,6 @@ enum ChargingSessionStatus: String, Codable {
     case paused
 }
 
-/// Charging Task
-///
-/// A charging task which is defined for each charging point
-struct ChargingTask {
-    let cpId: UInt8
-    var chargingSession: ChargingSession?
-}
-
 /// Charging System Information Data Model
 struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let appVersion: String

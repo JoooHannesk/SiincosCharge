@@ -17,7 +17,7 @@ import Foundation
 @Suite("Charging-Point-Tests", .serialized)
 class ChargingPointTests {
 
-    var chargingPoints: [UInt8: ChargingPoint] = [:]
+    var chargingPoints: [ChargingPoint] = []
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
@@ -25,7 +25,7 @@ class ChargingPointTests {
         for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
             let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
             #expect(await chargingPoint.cpId == evCharger.unitId)
-            await self.chargingPoints[chargingPoint.cpId] = chargingPoint
+            self.chargingPoints.append(chargingPoint)
         }
     }
 
@@ -41,33 +41,26 @@ class ChargingPointTests {
 
     @Test("Test-Charging-Point-Container-Subscript-Access")
     func chargingPointContainer() async throws {
-        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
+        let chargingPointContainer = await ChargingPointContainer(chargingPoints: self.chargingPoints)
         #expect(await chargingPointContainer.count == self.chargingPoints.count)
-        for (_, chargingPoint) in self.chargingPoints {
+        for chargingPoint in self.chargingPoints {
             let cpId = await chargingPoint.cpId
 
             let chargingPointContainerChargingPoint = await chargingPointContainer[cpId].chargingPoint
             let chargingPointContainerChargingPointId = await chargingPointContainerChargingPoint?.cpId
             #expect(cpId == chargingPointContainerChargingPointId)
-
-            let chargingPointContainerChargingTask = await chargingPointContainer[cpId].chargingTask
-            let chargingPointContainerChargingTaskChargingPointId = chargingPointContainerChargingTask?.cpId
-            #expect(cpId == chargingPointContainerChargingTaskChargingPointId)
         }
     }
 
     @Test("Test-Charging-Task-Container-Subscript")
     func chargingTaskContainer() async throws {
-        let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints)
-        #expect(await chargingPointContainer.chargingTasks.count == self.chargingPoints.count)
-        for (cpId, chargingTask) in await chargingPointContainer.chargingTasks {
-            #expect(cpId == chargingTask.cpId)
-        }
+        let chargingPointContainer = await ChargingPointContainer(chargingPoints: self.chargingPoints)
+        // TODO: implement - add two charging tasks and get them out again. 1: using subscript access; 2: using method access
     }
 
     @Test("Test-Charging-System-Properties")
     func chargingSystemProperties() async throws {
-        for (_, chargingPoint) in chargingPoints {
+        for chargingPoint in chargingPoints {
             let chargingState = try await chargingPoint.chargingState
             #expect(chargingState != .unknown)
             let pluggedState = try await chargingPoint.evState
@@ -95,7 +88,7 @@ class ChargingPointTests {
 
     @Test("Enable-Charging")
     func enableCharging() async throws {
-        for (_, chargingPoint) in self.chargingPoints {
+        for chargingPoint in self.chargingPoints {
             let charging = try await chargingPoint.enableCharging()
             #expect(charging == .enabled)
             #expect(await chargingPoint.chargingPermission == .enabled)
@@ -104,7 +97,7 @@ class ChargingPointTests {
 
     @Test("Disable-Charging")
     func disableCharging() async throws {
-        for (_, chargingPoint) in self.chargingPoints {
+        for chargingPoint in self.chargingPoints {
             let charging = try await chargingPoint.disableCharging()
             #expect(charging == .disabled)
             #expect(await chargingPoint.chargingPermission == .disabled)
@@ -122,7 +115,7 @@ class ChargingPointTests {
             (16.0, 16.0),
             (18.0, 16.0),
         ]
-        for (_, chargingPoint) in self.chargingPoints {
+        for chargingPoint in self.chargingPoints {
             for testValue in testValuesFrame {
                 let chargerAckCurrent = try await chargingPoint.setChargingCurrentSetpoint(to: Measurement(value: testValue.0, unit: .amperes))
                 let chargerCurrentSetpoint = try await chargingPoint.chargingCurrentSetpoint
