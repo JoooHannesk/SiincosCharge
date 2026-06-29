@@ -17,8 +17,8 @@ import Foundation
 @Suite("Charging-Point-Tests", .serialized)
 class ChargingPointTests {
 
-    var chargingPoints: [ChargingPoint] = []
-    var chargingTasks: [ChargingTask] = []
+    var chargingPoints: [UInt8: ChargingPoint] = [:]
+    var chargingTasks: [UInt8: ChargingTask] = [:]
 
     init() async throws {
         let systemConfig = try ComponentSupplier.getSystemConfig()
@@ -26,8 +26,8 @@ class ChargingPointTests {
         for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
             let chargingPoint = try await ChargingPoint(evCharger: evCharger, powerMeter: powerMeter)
             #expect(await chargingPoint.cpId == evCharger.unitId)
-            self.chargingPoints.append(chargingPoint)
-            await self.chargingTasks.append(ChargingTask(cpId: chargingPoint.cpId))
+            await self.chargingPoints[chargingPoint.cpId] = chargingPoint
+            await self.chargingTasks[chargingPoint.cpId] = ChargingTask(cpId: chargingPoint.cpId)
         }
     }
 
@@ -45,7 +45,7 @@ class ChargingPointTests {
     func chargingPointContainer() async throws {
         let chargingPointContainer = ChargingPointContainer(chargingPoints: self.chargingPoints, chargingTasks: self.chargingTasks)
         #expect(await chargingPointContainer.count == self.chargingPoints.count)
-        for chargingPoint in self.chargingPoints {
+        for (_, chargingPoint) in self.chargingPoints {
             let cpId = await chargingPoint.cpId
 
             let chargingPointContainerChargingPoint = await chargingPointContainer[cpId].chargingPoint
@@ -61,7 +61,7 @@ class ChargingPointTests {
 
     @Test("Test-Charging-System-Properties")
     func chargingSystemProperties() async throws {
-        for chargingPoint in chargingPoints {
+        for (_, chargingPoint) in chargingPoints {
             let chargingState = try await chargingPoint.chargingState
             #expect(chargingState != .unknown)
             let pluggedState = try await chargingPoint.evState
@@ -89,7 +89,7 @@ class ChargingPointTests {
 
     @Test("Enable-Charging")
     func enableCharging() async throws {
-        for chargingPoint in self.chargingPoints {
+        for (_, chargingPoint) in self.chargingPoints {
             let charging = try await chargingPoint.enableCharging()
             #expect(charging == .enabled)
             #expect(await chargingPoint.chargingPermission == .enabled)
@@ -98,7 +98,7 @@ class ChargingPointTests {
 
     @Test("Disable-Charging")
     func disableCharging() async throws {
-        for chargingPoint in self.chargingPoints {
+        for (_, chargingPoint) in self.chargingPoints {
             let charging = try await chargingPoint.disableCharging()
             #expect(charging == .disabled)
             #expect(await chargingPoint.chargingPermission == .disabled)
@@ -116,7 +116,7 @@ class ChargingPointTests {
             (16.0, 16.0),
             (18.0, 16.0),
         ]
-        for chargingPoint in self.chargingPoints {
+        for (_, chargingPoint) in self.chargingPoints {
             for testValue in testValuesFrame {
                 let chargerAckCurrent = try await chargingPoint.setChargingCurrentSetpoint(to: Measurement(value: testValue.0, unit: .amperes))
                 let chargerCurrentSetpoint = try await chargingPoint.chargingCurrentSetpoint

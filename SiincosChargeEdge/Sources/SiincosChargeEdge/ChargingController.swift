@@ -102,7 +102,7 @@ actor ChargingController {
     func updateChargingSystemStatus() async {
         do {
             if let cps = await chargingSystem?.chargingPointContainer.chargingPoints {
-                for cp in cps {
+                for (_, cp) in cps {
                     let chargingSystemStatus = ChargingSystemStatus(
                         cpId: await cp.cpId,
                         loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),

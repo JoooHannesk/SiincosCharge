@@ -16,8 +16,8 @@
 /// device's unit ID. Instead, access charging points by explicitly comparing their `cpId` using
 /// the provided async subscript or `getChargingPoint(by:)`.
 actor ChargingPointContainer {
-    private(set) var chargingPoints: [ChargingPoint] = []
-    private(set) var chargingTasks: [ChargingTask] = []
+    private(set) var chargingPoints: [UInt8: ChargingPoint] = [:]
+    private(set) var chargingTasks: [UInt8: ChargingTask] = [:]
 
     var count: Int {
         chargingPoints.count
@@ -28,12 +28,12 @@ actor ChargingPointContainer {
     /// - Parameter cpId: Charging point id
     subscript(cpId: UInt8) -> (chargingPoint: ChargingPoint?, chargingTask: ChargingTask?)  {
         get async {
-            let cPcT: (chargingPoint: ChargingPoint?, chargingTask: ChargingTask?) = (await getChargingPoint(by: cpId), await getChargingTask(by: cpId))
+            let cPcT: (chargingPoint: ChargingPoint?, chargingTask: ChargingTask?) = (getChargingPoint(by: cpId), getChargingTask(by: cpId))
             return cPcT
         }
     }
 
-    init(chargingPoints: [ChargingPoint]? = nil, chargingTasks: [ChargingTask]? = nil) {
+    init(chargingPoints: [UInt8: ChargingPoint]? = nil, chargingTasks: [UInt8: ChargingTask]? = nil) {
         if let chargingPoints {
             self.chargingPoints = chargingPoints
         }
@@ -46,8 +46,8 @@ actor ChargingPointContainer {
     ///
     /// Add a new charging point and corresponding charging task
     func addChargingPoint(_ cp: ChargingPoint) async {
-        self.chargingPoints.append(cp)
-        await self.chargingTasks.append(ChargingTask(cpId: cp.cpId))
+        await self.chargingPoints[cp.cpId] = cp
+        await self.chargingTasks[cp.cpId] = ChargingTask(cpId: cp.cpId)
     }
 
     /// Get charging point by ID
@@ -55,13 +55,8 @@ actor ChargingPointContainer {
     /// Get charging point by its id.
     /// - Parameter cpId: Charging Point Id
     /// - Returns: the requested ``ChargingPoint`` (if no charging point with the given `cpId` exists, nil is returned)
-    func getChargingPoint(by cpId: UInt8) async -> ChargingPoint? {
-        for cp in chargingPoints {
-            if await cp.cpId == cpId {
-                return cp
-            }
-        }
-        return nil
+    func getChargingPoint(by cpId: UInt8) -> ChargingPoint? {
+        return self.chargingPoints[cpId]
     }
 
     /// Get charging task by ID
@@ -69,8 +64,8 @@ actor ChargingPointContainer {
     /// Get charging task by its id.
     /// - Parameter cpId: Charging Point Id
     /// - Returns: the requested ``ChargingTask`` (if no charging point with the given `cpId` exists, nil is returned)
-    func getChargingTask(by cpId: UInt8) async -> ChargingTask? {
-        return chargingTasks.first { $0.cpId == cpId }
+    func getChargingTask(by cpId: UInt8) -> ChargingTask? {
+        return self.chargingTasks[cpId]
     }
 
 }
