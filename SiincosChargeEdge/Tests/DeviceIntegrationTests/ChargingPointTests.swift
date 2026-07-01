@@ -55,6 +55,33 @@ class ChargingPointTests {
     @Test("Test-Charging-Task-Container-Subscript")
     func chargingTaskContainer() async throws {
         let chargingPointContainer = await ChargingPointContainer(chargingPoints: self.chargingPoints)
+        #expect(await chargingPointContainer.count == self.chargingPoints.count)
+        let ct1 = ChargingSession(
+            sessionId: "sampleSession1",
+            cpId: 1,
+            startTime: Date(),
+            endTime: Date(),
+            user: "sampleuser@sample.com",
+            chargingSessionStatus: .running,
+            totalEnergyConsumption: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
+            chargingCurrent: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
+            )
+        let ct2 = ChargingSession(
+            sessionId: "sampleSession2",
+            cpId: 2,
+            startTime: Date(),
+            endTime: Date(),
+            user: "sampleuser@sample.com",
+            chargingSessionStatus: .running,
+            totalEnergyConsumption: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
+            chargingCurrent: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
+            )
+        await chargingPointContainer.addChargingTask(ct1)
+        await chargingPointContainer.addChargingTask(ct2)
+        #expect(await chargingPointContainer.chargingTasks.count == 2)
+        #expect(await chargingPointContainer.getChargingTask(by: 1) == ct1)
+        #expect(await chargingPointContainer.getChargingTask(by: 2) == ct2)
+
         // TODO: implement - add two charging tasks and get them out again. 1: using subscript access; 2: using method access
     }
 

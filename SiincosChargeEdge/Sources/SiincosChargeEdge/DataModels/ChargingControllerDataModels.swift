@@ -20,8 +20,11 @@ struct ChargingSession: Hashable, Codable {
     /// Unique charging session id based on starting date/time and charging point id
     let sessionId: String
 
-    /// Charging Point Id
-    let chargingPointId: UInt8
+    /// Charging Point ID
+    ///
+    /// Canonical charging-point identifier used across app/backend and the physical site.
+    /// Mirrors the charger's Modbus unit ID for simplicity reasons.
+    let cpId: UInt8
 
     /// Charging Session Start Time
     let startTime: Date
