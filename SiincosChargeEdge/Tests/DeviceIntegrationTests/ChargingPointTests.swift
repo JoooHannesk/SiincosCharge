@@ -81,8 +81,8 @@ class ChargingPointTests {
         #expect(await chargingPointContainer.chargingTasks.count == 2)
         #expect(await chargingPointContainer.getChargingTask(by: 1) == ct1)
         #expect(await chargingPointContainer.getChargingTask(by: 2) == ct2)
-
-        // TODO: implement - add two charging tasks and get them out again. 1: using subscript access; 2: using method access
+        #expect(await chargingPointContainer.getChargingTask(by: 1) != ct2)
+        #expect(await chargingPointContainer.getChargingTask(by: 2) != ct1)
     }
 
     @Test("Test-Charging-System-Properties")
