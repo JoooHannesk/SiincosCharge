@@ -12,11 +12,8 @@ struct SiincosChargeEdge {
     static func main() async {
 
         let siincosChargeEdge = await ChargingController()
-        await siincosChargeEdge.startup()
-        await siincosChargeEdge.run()
-
         while true {
-            
+            try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
         }
     }
 }

@@ -13,49 +13,70 @@ actor ChargingController {
     let systemConfig: SystemConfig
     var backend: BackendController? = nil
     var chargingSystem: ChargingSystem? = nil
-
-    //var error: SystemError? = nil
+    var sysError: SystemError? = nil
+    var runLoopTask: Task<Void, Never>? = nil
 
     /// Logger
     ///
     /// The application-wide main logger
     private let logger = ComponentSupplier.mainLogger
 
-    init() async {
-        systemConfig = Self.loadSystemConfig()
-        backend = ThingsBoardBackend(chargingController: self)
-    }
-
-    /// Start up
+    /// Init and start up phase
     ///
     /// Load required assets and log errors. In case of critical errors, shut down.
-    func startup() async {
+    init() async {
         print(LogMessages.welcomMsg)
         self.logger.info("\(LogMessages.welcomMsg)")
+
+        self.systemConfig = Self.loadSystemConfig()
+        self.backend = ThingsBoardBackend(chargingController: self)
+
         do {
-            try self.chargingSystem = await ChargingSystem(config: systemConfig as DeviceConfig)
+            try self.chargingSystem = await ChargingSystem(config: self.systemConfig as DeviceConfig)
             try self.backend?.startup()
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
             self.shutdown()
         }
         self.updateChargingSystemInformation()
-        await self.updateChargingSystemStatus()
+        self.startRunLoop()
+
+    }
+
+    /// Start the run loop
+    ///
+    /// Start the ``ChargingController``s main run loop
+    func startRunLoop() {
+        runLoopTask?.cancel()
+        runLoopTask = Task { [weak self] in
+            let interval: TimeInterval = 3.0
+            var nextFire = Date()
+            while !Task.isCancelled {
+                await self?.runLoop()
+                nextFire = nextFire.addingTimeInterval(interval)
+                let nanos = UInt64(max(0, nextFire.timeIntervalSinceNow) * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: nanos)
+            }
+        }
     }
 
     /// Shutdown
     ///
     /// Shutdown gracefully
     func shutdown() {
+        self.runLoopTask?.cancel()
         try? self.backend?.shutdown()
         ChargingController.shutdown()
     }
 
-    /// Run
+    /// Run Loop
     ///
     /// Charging controller's main run loop
-    func run() {
+    func runLoop() async {
         // TODO: implement
+        print("main runloop called")
+        self.logger.info("main runloop called") // TODO: remove
+        await self.updateChargingSystemStatus()
     }
 
     /// Start a charging session
@@ -116,13 +137,15 @@ actor ChargingController {
                         gridVoltage: try await cp.gridVoltage
                     )
                     self.backend?.updateChargingSystemStatus(with: chargingSystemStatus)
-                    self.backend?.updateChargingSystemError(with: nil)
                 }
             }
+            self.sysError = nil
         } catch {
-            let sysError = error as? SystemError
-            self.backend?.updateChargingSystemError(with:sysError)
-            logger.error("\(String(describing: error.localizedDescription))", metadata: ["error": "\(error)"])
+            self.sysError = error as? SystemError
+        }
+        self.backend?.updateChargingSystemError(with: self.sysError)
+        if let sysError = self.sysError {
+            logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
         }
     }
 
