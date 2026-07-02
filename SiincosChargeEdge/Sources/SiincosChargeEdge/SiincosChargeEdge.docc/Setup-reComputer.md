@@ -19,7 +19,7 @@ Set network settings according to your needs, e.g.
 ## Set Basic Settings
 1. Install Updates: `sudo apt-get update && sudo apt-get upgrade`
 2. Enable password for root user: `sudo su root`. Type in `passwd` and enter the new password for root when prompted.
-3. Add user to *dialout*, *gpio* groups to allow access to serial ports and GPIOs: `sudo adduser $USER dialout`, `sudo adduser $USER gpio`
+3. Add current user to *dialout*, *gpio* groups to allow access to serial ports and GPIOs: `sudo adduser $USER dialout`, `sudo adduser $USER gpio`
 4. Check if user was added to group: `groups $USER` (list now should include `dialout` and `gpio`)
 5. Add a daily auto-reboot at 3:00 – as a cronjob – to improve system stability for always-on systems. Cronjob will be run as root user: `sudo crontab -e`, then add `0 3 * * * /usr/bin/systemctl reboot`
 6. Add your public ssh key for comfortable remote login: `ssh-copy-id -i ~/.ssh/id_rsa.pub evchargermanager@siincoschargeedge`
@@ -57,7 +57,7 @@ Make sure to use the *correct* device (`/dev/rdiskX`), otherwise you could destr
 
 ### Install Swift
 * Follow the steps on: [https://www.swift.org/install/linux/](https://www.swift.org/install/linux/)
-* When installing Swift on Raspberry Pi OS based on Debian 13 (trixie), the installer may warn you that no direct matching toolchain version could be found and that you should chose the closesd matchin distro. I selected `Debian 12` and it seems to work.
+* When installing Swift on Raspberry Pi OS based on Debian 13 (trixie), the installer may warn you that no direct matching toolchain version could be found and that you should chose the closesd matching distro. I selected `Debian 12` and it seems to work.
 
 ### Prepare Project
 * Place project in: 
