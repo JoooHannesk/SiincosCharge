@@ -45,18 +45,11 @@ actor ChargingController {
 
     /// Start the run loop
     ///
-    /// Start the ``ChargingController`` main run loop
+    /// Start the main run loop
     func startRunLoop() {
-        runLoopTask?.cancel()
-        runLoopTask = Task { [weak self] in
-            let interval: TimeInterval = 3.0
-            var nextFire = Date()
-            while !Task.isCancelled {
-                await self?.runLoop()
-                nextFire = nextFire.addingTimeInterval(interval)
-                let nanos = UInt64(max(0, nextFire.timeIntervalSinceNow) * 1_000_000_000)
-                try? await Task.sleep(nanoseconds: nanos)
-            }
+        self.runLoopTask?.cancel()
+        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
+            await self?.runLoop()
         }
     }
 
