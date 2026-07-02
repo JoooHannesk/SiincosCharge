@@ -45,7 +45,7 @@ actor ChargingController {
 
     /// Start the run loop
     ///
-    /// Start the ``ChargingController``s main run loop
+    /// Start the ``ChargingController`` main run loop
     func startRunLoop() {
         runLoopTask?.cancel()
         runLoopTask = Task { [weak self] in

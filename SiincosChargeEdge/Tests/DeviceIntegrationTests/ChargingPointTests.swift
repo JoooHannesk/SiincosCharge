@@ -64,7 +64,7 @@ class ChargingPointTests {
             user: "sampleuser@sample.com",
             chargingSessionStatus: .running,
             totalEnergyConsumption: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
-            chargingCurrent: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
+            chargingCurrentSetpoint: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
             )
         let ct2 = ChargingSession(
             sessionId: "sampleSession2",
@@ -74,7 +74,7 @@ class ChargingPointTests {
             user: "sampleuser@sample.com",
             chargingSessionStatus: .running,
             totalEnergyConsumption: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
-            chargingCurrent: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
+            chargingCurrentSetpoint: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
             )
         await chargingPointContainer.addChargingTask(ct1)
         await chargingPointContainer.addChargingTask(ct2)

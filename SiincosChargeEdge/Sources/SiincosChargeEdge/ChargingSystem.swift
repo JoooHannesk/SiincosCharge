@@ -37,7 +37,7 @@ final class ChargingSystem {
     init(config: DeviceConfig) async throws {
         self.chargingPointContainer = try await Self.collectChargingPoints(basedOn: config)
         self.systemTotalMaxCurrent = Measurement(value: Double(config.lineMaxCurrentA), unit: UnitElectricCurrent.amperes)
-        self.loadBalancedMaxCurrent = Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
+        self.loadBalancedMaxCurrent = Measurement(value: Double(config.lineMaxCurrentA), unit: UnitElectricCurrent.amperes)
     }
 
     /// Get EV State

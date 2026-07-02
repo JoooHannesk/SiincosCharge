@@ -47,11 +47,10 @@ struct ChargingSession: Hashable, Codable {
     /// Total energy drawn from the charging point by the EV
     var totalEnergyConsumption: Measurement<UnitEnergy>
 
-    /// Charging Current
+    /// Charging Current Setpoint
     ///
-    /// Charging current for the session set by the user or overriden by the
-    /// charging managers load balancer
-    var chargingCurrent: Measurement<UnitElectricCurrent>
+    /// Charging current for the session set by the user
+    var chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
 }
 
 /// Charging Session Status
