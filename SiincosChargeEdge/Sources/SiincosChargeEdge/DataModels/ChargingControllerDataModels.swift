@@ -61,7 +61,7 @@ enum ChargingSessionStatus: String, Codable {
 }
 
 /// Charging System Information Data Model
-struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
+struct ChargingSystemInformation: Hashable, CustomStringConvertible, JsonStringConvertible {
     let appVersion: String
     let chargerModel: SupportedCharger
     let meterModel: SupportedPowerMeter
@@ -77,27 +77,10 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
             Line Current (A): \(lineMaxCurrentA)
             """
     }
-
-    /// Return object as JSON
-    ///
-    /// Convert object to JSON and return as string. This functionality is required
-    /// when passing data to third-party systems, e.g. cloud backends.
-    /// - Note: If conversion fails, `nil` is returned.
-    var asJson: String? {
-        var asJson: String? = nil
-        let encoder = JSONEncoder()
-        //encoder.outputFormatting = .prettyPrinted
-        let data = try? encoder.encode(self)
-        if let data {
-            asJson = String(data: data, encoding: .utf8)
-        }
-        return asJson
-    }
-
 }
 
 /// Charging System Status Data Model
-struct ChargingSystemStatus: Hashable, CustomStringConvertible, Codable {
+struct ChargingSystemStatus: Hashable, CustomStringConvertible, JsonStringConvertible {
     let cpId: UInt8
     let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
     let chargingState: ChargerState
@@ -122,5 +105,28 @@ struct ChargingSystemStatus: Hashable, CustomStringConvertible, Codable {
             Charging Power (Real - kW): \(chargingPower)
             Grid Voltage (Real – V/AC): \(gridVoltage)
             """
+    }
+}
+
+protocol JsonStringConvertible: Codable {
+    var asJson: String? { get }
+}
+
+extension JsonStringConvertible {
+
+    /// Return object as JSON
+    ///
+    /// Convert object to JSON and return as string. This functionality is required
+    /// when passing data to third-party systems, e.g. cloud backends.
+    /// - Note: If conversion fails, `nil` is returned.
+    var asJson: String? {
+        var asJson: String? = nil
+        let encoder = JSONEncoder()
+        //encoder.outputFormatting = .prettyPrinted
+        let data = try? encoder.encode(self)
+        if let data {
+            asJson = String(data: data, encoding: .utf8)
+        }
+        return asJson
     }
 }
