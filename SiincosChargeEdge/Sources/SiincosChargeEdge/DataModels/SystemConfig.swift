@@ -5,6 +5,8 @@
 //  Created by Johannes Kinzig on 31.03.26.
 //
 
+import Foundation
+
 /// Device Configutation
 ///
 /// Device Configuration for ModbusRTU based EV chargers and power meters.
@@ -16,6 +18,7 @@ protocol DeviceConfig {
     var meterBus: String { get }
     var lineLength: UInt8 { get }
     var lineMaxCurrentA: UInt8 { get }
+    var lineMaxCurrent: Measurement<UnitElectricCurrent> { get }
 }
 
 /// Cloud Configuration
@@ -41,6 +44,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let meterBus: String
     let lineLength: UInt8
     let lineMaxCurrentA: UInt8
+    var lineMaxCurrent: Measurement<UnitElectricCurrent> { Measurement(value: Double(lineMaxCurrentA), unit: UnitElectricCurrent.amperes) }
     let cloudHost: String
     let cloudPort: UInt16
     let cloudCACertPath: String
@@ -56,7 +60,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
             Meter Model: \(self.meterModel),
             Meter Bus: \(self.meterBus),
             Line Length: \(self.lineLength),
-            Line Max Current (A): \(self.lineMaxCurrentA),
+            Line Max Current (A): \(self.lineMaxCurrent.value),
             Cloud: \(self.cloudHost):\(self.cloudPort)"
             """
     }
