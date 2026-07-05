@@ -49,6 +49,15 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let cloudPassword: String
 
     var description: String {
-        return "System ID: \(self.systemId), Charger Model: \(self.chargerModel), Charger Bus: \(self.chargerBus), Meter Model: \(self.meterModel), Meter Bus: \(self.meterBus), Line Length: \(self.lineLength), Line Max Current: \(self.lineMaxCurrentA), Cloud: \(self.cloudHost):\(self.cloudPort)"
+        return """
+            System ID: \(self.systemId),
+            Charger Model: \(self.chargerModel),
+            Charger Bus: \(self.chargerBus),
+            Meter Model: \(self.meterModel),
+            Meter Bus: \(self.meterBus),
+            Line Length: \(self.lineLength),
+            Line Max Current (A): \(self.lineMaxCurrentA),
+            Cloud: \(self.cloudHost):\(self.cloudPort)"
+            """
     }
 }
