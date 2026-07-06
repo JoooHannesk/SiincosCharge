@@ -51,7 +51,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
 
     /// Decodes ChargingSystemInformation from a flat JSON structure.
     ///
-    /// - Note: The `lineMaxCurrentA` key is decoded as a numeric value in amperes and reconstructed as a Measurement<UnitElectricCurrent>.
+    /// - Note: The `lineMaxCurrentA` key is decoded as a numeric value in amperes and reconstructed as a `Measurement<UnitElectricCurrent>`.
     /// - Throws: An error if any value fails to decode or is missing.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

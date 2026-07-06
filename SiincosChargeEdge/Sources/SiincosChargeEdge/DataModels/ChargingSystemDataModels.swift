@@ -262,7 +262,6 @@ struct ElectricCurrent3PhaseGrid: Codable, Hashable {
         let average = valid.map(\.value).reduce(0, +) / Double(valid.count)
         return Measurement(value: average, unit: .amperes)
     }
-
 }
 
 /// Electric Voltage

@@ -36,8 +36,8 @@ final class ChargingSystem {
     /// - Parameter config: Provide device configuration to setup communication for EV chargers and smart meters
     init(config: DeviceConfig) async throws {
         self.chargingPointContainer = try await Self.collectChargingPoints(basedOn: config)
-        self.systemTotalMaxCurrent = Measurement(value: Double(config.lineMaxCurrentA), unit: UnitElectricCurrent.amperes)
-        self.loadBalancedMaxCurrent = Measurement(value: Double(config.lineMaxCurrentA), unit: UnitElectricCurrent.amperes)
+        self.systemTotalMaxCurrent = config.lineMaxCurrent
+        self.loadBalancedMaxCurrent = config.lineMaxCurrent
     }
 
     /// Get EV State

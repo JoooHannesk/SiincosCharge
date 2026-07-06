@@ -17,7 +17,6 @@ protocol DeviceConfig {
     var meterModel: SupportedPowerMeter { get }
     var meterBus: String { get }
     var lineLength: UInt8 { get }
-    var lineMaxCurrentA: UInt8 { get }
     var lineMaxCurrent: Measurement<UnitElectricCurrent> { get }
 }
 
@@ -36,21 +35,85 @@ protocol CloudConfig {
 /// System Configuration
 ///
 /// System configuration for the Siincos Charge Edge system
-struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible {
+struct SystemConfig: DeviceConfig, CloudConfig, Encodable, Decodable, CustomStringConvertible {
     let systemId: String
     let chargerModel: SupportedCharger
     let chargerBus: String
     let meterModel: SupportedPowerMeter
     let meterBus: String
     let lineLength: UInt8
-    let lineMaxCurrentA: UInt8
-    var lineMaxCurrent: Measurement<UnitElectricCurrent> { Measurement(value: Double(lineMaxCurrentA), unit: UnitElectricCurrent.amperes) }
+    let lineMaxCurrent: Measurement<UnitElectricCurrent>
     let cloudHost: String
     let cloudPort: UInt16
     let cloudCACertPath: String
     let cloudClientId: String
     let cloudUsername: String
     let cloudPassword: String
+
+    enum CodingKeys: String, CodingKey {
+        case systemId
+        case chargerModel
+        case chargerBus
+        case meterModel
+        case meterBus
+        case lineLength
+        case lineMaxCurrentA
+        case cloudHost
+        case cloudPort
+        case cloudCACertPath
+        case cloudClientId
+        case cloudUsername
+        case cloudPassword
+    }
+
+    /**
+     Decodes a `SystemConfig` instance from the given decoder.
+     This custom implementation decodes all properties directly, but expects the `lineMaxCurrent` value to be provided as a flat
+     double under the key `lineMaxCurrentA` (amperes) in the JSON, and reconstructs it as a `Measurement<UnitElectricCurrent>`.
+     - Parameter decoder: The decoder to read data from.
+     - Throws: An error if reading from the decoder fails, or if the data is corrupted or otherwise invalid.
+     */
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        systemId = try container.decode(String.self, forKey: .systemId)
+        chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
+        chargerBus = try container.decode(String.self, forKey: .chargerBus)
+        meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)
+        meterBus = try container.decode(String.self, forKey: .meterBus)
+        lineLength = try container.decode(UInt8.self, forKey: .lineLength)
+        let lineMaxCurrentA = try container.decode(Double.self, forKey: .lineMaxCurrentA)
+        lineMaxCurrent = Measurement(value: lineMaxCurrentA, unit: .amperes)
+        cloudHost = try container.decode(String.self, forKey: .cloudHost)
+        cloudPort = try container.decode(UInt16.self, forKey: .cloudPort)
+        cloudCACertPath = try container.decode(String.self, forKey: .cloudCACertPath)
+        cloudClientId = try container.decode(String.self, forKey: .cloudClientId)
+        cloudUsername = try container.decode(String.self, forKey: .cloudUsername)
+        cloudPassword = try container.decode(String.self, forKey: .cloudPassword)
+    }
+
+    /**
+     Encodes this `SystemConfig` instance into the given encoder.
+     This custom implementation encodes all properties directly, but flattens the `lineMaxCurrent` measurement to a plain double
+     (amperes) under the key `lineMaxCurrentA` in the JSON for compatibility with external systems.
+     - Parameter encoder: The encoder to write data to.
+     - Throws: An error if any values are invalid for the encoder’s format.
+     */
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(systemId, forKey: .systemId)
+        try container.encode(chargerModel, forKey: .chargerModel)
+        try container.encode(chargerBus, forKey: .chargerBus)
+        try container.encode(meterModel, forKey: .meterModel)
+        try container.encode(meterBus, forKey: .meterBus)
+        try container.encode(lineLength, forKey: .lineLength)
+        try container.encode(lineMaxCurrent.value, forKey: .lineMaxCurrentA)
+        try container.encode(cloudHost, forKey: .cloudHost)
+        try container.encode(cloudPort, forKey: .cloudPort)
+        try container.encode(cloudCACertPath, forKey: .cloudCACertPath)
+        try container.encode(cloudClientId, forKey: .cloudClientId)
+        try container.encode(cloudUsername, forKey: .cloudUsername)
+        try container.encode(cloudPassword, forKey: .cloudPassword)
+    }
 
     var description: String {
         return """
@@ -65,3 +128,4 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
             """
     }
 }
+
