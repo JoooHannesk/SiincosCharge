@@ -117,7 +117,7 @@ actor ChargingController {
         do {
             if let cps = await chargingSystem?.chargingPointContainer.chargingPoints {
                 for (_, cp) in cps {
-                    let chargingSystemStatus = ChargingSystemStatus(
+                    let chargingPointStatus = ChargingPointStatus(
                         cpId: await cp.cpId,
                         loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
                         chargingState: try await cp.chargingState,
@@ -129,7 +129,7 @@ actor ChargingController {
                         chargingPower: try await cp.chargingPower,
                         gridVoltage: try await cp.gridVoltage
                     )
-                    self.backend?.updateChargingSystemStatus(with: chargingSystemStatus)
+                    self.backend?.updateChargingPointStatus(with: chargingPointStatus)
                 }
             }
             self.sysError = nil

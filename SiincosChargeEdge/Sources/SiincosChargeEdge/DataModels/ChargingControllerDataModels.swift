@@ -80,7 +80,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
 }
 
 /// Charging System Status Data Model
-struct ChargingSystemStatus: Hashable, CustomStringConvertible, Codable {
+struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
     let cpId: UInt8
     let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
     let chargingState: ChargerState

@@ -60,7 +60,7 @@ class ThingsBoardBackend: BackendController {
         print("Shuttting Down!")
     }
 
-    func updateChargingSystemStatus(with sysStatus: ChargingSystemStatus) {
+    func updateChargingPointStatus(with sysStatus: ChargingPointStatus) {
         // TODO: implement correctly
         // store as attributes in TB, each is a single attribute
         print(sysStatus)

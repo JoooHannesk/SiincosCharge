@@ -24,7 +24,6 @@ struct DataModelTests {
                                                  chargingPoints: 3,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes))
         try #require(csysInfo.asJson != nil)
-        print(csysInfo.asJson)
         if let jsonString = csysInfo.asJson {
             let jsonData = jsonString.data(using: .utf8)!
             let csysInfo2 = try JSONDecoder().decode(ChargingSystemInformation.self, from: jsonData)
@@ -34,7 +33,7 @@ struct DataModelTests {
 
     @Test("Test-JSON-Encoding-For-ChargingSystemStatus-Data-Model")
     func testChargingSystemStatusJsonEncoding() throws {
-        let csysStatus = ChargingSystemStatus(cpId: 3,
+        let csysStatus = ChargingPointStatus(cpId: 3,
                                             loadBalancedMaxCurrent: Measurement(value: 8.4, unit: UnitElectricCurrent.amperes),
                                             chargingState: .charging,
                                             evState: .pluggedIn,
@@ -51,7 +50,7 @@ struct DataModelTests {
         try #require(csysStatus.asJson != nil)
         if let jsonString = csysStatus.asJson {
             let jsonData = jsonString.data(using: .utf8)!
-            let csysStatus2 = try JSONDecoder().decode(ChargingSystemStatus.self, from: jsonData)
+            let csysStatus2 = try JSONDecoder().decode(ChargingPointStatus.self, from: jsonData)
             #expect(csysStatus == csysStatus2)
         }
     }
