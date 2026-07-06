@@ -156,7 +156,7 @@ actor ChargingController {
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
-            lineMaxCurrentA: self.systemConfig.lineMaxCurrentA)
+            lineMaxCurrent: self.systemConfig.lineMaxCurrent)
         self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")
         self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)
     }

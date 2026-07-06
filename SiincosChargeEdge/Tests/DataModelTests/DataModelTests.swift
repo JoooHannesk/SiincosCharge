@@ -22,7 +22,7 @@ struct DataModelTests {
                                                  chargerModel: .senecWallboxProS11kW,
                                                  meterModel: .janitzaSmartMeterB2331210J,
                                                  chargingPoints: 3,
-                                                 lineMaxCurrentA: 16)
+                                                 lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes))
         try #require(csysInfo.asJson != nil)
         if let jsonString = csysInfo.asJson {
             let jsonData = jsonString.data(using: .utf8)!

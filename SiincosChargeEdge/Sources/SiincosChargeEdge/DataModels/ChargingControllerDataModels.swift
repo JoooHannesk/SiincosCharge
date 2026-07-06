@@ -66,7 +66,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, JsonStringC
     let chargerModel: SupportedCharger
     let meterModel: SupportedPowerMeter
     let chargingPoints: UInt8
-    let lineMaxCurrentA: UInt8
+    let lineMaxCurrent: Measurement<UnitElectricCurrent>
 
     var description: String {
         return """
@@ -74,7 +74,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, JsonStringC
             Charger Model: \(chargerModel.rawValue)
             Power Meter Model: \(meterModel.rawValue)
             Charging Points: \(chargingPoints)
-            Line Current (A): \(lineMaxCurrentA)
+            Line Current (A): \(lineMaxCurrent)
             """
     }
 }
