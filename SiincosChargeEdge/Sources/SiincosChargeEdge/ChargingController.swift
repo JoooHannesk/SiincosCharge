@@ -38,6 +38,7 @@ actor ChargingController {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
             self.shutdown()
         }
+        try? await Task.sleep(for: .seconds(5))
         self.updateChargingSystemInformation()
         self.startRunLoop()
 
@@ -114,6 +115,7 @@ actor ChargingController {
     /// Update charging system status information in backend by
     /// collecting all charging point status information.
     func updateChargingSystemStatus() async {
+        var allChargingPointStatus: Set<ChargingPointStatus> = []
         do {
             if let cps = await chargingSystem?.chargingPointContainer.chargingPoints {
                 for (_, cp) in cps {
@@ -129,7 +131,7 @@ actor ChargingController {
                         chargingPower: try await cp.chargingPower,
                         gridVoltage: try await cp.gridVoltage
                     )
-                    self.backend?.updateChargingPointStatus(with: chargingPointStatus)
+                    allChargingPointStatus.insert(chargingPointStatus)
                 }
             }
             self.sysError = nil
@@ -137,6 +139,7 @@ actor ChargingController {
             self.sysError = error as? SystemError
         }
         self.backend?.updateChargingSystemError(with: self.sysError)
+        self.backend?.updateChargingPointStatus(with: allChargingPointStatus)
         if let sysError = self.sysError {
             logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
         }

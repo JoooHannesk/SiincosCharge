@@ -14,10 +14,10 @@ import Foundation
 /// ThingsBoard MQTT Topics
 ///
 /// Topics required to communicate with ThingsBoard MQTT Server
-enum TBMQTTTopics {
-    static let telemetryTopic = "v1/devices/me/telemetry"
-    static let rpcTopic = "v1/devices/me/rpc/request/+"
-    static let attributeTopic = "v1/devices/me/attributes"
+enum TBMQTTTopics: String {
+    case telemetryTopic = "v1/devices/me/telemetry"
+    case rpcTopic = "v1/devices/me/rpc/request/+"
+    case attributeTopic = "v1/devices/me/attributes"
 }
 
 class ThingsBoardBackend: BackendController {
@@ -60,16 +60,17 @@ class ThingsBoardBackend: BackendController {
         print("Shuttting Down!")
     }
 
-    func updateChargingPointStatus(with sysStatus: ChargingPointStatus) {
-        // TODO: implement correctly
-        // store as attributes in TB, each is a single attribute
-        print(sysStatus)
+    func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
+        print(cpsStatus)
+//        if let msg = cpStatus.asJson {
+//            self.publish(message: msg, to: .telemetryTopic)
+//        }
     }
 
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
-        // TODO: implement correctly
-        // store as attributes in TB, each is a single attribute
-        print(sysInfo)
+        if let msg = sysInfo.asJson {
+            self.publish(message: msg, to: .attributeTopic)
+        }
     }
 
     func updateChargingSystemError(with sysError: SystemError?) {
@@ -102,4 +103,31 @@ class ThingsBoardBackend: BackendController {
         )
         return client
     }
+
+    /// Publishes message to the specified MQTT topic.
+    ///
+    /// This method uses the configured MQTT client to publish a message
+    /// to the given topic. It handles both success and error cases,
+    /// logging appropriate messages to the console.
+    ///
+    /// - Parameters:
+    ///   - message: The JSON string containing telemetry data to publish
+    ///   - topic: The MQTT topic to which the message should be published
+    ///
+    /// - Note: This method relies on a shared `mqttClient` instance that must
+    ///   be configured before calling this function. If the client is not set,
+    ///   no message will be published.
+    private func publish(message: String, to topic: TBMQTTTopics) {
+        self.client?.publish(
+            message: message,
+            to: topic.rawValue,
+            onSuccess: {
+                //self.logger.info("Telemetry published: \(message)")
+            },
+            onError: { error in
+                self.logger.error("Message \(message) failed to publish with error: \(error)")
+            }
+        )
+    }
+
 }
