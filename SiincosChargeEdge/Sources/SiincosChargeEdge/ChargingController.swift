@@ -136,6 +136,8 @@ actor ChargingController {
     /// - power meter model
     /// - total number of charging points
     /// - max. installation line current (amperes)
+    /// - load balanced max. current
+    /// - system error
     func updateChargingSystemInformation() {
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,
