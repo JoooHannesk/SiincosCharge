@@ -42,10 +42,5 @@ protocol BackendController {
     ///
     /// Propagate charging system information to backend
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation)
-
-    /// Update Charging System Error
-    ///
-    /// Propagate system error to backend
-    func updateChargingSystemError(with sysError: SystemError?)
 }
 

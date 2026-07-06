@@ -61,7 +61,7 @@ class ThingsBoardBackend: BackendController {
     }
 
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
-        print(cpsStatus)
+        //print(cpsStatus)
 //        if let msg = cpStatus.asJson {
 //            self.publish(message: msg, to: .telemetryTopic)
 //        }
@@ -70,16 +70,6 @@ class ThingsBoardBackend: BackendController {
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
         if let msg = sysInfo.asJson {
             self.publish(message: msg, to: .attributeTopic)
-        }
-    }
-
-    func updateChargingSystemError(with sysError: SystemError?) {
-        // TODO: implement correctly
-        // store as attributes in TB, each is a single attribute
-        if let sysError {
-            print(sysError)
-        } else {
-            print("no error")
         }
     }
 

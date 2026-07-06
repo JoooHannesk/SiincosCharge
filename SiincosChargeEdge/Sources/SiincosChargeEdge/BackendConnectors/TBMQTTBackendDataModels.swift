@@ -33,12 +33,12 @@ extension JsonStringConvertible {
 extension ChargingSystemInformation: JsonStringConvertible {
 
     enum CodingKeys: String, CodingKey {
-        case appVersion, chargerModel, meterModel, chargingPoints, lineMaxCurrentA
+        case appVersion, chargerModel, meterModel, chargingPoints, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
     }
 
     /// Encodes `ChargingSystemInformation` to a flat JSON structure.
     ///
-    /// - Note: The `lineMaxCurrent` property is encoded as a single numeric value using the key `lineMaxCurrentA` (amperes only), for interoperability with flat-data systems like MQTT/ThingsBoard.
+    /// - Note: The `lineMaxCurrent` property is encoded as a single numeric value using the key `lineMaxCurrentA` (amperes only), for interoperability with flat-data systems like MQTT/ThingsBoard. Same applies to `loadBalancedMaxCurrent`.
     /// - Throws: An error if any value fails to encode.
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -47,11 +47,13 @@ extension ChargingSystemInformation: JsonStringConvertible {
         try container.encode(meterModel, forKey: .meterModel)
         try container.encode(chargingPoints, forKey: .chargingPoints)
         try container.encode(lineMaxCurrent.value, forKey: .lineMaxCurrentA)
+        try container.encode(loadBalancedMaxCurrent.value, forKey: .loadBalancedMaxCurrentA)
+        try container.encode(sysError?.rawValue ?? "", forKey: .sysError)
     }
 
     /// Decodes ChargingSystemInformation from a flat JSON structure.
     ///
-    /// - Note: The `lineMaxCurrentA` key is decoded as a numeric value in amperes and reconstructed as a `Measurement<UnitElectricCurrent>`.
+    /// - Note: The `lineMaxCurrentA` key is decoded as a numeric value in amperes and reconstructed as a `Measurement<UnitElectricCurrent>`. Same applies to `loadBalancedMaxCurrentA`
     /// - Throws: An error if any value fails to decode or is missing.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -59,21 +61,24 @@ extension ChargingSystemInformation: JsonStringConvertible {
         self.chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
         self.meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)
         self.chargingPoints = try container.decode(UInt8.self, forKey: .chargingPoints)
-        let value = try container.decode(Double.self, forKey: .lineMaxCurrentA)
-        self.lineMaxCurrent = Measurement(value: value, unit: UnitElectricCurrent.amperes)
+        let lmca = try container.decode(Double.self, forKey: .lineMaxCurrentA)
+        self.lineMaxCurrent = Measurement(value: lmca, unit: UnitElectricCurrent.amperes)
+        let lbmca = try container.decode(Double.self, forKey: .loadBalancedMaxCurrentA)
+        self.loadBalancedMaxCurrent = Measurement(value: lbmca, unit: UnitElectricCurrent.amperes)
+        let errorString = try container.decode(String.self, forKey: .sysError)
+        self.sysError = errorString.isEmpty ? nil : SystemError(rawValue: errorString)
     }
 }
 
 extension ChargingPointStatus: JsonStringConvertible {
     enum CodingKeys: String, CodingKey {
         case cpId
-        case loadBalancedMaxCurrentA
         case chargingState
         case evState
         case chargingPermission
         case chargingCurrentSetpointA
         case meterReadingkWh
-        case chargingCurrentL1A, chargingCurrentL2A, chargingCurrentL3A, chargingCurrentA
+        case chargingCurrentL1A, chargingCurrentL2A, chargingCurrentL3A, chargingCurrentAvgA
         case chargingPowerL1kW, chargingPowerL2kW, chargingPowerL3kW, chargingPowerTotalkW
         case gridVoltageL1N, gridVoltageL2N, gridVoltageL3N
     }
@@ -83,7 +88,6 @@ extension ChargingPointStatus: JsonStringConvertible {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(cpId, forKey: .cpId)
-        try container.encode(loadBalancedMaxCurrent.value, forKey: .loadBalancedMaxCurrentA)
         try container.encode(chargingState.rawValue, forKey: .chargingState)
         try container.encode(evState.rawValue, forKey: .evState)
         try container.encode(chargingPermission.rawValue, forKey: .chargingPermission)
@@ -92,7 +96,7 @@ extension ChargingPointStatus: JsonStringConvertible {
         try container.encode(chargingCurrent.currentL1?.value, forKey: .chargingCurrentL1A)
         try container.encode(chargingCurrent.currentL2?.value, forKey: .chargingCurrentL2A)
         try container.encode(chargingCurrent.currentL3?.value, forKey: .chargingCurrentL3A)
-        try container.encode(chargingCurrent.currentAverage.value, forKey: .chargingCurrentA)
+        try container.encode(chargingCurrent.currentAverage.value, forKey: .chargingCurrentAvgA)
         try container.encode(chargingPower.powerL1?.value, forKey: .chargingPowerL1kW)
         try container.encode(chargingPower.powerL2?.value, forKey: .chargingPowerL2kW)
         try container.encode(chargingPower.powerL3?.value, forKey: .chargingPowerL3kW)
@@ -107,7 +111,6 @@ extension ChargingPointStatus: JsonStringConvertible {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.cpId = try container.decode(UInt8.self, forKey: .cpId)
-        self.loadBalancedMaxCurrent = Measurement(value: try container.decode(Double.self, forKey: .loadBalancedMaxCurrentA), unit: .amperes)
         self.chargingState = ChargerState(rawValue: try container.decode(String.self, forKey: .chargingState)) ?? .unknown
         self.evState = EVState(rawValue: try container.decode(String.self, forKey: .evState)) ?? .unknown
         self.chargingPermission = Status(rawValue: try container.decode(UInt8.self, forKey: .chargingPermission)) ?? .unknown

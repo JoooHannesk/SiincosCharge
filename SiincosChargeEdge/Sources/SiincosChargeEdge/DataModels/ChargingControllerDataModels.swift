@@ -67,6 +67,8 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let meterModel: SupportedPowerMeter
     let chargingPoints: UInt8
     let lineMaxCurrent: Measurement<UnitElectricCurrent>
+    let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
+    let sysError: SystemError?
 
     var description: String {
         return """
@@ -75,14 +77,15 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
             Power Meter Model: \(meterModel.rawValue)
             Charging Points: \(chargingPoints)
             Line Current (A): \(lineMaxCurrent)
+            Load Balanced max. Current (A): \(loadBalancedMaxCurrent)
+            Error: \(String(describing: sysError))
             """
     }
 }
 
-/// Charging System Status Data Model
+/// Charging Point Status Data Model
 struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
     let cpId: UInt8
-    let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
     let chargingState: ChargerState
     let evState: EVState
     let chargingPermission: Status
@@ -95,7 +98,6 @@ struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
     var description: String {
         return """
             Charging Point ID: \(self.cpId)
-            Load Balanced max. Current: \(loadBalancedMaxCurrent)
             Charging State: \(chargingState)
             EV State: \(evState)
             Charging: \(chargingPermission)

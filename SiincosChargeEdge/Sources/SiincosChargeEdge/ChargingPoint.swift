@@ -147,6 +147,25 @@ actor ChargingPoint {
         }
     }
 
+    /// Device Status
+    ///
+    /// - Returns: Charging point status as object
+    var deviceStatus: ChargingPointStatus {
+        get async throws {
+            ChargingPointStatus(
+                cpId: self.cpId,
+                chargingState: try await self.chargingState,
+                evState: try await self.evState,
+                chargingPermission: self.chargingPermission,
+                chargingCurrentSetpoint: try await self.chargingCurrentSetpoint,
+                meterReading: try await self.meterReading,
+                chargingCurrent: try await self.chargingCurrent,
+                chargingPower: try await self.chargingPower,
+                gridVoltage: try await self.gridVoltage
+            )
+        }
+    }
+
     /// Logger
     ///
     /// The application-wide main logger

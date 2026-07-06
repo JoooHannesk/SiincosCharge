@@ -9,7 +9,7 @@ import Foundation
 
 /// System Errors
 ///
-enum SystemError: Error {
+enum SystemError: String, RawRepresentable, Codable, Error {
     case configFileNotFound
     case boundaryViolation
     case dataMissing

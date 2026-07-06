@@ -14,7 +14,7 @@ import Foundation
 /// points connected to and controlled by a single Siincos Charge Edge Gateway.
 ///
 /// A single Charging System is represented as a single device in the IoT cloud.
-final class ChargingSystem {
+final class ChargingSystem: Sendable {
 
     /// Hold all charging points
     let chargingPointContainer: ChargingPointContainer
@@ -30,6 +30,19 @@ final class ChargingSystem {
     /// all EV chargers stays below the ``systemTotalMaxCurrent``. Therefor each charging point is limited to
     /// the ``loadBalancedMaxCurrent`` (given in amperes).
     let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
+
+    /// System Status
+    ///
+    /// - Returns: All charging points status as set
+    var systemStatus: Set<ChargingPointStatus> {
+        get async throws {
+            var allChargingPointsStatus: Set<ChargingPointStatus> = []
+            for (_, cp) in await self.chargingPointContainer.chargingPoints {
+                allChargingPointsStatus.insert(try await cp.deviceStatus)
+            }
+            return allChargingPointsStatus
+        }
+    }
 
     /// Init a Charging System
     ///

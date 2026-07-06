@@ -21,7 +21,7 @@ actor ChargingController {
     /// The application-wide main logger
     private let logger = ComponentSupplier.mainLogger
 
-    /// Init and start up phase
+    /// Init and start-up phase
     ///
     /// Load required assets and log errors. In case of critical errors, shut down.
     init() async {
@@ -39,7 +39,6 @@ actor ChargingController {
             self.shutdown()
         }
         try? await Task.sleep(for: .seconds(5))
-        self.updateChargingSystemInformation()
         self.startRunLoop()
 
     }
@@ -70,7 +69,8 @@ actor ChargingController {
         // TODO: implement
         print("main runloop called")
         self.logger.info("main runloop called") // TODO: remove
-        await self.updateChargingSystemStatus()
+        self.updateChargingSystemInformation()
+        await self.updateChargingPointStatus()
     }
 
     /// Start a charging session
@@ -110,38 +110,21 @@ actor ChargingController {
         // TODO: implement
     }
 
-    /// Update Charging System Status
+    /// Update Charging Points Status
     ///
     /// Update charging system status information in backend by
     /// collecting all charging point status information.
-    func updateChargingSystemStatus() async {
-        var allChargingPointStatus: Set<ChargingPointStatus> = []
+    func updateChargingPointStatus() async {
         do {
-            if let cps = await chargingSystem?.chargingPointContainer.chargingPoints {
-                for (_, cp) in cps {
-                    let chargingPointStatus = ChargingPointStatus(
-                        cpId: await cp.cpId,
-                        loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
-                        chargingState: try await cp.chargingState,
-                        evState: try await cp.evState,
-                        chargingPermission: await cp.chargingPermission,
-                        chargingCurrentSetpoint: try await cp.chargingCurrentSetpoint,
-                        meterReading: try await cp.meterReading,
-                        chargingCurrent: try await cp.chargingCurrent,
-                        chargingPower: try await cp.chargingPower,
-                        gridVoltage: try await cp.gridVoltage
-                    )
-                    allChargingPointStatus.insert(chargingPointStatus)
-                }
+            if let cpsStatus = try await self.chargingSystem?.systemStatus {
+                self.backend?.updateChargingPointStatus(with: cpsStatus)
+                self.sysError = nil
             }
-            self.sysError = nil
         } catch {
             self.sysError = error as? SystemError
-        }
-        self.backend?.updateChargingSystemError(with: self.sysError)
-        self.backend?.updateChargingPointStatus(with: allChargingPointStatus)
-        if let sysError = self.sysError {
-            logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
+            if let sysError = self.sysError {
+                self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
+            }
         }
     }
 
@@ -159,7 +142,10 @@ actor ChargingController {
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
-            lineMaxCurrent: self.systemConfig.lineMaxCurrent)
+            lineMaxCurrent: self.systemConfig.lineMaxCurrent,
+            loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
+            sysError: self.sysError
+        )
         self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")
         self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)
     }
