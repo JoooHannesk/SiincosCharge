@@ -24,6 +24,7 @@ struct DataModelTests {
                                                  chargingPoints: 3,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes))
         try #require(csysInfo.asJson != nil)
+        print(csysInfo.asJson)
         if let jsonString = csysInfo.asJson {
             let jsonData = jsonString.data(using: .utf8)!
             let csysInfo2 = try JSONDecoder().decode(ChargingSystemInformation.self, from: jsonData)
