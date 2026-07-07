@@ -10,8 +10,8 @@ let package = Package(
         .custom("Linux", versionString: "6.12.34")
     ],
     dependencies: [
-        .package(url: "https://github.com/3a4oT/modbus-swift.git", from: "1.0.0"),       // Apache-2.0 license
-        .package(url: "https://github.com/JoooHannesk/TinyTBDeviceClient.git", from: "0.0.2"),
+        .package(url: "https://github.com/3a4oT/modbus-swift.git", from: "1.0.0"), // Apache-2.0 license
+        .package(url: "https://github.com/JoooHannesk/TinyTBDeviceClient.git", from: "0.0.2"), // Apache-2.0 license
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

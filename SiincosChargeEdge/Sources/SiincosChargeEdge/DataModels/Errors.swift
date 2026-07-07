@@ -19,6 +19,7 @@ enum SystemError: String, RawRepresentable, Codable, Error {
     case unitIdMissmatch
     case unsupportedDevice
     case mqttCommunicationError
+    case mqttConnectError
 }
 
 
@@ -43,6 +44,8 @@ extension SystemError: LocalizedError {
             return "Provided device not supported! Aborting!"
         case .mqttCommunicationError:
             return "Error communicating with the MQTT broker!. Aborting!"
+        case .mqttConnectError:
+            return "Error connecting to the MQTT Server! Aborting!"
         }
     }
 }

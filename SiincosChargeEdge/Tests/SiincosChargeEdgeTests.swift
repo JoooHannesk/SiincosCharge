@@ -72,6 +72,17 @@ struct SiincosChargeEdgeTests {
         logger.error("\(logString)", metadata: ["sampleMetaData": "This is a sample metadata test string."])
         await FileLoggingConfiguration.shared.close()
     }
+
+
+    /// Test Main App
+    ///
+    /// This test case starts the main app's environment and terminates after 30 seconds.
+    /// See this test as a first smoke test to ensure everything inits correctly.
+    @Test("Test-Main-App")
+    func testMainApp() async throws {
+        let siincosChargeEdge = await ChargingController()
+        try? await Task.sleep(for: .seconds(30))
+    }
 }
 
 

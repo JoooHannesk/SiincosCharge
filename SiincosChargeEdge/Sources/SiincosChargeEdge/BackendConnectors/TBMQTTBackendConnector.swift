@@ -49,6 +49,8 @@ class ThingsBoardBackend: BackendController {
             },
             onError: { error in
                 self.logger.error("\(LogMessages.mqttConnectionFailed)", metadata: ["error": "\(error.localizedDescription)"])
+                // throw SystemError.mqttConnectError
+                exit(1) // TODO: replace with a throwing error, therefore the TinyTBDeviceClient library needs to be updated
             }
         )
     }
