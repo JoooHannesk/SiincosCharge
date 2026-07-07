@@ -54,7 +54,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
 /// Charging Point Status Extension
 ///
 /// Custom model extension for ThingsBoard/MQTT backend
-extension ChargingPointStatus: JsonStringConvertible {
+extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConvertible {
     enum CodingKeys: String, CodingKey {
         case cpId
         case chargingState

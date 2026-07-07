@@ -72,4 +72,26 @@ struct DataModelTests {
             #expect(csysStatus == csysStatus2)
         }
     }
+
+    @Test("Test-JSON-Serialization-For-ChargingSystemStatus-Data-Model")
+    func testChargingSystemStatusJsonSerialization() throws {
+        let csysStatus = ChargingPointStatus(cpId: 3,
+                                            chargingState: .charging,
+                                            evState: .pluggedIn,
+                                            chargingPermission: .enabled,
+                                            chargingCurrentSetpoint: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
+                                            meterReading: Measurement(value: 523.4, unit: UnitEnergy.kilowattHours),
+                                            chargingCurrent: ElectricCurrent3PhaseGrid(currentL1: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
+                                                                                       currentL2: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
+                                                                                       currentL3: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes)),
+                                            chargingPower: ElectricPower3PhaseGrid(powerTotal: Measurement(value: 4.5, unit: UnitPower.kilowatts)),
+                                            gridVoltage: ElectricVoltage3PhaseGrid(voltageL1: Measurement(value: 234.4, unit: UnitElectricPotentialDifference.volts),
+                                                                                   voltageL2: Measurement(value: 224.8, unit: UnitElectricPotentialDifference.volts),
+                                                                                   voltageL3: Measurement(value: 228.2, unit: UnitElectricPotentialDifference.volts)))
+        try #require(csysStatus.asSerializedJson != nil)
+        let csysStatusBack = try deserializeChargingPoint(from: csysStatus.asSerializedJson!)
+        try #require(csysStatusBack != nil)
+        #expect(csysStatusBack! == csysStatus)
+    }
+
 }
