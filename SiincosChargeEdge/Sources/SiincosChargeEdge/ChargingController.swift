@@ -69,7 +69,7 @@ actor ChargingController {
         // TODO: implement
         print("main runloop called")
         self.logger.info("main runloop called") // TODO: remove
-        self.updateChargingSystemInformation()
+        await self.updateChargingSystemInformation()
         await self.updateChargingPointStatus()
     }
 
@@ -138,14 +138,14 @@ actor ChargingController {
     /// - max. installation line current (amperes)
     /// - load balanced max. current
     /// - system error
-    func updateChargingSystemInformation() {
+    func updateChargingSystemInformation() async {
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
             lineMaxCurrent: self.systemConfig.lineMaxCurrent,
-            loadBalancedMaxCurrent: self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
+            loadBalancedMaxCurrent: await self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
             sysError: self.sysError
         )
         self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")

@@ -10,23 +10,26 @@ import Testing
 import Foundation
 @testable import SiincosChargeEdge
 
-@Suite("ChargingSystemTests")
+@Suite("ChargingSystemTests", .serialized)
 class ChargingSystemTests {
 
-    let deviceConfig: DeviceConfig
+    static var deviceConfig: DeviceConfig {
+        get async throws {
+            try ComponentSupplier.getSystemConfig()
+        }
+    }
     let chargingSystem: ChargingSystem
     let startingCpId: UInt8 = 1
     let allChargingPointIds: ClosedRange<UInt8>
 
     init() async throws {
-        deviceConfig = try ComponentSupplier.getSystemConfig()
-        chargingSystem = try await ChargingSystem(config: deviceConfig)
-        allChargingPointIds = startingCpId...deviceConfig.lineLength
+        chargingSystem = try await ChargingSystem(config: Self.deviceConfig)
+        allChargingPointIds = try await startingCpId...Self.deviceConfig.lineLength
     }
 
     @Test("Test-Charging-System-Creation")
     func testChargingSystemCreation() async throws {
-        #expect(await self.chargingSystem.chargingPointContainer.count == deviceConfig.lineLength)
+        #expect(try await self.chargingSystem.chargingPointContainer.count == Self.deviceConfig.lineLength)
     }
 
     @Test("Get-EV-Plugged-State")

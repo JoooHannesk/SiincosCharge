@@ -14,10 +14,10 @@ import Foundation
 /// points connected to and controlled by a single Siincos Charge Edge Gateway.
 ///
 /// A single Charging System is represented as a single device in the IoT cloud.
-final class ChargingSystem: Sendable {
+actor ChargingSystem {
 
     /// Hold all charging points
-    let chargingPointContainer: ChargingPointContainer
+    var chargingPointContainer: ChargingPointContainer
 
     /// System total maximum current
     ///
@@ -29,7 +29,7 @@ final class ChargingSystem: Sendable {
     /// When more than one charger is connected, the system has to ensure that the total current drawn from
     /// all EV chargers stays below the ``systemTotalMaxCurrent``. Therefor each charging point is limited to
     /// the ``loadBalancedMaxCurrent`` (given in amperes).
-    let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
+    var loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
 
     /// System Status
     ///
@@ -48,9 +48,10 @@ final class ChargingSystem: Sendable {
     ///
     /// - Parameter config: Provide device configuration to setup communication for EV chargers and smart meters
     init(config: DeviceConfig) async throws {
-        self.chargingPointContainer = try await Self.collectChargingPoints(basedOn: config)
         self.systemTotalMaxCurrent = config.lineMaxCurrent
         self.loadBalancedMaxCurrent = config.lineMaxCurrent
+        self.chargingPointContainer = await ChargingPointContainer()
+        self.chargingPointContainer = try await self.collectChargingPoints(basedOn: config)
     }
 
     /// Get EV State
@@ -185,7 +186,7 @@ final class ChargingSystem: Sendable {
     ///
     /// - Parameter deviceConfig: Device config containing the charging point information
     /// - Returns: a ``ChargingPointContainer`` instance containing all charging points described in the given ``DeviceConfig``
-    static func collectChargingPoints(basedOn deviceConfig: DeviceConfig) async throws -> ChargingPointContainer {
+    func collectChargingPoints(basedOn deviceConfig: DeviceConfig) async throws -> ChargingPointContainer {
         let chargingPoints = await ChargingPointContainer()
         let devices = try ComponentSupplier.getDevices(for: deviceConfig)
         for (evCharger, powerMeter) in zip(devices.evChargers, devices.powerMeters) {
