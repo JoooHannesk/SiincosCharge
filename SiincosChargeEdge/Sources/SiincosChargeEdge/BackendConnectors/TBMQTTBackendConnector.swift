@@ -52,7 +52,10 @@ class ThingsBoardBackend: BackendController {
             }
         )
     }
-    
+
+    /// Shutdown Backend
+    ///
+    /// Disconnect client and shutdown backend gracefully
     func shutdown() throws {
         self.client?.disconnect()
         try self.eventLoopGroup.syncShutdownGracefully()
@@ -60,13 +63,20 @@ class ThingsBoardBackend: BackendController {
         print("Shuttting Down!")
     }
 
+    /// Update Charging Point Status
+    ///
+    /// Update Charging Point Status in ThingsBoard
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
-        //print(cpsStatus)
-//        if let msg = cpStatus.asJson {
-//            self.publish(message: msg, to: .telemetryTopic)
-//        }
+        for cpStatus in cpsStatus {
+            if let msg = cpStatus.asSerializedJson {
+                self.publish(message: msg, to: .telemetryTopic)
+            }
+        }
     }
 
+    /// Update Charging System Information
+    ///
+    /// Update Charging System Information in ThingsBoard
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
         if let msg = sysInfo.asJson {
             self.publish(message: msg, to: .attributeTopic)

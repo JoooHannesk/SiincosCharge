@@ -33,7 +33,7 @@ protocol BackendController {
     /// Shutdown Backend Controller gracefully
     func shutdown() throws
 
-    /// Update Charging System Status
+    /// Update Charging Point Status
     ///
     /// Propagate charging system status to backend
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>)
