@@ -9,9 +9,21 @@ import Foundation
 
 @main
 struct SiincosChargeEdge {
+
+    @MainActor static var shutdownRequested = false
+
     static func main() async {
 
+        PosixSignals.registerTerminationHandler(run: {
+            self.shutdownRequested = true
+        })
+
         let siincosChargeEdge = await ChargingController()
-        while true { try? await Task.sleep(for: .seconds(60)) }
+
+        while !Self.shutdownRequested {
+            try? await Task.sleep(for: .seconds(5))
+        }
+
+        await siincosChargeEdge.shutdown()
     }
 }
