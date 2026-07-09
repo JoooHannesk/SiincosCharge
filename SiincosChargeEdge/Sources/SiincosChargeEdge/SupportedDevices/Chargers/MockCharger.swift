@@ -12,15 +12,15 @@ import ModbusSerial
 struct MockCharger: EVCharger {
     let unitId: UInt8
     let modelName: SupportedCharger
+    let chargingState: ChargerState = { Bool.random() ? .notCharging : .charging }()
 
     func setupConfig() async throws {
         print("MockCharger: Config Setup completed!")
     }
     
     func getChargerState() async throws -> ChargerState {
-        let chargingState: ChargerState = .notCharging
-        print("Current charging state: \(chargingState)")
-        return chargingState
+        print("Current charging state: \(self.chargingState)")
+        return self.chargingState
     }
 
     func getEVPluggedState() async throws -> EVState {
