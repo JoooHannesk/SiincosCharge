@@ -35,7 +35,7 @@ protocol CloudConfig {
 /// System Configuration
 ///
 /// System configuration for the Siincos Charge Edge system
-struct SystemConfig: DeviceConfig, CloudConfig, Encodable, Decodable, CustomStringConvertible {
+struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible {
     let systemId: String
     let chargerModel: SupportedCharger
     let chargerBus: String
@@ -64,6 +64,37 @@ struct SystemConfig: DeviceConfig, CloudConfig, Encodable, Decodable, CustomStri
         case cloudClientId
         case cloudUsername
         case cloudPassword
+    }
+
+    /// Memberwise Initializer
+    ///
+    /// - Note: Memberwise initializer mainly used for running the tests
+    init(systemId: String,
+         chargerModel: SupportedCharger,
+         chargerBus: String,
+         meterModel: SupportedPowerMeter,
+         meterBus: String,
+         lineLength: UInt8,
+         lineMaxCurrent: Measurement<UnitElectricCurrent>,
+         cloudHost: String,
+         cloudPort: UInt16,
+         cloudCACertPath: String,
+         cloudClientId: String,
+         cloudUsername: String,
+         cloudPassword: String) {
+        self.systemId = systemId
+        self.chargerModel = chargerModel
+        self.chargerBus = chargerBus
+        self.meterModel = meterModel
+        self.meterBus = meterBus
+        self.lineLength = lineLength
+        self.lineMaxCurrent = lineMaxCurrent
+        self.cloudHost = cloudHost
+        self.cloudPort = cloudPort
+        self.cloudCACertPath = cloudCACertPath
+        self.cloudClientId = cloudClientId
+        self.cloudUsername = cloudUsername
+        self.cloudPassword = cloudPassword
     }
 
     /**
