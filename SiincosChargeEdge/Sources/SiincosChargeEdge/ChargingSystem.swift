@@ -21,7 +21,8 @@ actor ChargingSystem {
 
     /// System total maximum current
     ///
-    /// Defines the maximum possible current drawn from the power grid (given in amperes) for the local installation.
+    /// Defines the maximum possible current (given in amperes) which can be drawn from
+    /// the power grid for the local installation.
     let systemTotalMaxCurrent: Measurement<UnitElectricCurrent>
 
     /// Load balanced maxminum current
@@ -41,6 +42,21 @@ actor ChargingSystem {
                 allChargingPointsStatus.insert(try await cp.deviceStatus)
             }
             return allChargingPointsStatus
+        }
+    }
+
+    /// Charging Points Charging
+    ///
+    /// - Returns: Number of charging points which are currently busy with `.charging`
+    var chargingPointsCharging: Int {
+        get async throws {
+            var chargingCount = 0
+            for (_, cp) in await self.chargingPointContainer.chargingPoints {
+                if try await cp.chargingState == .charging {
+                    chargingCount += 1
+                }
+            }
+            return chargingCount
         }
     }
 
@@ -127,9 +143,8 @@ actor ChargingSystem {
     /// - Returns: Actual charging current setpoint for given charging point
     func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>, for chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: current)
+        let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: min(current, self.loadBalancedMaxCurrent))
         return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
-        // TODO: ensure that charging current load balancing / load limitting is done properly!
     }
 
     /// Get charging current
@@ -178,6 +193,24 @@ actor ChargingSystem {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let gridVoltage = try await chargingPoint?.gridVoltage
         return gridVoltage ?? ElectricVoltage3PhaseGrid()
+    }
+
+    /// Update max. Current setpoint
+    ///
+    /// Determine which charging points are currently in `.charging` state and distribute the
+    /// max. available current ``ChargingSystem/systemTotalMaxCurrent`` among all charging stations equally.
+    /// - Parameter forceSetpoint: Skip load-balancing-charging-current calculation and force this setpoint globally.
+    @discardableResult
+    func updateLoadBalancedCurrent(forceSetpoint: Measurement<UnitElectricCurrent>? = nil) async throws -> Measurement<UnitElectricCurrent> {
+        if let forceSetpoint {
+            self.loadBalancedMaxCurrent = min(forceSetpoint, self.systemTotalMaxCurrent)
+            return self.loadBalancedMaxCurrent
+        } else {
+            let chargingPointsCharging = try await self.chargingPointsCharging == 0 ? 1 : try await self.chargingPointsCharging
+            let loadBalancedCurrent = self.systemTotalMaxCurrent.value / Double(chargingPointsCharging)
+            self.loadBalancedMaxCurrent = Measurement(value: loadBalancedCurrent, unit: .amperes)
+            return self.loadBalancedMaxCurrent
+        }
     }
 
     /// Collect Charging Points
