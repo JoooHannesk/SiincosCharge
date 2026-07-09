@@ -120,5 +120,50 @@ class ChargingSystemTests {
             #expect(result.voltageL1 != nil && result.voltageL2 != nil && result.voltageL3 != nil)
         }
     }
+}
+
+@Suite("ChargingSystemLoadBalancerTests", .serialized)
+class ChargingSystemLoadBalancerTests {
+
+    /// Static Device Config
+    static var deviceConfig: DeviceConfig {
+        get async throws {
+            let config = SystemConfig(systemId: "TestcaseConfig",
+                                      chargerModel: .mockCharger,
+                                      chargerBus: "",
+                                      meterModel: .nope,
+                                      meterBus: "",
+                                      lineLength: 6,
+                                      lineMaxCurrent: Measurement(value: 32.0, unit: .amperes),
+                                      cloudHost: "",
+                                      cloudPort: 0,
+                                      cloudCACertPath: "",
+                                      cloudClientId: "",
+                                      cloudUsername: "",
+                                      cloudPassword: "") as DeviceConfig
+            return config
+        }
+    }
+
+    /// Charging System (SUT)
+    let chargingSystem: ChargingSystem
+
+    init() async throws {
+        chargingSystem = try await ChargingSystem(config: Self.deviceConfig)
+    }
+
+    @Test("Force-Setpoint-is-below-system-max-current")
+    func testForceSetpointIsBelowSystemMaxCurrent() async throws {
+        let currentSetpointChargingPoint = try await self.chargingSystem.updateLoadBalancedCurrent(forceSetpoint: Measurement(value: 64.0, unit: .amperes))
+        #expect(currentSetpointChargingPoint.value <= 32.0)
+    }
+
+    @Test("Test-Load-Balancer")
+    func testLoadBalancerIsLimitting() async throws {
+        let currentLimitedBalancer = try await self.chargingSystem.updateLoadBalancedCurrent()
+        let chargingPointsCharging = try await self.chargingSystem.chargingPointsCharging == 0 ? 1 : try await self.chargingSystem.chargingPointsCharging
+        let chargingCurrentLimitExpectation = try await Self.deviceConfig.lineMaxCurrent.value / Double(chargingPointsCharging)
+        #expect(currentLimitedBalancer.value == chargingCurrentLimitExpectation)
+    }
 
 }
