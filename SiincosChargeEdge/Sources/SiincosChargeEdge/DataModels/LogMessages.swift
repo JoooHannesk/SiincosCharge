@@ -14,4 +14,7 @@ enum LogMessages {
     static let sysInfo = "System information:"
     static let mqttConnectionSuccess = "✓ Successfully connected to MQTT broker."
     static let mqttConnectionFailed = "⨯ Failure connecting to MQTT broker."
+    static let mqttSubscriptionSuccess = "✓ Successfully subscribed to topics:"
+    static let mqttSubscriptionFailed = "⨯ Failure subscribing to topics:"
+    static let mqttMessageHandlingFailed = "⨯ Failure when handling MQTT message!"
 }

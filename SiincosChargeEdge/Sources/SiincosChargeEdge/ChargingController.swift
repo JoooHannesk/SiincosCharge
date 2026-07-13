@@ -84,7 +84,7 @@ actor ChargingController {
     ///
     /// - Parameter session: charging session details
     func requestChargingSession(_ session: ChargingSession) {
-
+        print(session)
     }
 
     /// Start a charging session

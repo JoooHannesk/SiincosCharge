@@ -26,6 +26,8 @@ class ThingsBoardBackend: BackendController {
     let eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     let eventLoopGroupProvider: NIOEventLoopGroupProvider
 
+    // MARK: - Protocol enforced Members
+
     let chargingController: ChargingController
 
     /// Logger
@@ -46,6 +48,7 @@ class ThingsBoardBackend: BackendController {
         self.client?.connect(
             onSuccess: {
                 self.logger.info("\(LogMessages.mqttConnectionSuccess)")
+                self.subscribe(to: [.rpcTopic])
             },
             onError: { error in
                 self.logger.error("\(LogMessages.mqttConnectionFailed)", metadata: ["error": "\(error.localizedDescription)"])
@@ -83,7 +86,37 @@ class ThingsBoardBackend: BackendController {
         }
     }
 
-    // MARK: - private methods
+    // MARK: - Backend specific Methods
+
+    /// Subscribe to MQTT topics
+    private func subscribe(to topics: [TBMQTTTopics]) {
+        self.client?.subscribe(
+            to: topics.map { $0.rawValue },
+            onSuccess: { topic, subAck in
+                self.logger.info("\(LogMessages.mqttSubscriptionSuccess)\(topic) with code \(subAck)")
+                self.setMessageListener()
+            },
+            onError: { error in
+                self.logger.error("\(LogMessages.mqttSubscriptionFailed)", metadata: ["error": "\(error.localizedDescription)"])
+            }
+        )
+    }
+
+    /// Set a message listener
+    ///
+    /// Handle inbound messages (messages are related to subscribed topics)
+    private func setMessageListener() {
+        self.client?.registerMessageListener(
+            named: "MainListener",
+            onMessage: { [weak self] message, topic in
+                print("Received: \(topic), \(message)")
+            }, onError: { error in
+                self.logger.error("\(LogMessages.mqttMessageHandlingFailed)", metadata: ["error": "\(error.localizedDescription)"])
+            })
+    }
+
+
+    // MARK: - Private methods
 
     /// Create MQTT Client
     ///
