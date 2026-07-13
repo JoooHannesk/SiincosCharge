@@ -61,8 +61,6 @@ class ThingsBoardBackend: BackendController {
     func shutdown() throws {
         self.client?.disconnect()
         try self.eventLoopGroup.syncShutdownGracefully()
-        // TODO: implement correctly
-        print("TBMQTT Backend is shuttting Down!")
     }
 
     /// Update Charging Point Status
