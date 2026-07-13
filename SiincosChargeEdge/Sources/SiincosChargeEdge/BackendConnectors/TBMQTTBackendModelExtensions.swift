@@ -14,7 +14,7 @@ import Foundation
 extension ChargingSystemInformation: JsonStringConvertible {
 
     enum CodingKeys: String, CodingKey {
-        case appVersion, chargerModel, meterModel, chargingPoints, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
+        case appVersion, chargerModel, meterModel, chargingPoints, chargingPointsCharging, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
     }
 
     /// Encodes `ChargingSystemInformation` to a flat JSON structure.
@@ -27,6 +27,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
         try container.encode(chargerModel, forKey: .chargerModel)
         try container.encode(meterModel, forKey: .meterModel)
         try container.encode(chargingPoints, forKey: .chargingPoints)
+        try container.encode(chargingPointsCharging, forKey: .chargingPointsCharging)
         try container.encode(lineMaxCurrent.value, forKey: .lineMaxCurrentA)
         try container.encode(loadBalancedMaxCurrent.value, forKey: .loadBalancedMaxCurrentA)
         try container.encode(sysError?.rawValue ?? "", forKey: .sysError)
@@ -42,6 +43,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
         self.chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
         self.meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)
         self.chargingPoints = try container.decode(UInt8.self, forKey: .chargingPoints)
+        self.chargingPointsCharging = try container.decode(UInt8.self, forKey: .chargingPointsCharging)
         let lmca = try container.decode(Double.self, forKey: .lineMaxCurrentA)
         self.lineMaxCurrent = Measurement(value: lmca, unit: UnitElectricCurrent.amperes)
         let lbmca = try container.decode(Double.self, forKey: .loadBalancedMaxCurrentA)

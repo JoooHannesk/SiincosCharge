@@ -66,6 +66,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let chargerModel: SupportedCharger
     let meterModel: SupportedPowerMeter
     let chargingPoints: UInt8
+    let chargingPointsCharging: UInt8
     let lineMaxCurrent: Measurement<UnitElectricCurrent>
     let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
     let sysError: SystemError?
@@ -76,6 +77,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
             Charger Model: \(chargerModel.rawValue)
             Power Meter Model: \(meterModel.rawValue)
             Charging Points: \(chargingPoints)
+            Charging Points charging: \(chargingPointsCharging)
             Line Current (A): \(lineMaxCurrent)
             Load Balanced max. Current (A): \(loadBalancedMaxCurrent)
             Error: \(String(describing: sysError))

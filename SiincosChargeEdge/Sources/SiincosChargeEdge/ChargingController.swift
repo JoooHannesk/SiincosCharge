@@ -69,8 +69,13 @@ actor ChargingController {
         // TODO: implement
         print("main runloop called")
         self.logger.info("main runloop called") // TODO: remove
-        await self.updateChargingSystemInformation()
         await self.updateChargingPointStatus()
+        do {
+            try await self.updateChargingSystemInformation()
+            try await self.chargingSystem?.updateLoadBalancedCurrent()
+        } catch {
+            self.handleError(err: error)
+        }
     }
 
     /// Start a charging session
@@ -118,13 +123,10 @@ actor ChargingController {
         do {
             if let cpsStatus = try await self.chargingSystem?.systemStatus {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
-                self.sysError = nil
+                //self.sysError = nil // TODO: move to a better position, e.g. restarting the gateway... We don't reset the error here, as it wouldn't propagae to the backend properly
             }
         } catch {
-            self.sysError = error as? SystemError
-            if let sysError = self.sysError {
-                self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
-            }
+            self.handleError(err: error)
         }
     }
 
@@ -138,18 +140,32 @@ actor ChargingController {
     /// - max. installation line current (amperes)
     /// - load balanced max. current
     /// - system error
-    func updateChargingSystemInformation() async {
+    func updateChargingSystemInformation() async throws {
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
+            chargingPointsCharging: try await self.chargingSystem?.chargingPointsCharging ?? 0,
             lineMaxCurrent: self.systemConfig.lineMaxCurrent,
             loadBalancedMaxCurrent: await self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
             sysError: self.sysError
         )
         self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")
         self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)
+    }
+
+    /// Handle Error
+    ///
+    /// Handle the error by
+    /// - converting it to the project specific ``SystemError``
+    /// - set local member
+    /// - log it
+    func handleError(err: Error) {
+        self.sysError = err as? SystemError
+        if let sysError = self.sysError {
+            self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
+        }
     }
 
     // MARK: - static methods

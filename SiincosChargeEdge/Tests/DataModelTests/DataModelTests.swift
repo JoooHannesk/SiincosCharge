@@ -22,6 +22,7 @@ struct DataModelTests {
                                                  chargerModel: .senecWallboxProS11kW,
                                                  meterModel: .janitzaSmartMeterB2331210J,
                                                  chargingPoints: 3,
+                                                 chargingPointsCharging: 1,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  loadBalancedMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  sysError: nil)
@@ -39,6 +40,7 @@ struct DataModelTests {
                                                  chargerModel: .senecWallboxProS11kW,
                                                  meterModel: .janitzaSmartMeterB2331210J,
                                                  chargingPoints: 3,
+                                                 chargingPointsCharging: 1,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  loadBalancedMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  sysError: .chargersMissing)
