@@ -96,4 +96,40 @@ struct DataModelTests {
         #expect(csysStatusBack! == csysStatus)
     }
 
+    @Test("Test-JSON-Encoding-For-ChargingSession-Data-Model")
+    func testChargingSessionJsonEncoding() throws {
+        let originalA = ChargingSession(
+            cpId: 7,
+            userName: "user@example.com",
+            chargingSessionStatus: .paused,
+            chargingCurrentSetpoint: Measurement(value: 16.0, unit: .amperes)
+        )
+        try #require(originalA.asJson != nil)
+        if let originalAjson = originalA.asJson {
+            let jsonData = originalAjson.data(using: .utf8)!
+            let originalABack = try JSONDecoder().decode(ChargingSession.self, from: jsonData)
+            #expect(originalA == originalABack)
+        }
+
+        let originalB = ChargingSession(
+            sessionId: "SessionID4711",
+            cpId: 2,
+            startTime: Date(),
+            endTime: Date().addingTimeInterval(TimeInterval(60)),
+            meterReadingStart: Measurement(value: 9.4, unit: .kilowattHours),
+            meterReadingEnd: Measurement(value: 12.4, unit: .kilowattHours),
+            userName: "user@example.com",
+            chargingSessionStatus: .running,
+            totalEnergyConsumed: Measurement(value: 3.0, unit: .kilowattHours),
+            chargingCurrentSetpoint: Measurement(value: 16.0, unit: .amperes)
+        )
+        try #require(originalB.asJson != nil)
+        if let originalBjson = originalB.asJson {
+            let jsonData = originalBjson.data(using: .utf8)!
+            let originalBBack = try JSONDecoder().decode(ChargingSession.self, from: jsonData)
+            #expect(originalB == originalBBack)
+        }
+
+    }
+
 }

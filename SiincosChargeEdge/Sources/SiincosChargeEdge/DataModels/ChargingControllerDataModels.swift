@@ -13,12 +13,12 @@ import Foundation
 /// for a single charging point.
 /// When charging has finished, this ``ChargingSession`` is used as a *Charging Session Receipt*
 /// in the backend to maintaing history of all charging sessions.
-struct ChargingSession: Hashable, Codable {
+struct ChargingSession: Hashable, CustomStringConvertible, Codable {
 
     /// Charging Session Id
     ///
     /// Unique charging session id based on starting date/time and charging point id
-    let sessionId: String
+    var sessionId: String?
 
     /// Charging Point ID
     ///
@@ -27,30 +27,77 @@ struct ChargingSession: Hashable, Codable {
     let cpId: UInt8
 
     /// Charging Session Start Time
-    let startTime: Date
+    var startTime: Date?
 
     /// Charging Session End time
-    var endTime: Date
+    var endTime: Date?
+
+    /// Power meter reading at charging session start time
+    var meterReadingStart: Measurement<UnitEnergy>?
+
+    /// Power meter reading at charging session end time
+    var meterReadingEnd: Measurement<UnitEnergy>?
 
     /// User
     ///
     /// User who invoked the charging session
-    let user: String
+    let userName: String
 
     /// Charging Session Status
     ///
     /// Either `.running`, `.finished`, `.paused`
     var chargingSessionStatus: ChargingSessionStatus
 
-    /// Total Energy Consumption
+    /// Total Energy Consumed
     ///
     /// Total energy drawn from the charging point by the EV
-    var totalEnergyConsumption: Measurement<UnitEnergy>
+    var totalEnergyConsumed: Measurement<UnitEnergy>?
 
     /// Charging Current Setpoint
     ///
     /// Charging current for the session set by the user
-    var chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
+    let chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
+
+    /// Stringconvertible description
+    var description: String {
+        return """
+            Session ID: \(sessionId ?? "<n/a>"),
+            Charging Point: \(cpId),
+            Start Timestamp: \(startTime, default: "<n/a>"),
+            End Timestamp: \(endTime, default: "<n/a>"),
+            Meter Reading Start (kWh): \(meterReadingStart, default: "<n/a>"),
+            Meter Reading End (kWh): \(meterReadingEnd, default: "<n/a>"),
+            User: \(userName),
+            Charging Session Status: \(chargingSessionStatus),
+            Total Energy Consumption: \(totalEnergyConsumed, default: "<n/a>"),
+            Charging Current Setpoint: \(chargingCurrentSetpoint)
+            """
+    }
+
+    init(
+        sessionId: String? = nil,
+        cpId: UInt8,
+        startTime: Date? = nil,
+        endTime: Date? = nil,
+        meterReadingStart: Measurement<UnitEnergy>? = nil,
+        meterReadingEnd: Measurement<UnitEnergy>? = nil,
+        userName: String,
+        chargingSessionStatus: ChargingSessionStatus,
+        totalEnergyConsumed: Measurement<UnitEnergy>? = nil,
+        chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
+    ) {
+        self.sessionId = sessionId
+        self.cpId = cpId
+        self.startTime = startTime
+        self.endTime = endTime
+        self.meterReadingStart = meterReadingStart
+        self.meterReadingEnd = meterReadingEnd
+        self.userName = userName
+        self.chargingSessionStatus = chargingSessionStatus
+        self.totalEnergyConsumed = totalEnergyConsumed
+        self.chargingCurrentSetpoint = chargingCurrentSetpoint
+    }
+
 }
 
 /// Charging Session Status

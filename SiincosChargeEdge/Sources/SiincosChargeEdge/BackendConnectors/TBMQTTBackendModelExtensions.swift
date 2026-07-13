@@ -57,6 +57,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
 ///
 /// Custom model extension for ThingsBoard/MQTT backend
 extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConvertible {
+
     enum CodingKeys: String, CodingKey {
         case cpId
         case chargingState
@@ -129,4 +130,62 @@ extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConver
             voltageL3: voltageL3
         )
     }
+}
+
+/// Charging Session Extension
+///
+/// Custom model extension for ThingsBoard/MQTT backend
+extension ChargingSession: JsonStringConvertible {
+
+    enum CodingKeys: String, CodingKey {
+        case sessionId
+        case cpId
+        case startTime
+        case endTime
+        case meterReadingStartkWh
+        case meterReadingEndkWh
+        case userName
+        case chargingSessionStatus
+        case totalEnergyConsumedkWh
+        case chargingCurrentSetpointA
+    }
+
+    /// Encode to a flat json string
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(sessionId, forKey: .sessionId)
+        try container.encode(cpId, forKey: .cpId)
+        try container.encode(startTime, forKey: .startTime)
+        try container.encode(endTime, forKey: .endTime)
+        try container.encode(meterReadingStart?.value, forKey: .meterReadingStartkWh)
+        try container.encode(meterReadingEnd?.value, forKey: .meterReadingEndkWh)
+        try container.encode(userName, forKey: .userName)
+        try container.encode(chargingSessionStatus, forKey: .chargingSessionStatus)
+        try container.encode(totalEnergyConsumed?.value, forKey: .totalEnergyConsumedkWh)
+        try container.encode(chargingCurrentSetpoint.value, forKey: .chargingCurrentSetpointA)
+    }
+
+    /// Decode from a flat json string
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.sessionId = try container.decodeIfPresent(String.self, forKey: .sessionId)
+        self.cpId = try container.decode(UInt8.self, forKey: .cpId)
+        self.startTime = try container.decodeIfPresent(Date.self, forKey: .startTime)
+        self.endTime = try container.decodeIfPresent(Date.self, forKey: .endTime)
+        if let meterReadingStart = try container.decodeIfPresent(Double.self, forKey: .meterReadingStartkWh) {
+            self.meterReadingStart = Measurement(value: meterReadingStart, unit: .kilowattHours)
+        }
+        if let meterReadingEnd = try container.decodeIfPresent(Double.self, forKey: .meterReadingEndkWh) {
+            self.meterReadingEnd = Measurement(value: meterReadingEnd, unit: .kilowattHours)
+        }
+        userName = try container.decode(String.self, forKey: .userName)
+        chargingSessionStatus = try container.decode(ChargingSessionStatus.self, forKey: .chargingSessionStatus)
+        if let totalEnergyConsumed = try container.decodeIfPresent(Double.self, forKey: .totalEnergyConsumedkWh) {
+            self.totalEnergyConsumed = Measurement(value: totalEnergyConsumed, unit: .kilowattHours)
+        }
+        self.chargingCurrentSetpoint = Measurement(value: try container.decode(Double.self, forKey: .chargingCurrentSetpointA), unit: .amperes)
+
+    }
+
+
 }

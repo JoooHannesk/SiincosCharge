@@ -75,6 +75,18 @@ actor ChargingController {
         }
     }
 
+    /// Request a charging session
+    ///
+    /// In case a charging session is requested, it is registered as a charging session if:
+    /// - no other charging session is registered or running for the given charging point
+    /// - the EV is plugged in, recognized by the charger and the charger is in state ``EVState/pluggedIn``.
+    /// In any other cases, the charging session request is ignored.
+    ///
+    /// - Parameter session: charging session details
+    func requestChargingSession(_ session: ChargingSession) {
+
+    }
+
     /// Start a charging session
     ///
     /// Start a charging session for the provided charging poind id.
