@@ -66,9 +66,6 @@ actor ChargingController {
     ///
     /// Charging controller's main run loop
     func runLoop() async {
-        // TODO: implement
-        print("main runloop called")
-        self.logger.info("main runloop called") // TODO: remove
         await self.updateChargingPointStatus()
         do {
             try await self.updateChargingSystemInformation()
@@ -123,7 +120,6 @@ actor ChargingController {
         do {
             if let cpsStatus = try await self.chargingSystem?.systemStatus {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
-                //self.sysError = nil // TODO: move to a better position, e.g. restarting the gateway... We don't reset the error here, as it wouldn't propagae to the backend properly
             }
         } catch {
             self.handleError(err: error)
@@ -166,6 +162,24 @@ actor ChargingController {
         if let sysError = self.sysError {
             self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
         }
+    }
+
+    /// Restart System
+    ///
+    /// Completely restart the system:
+    /// - exit application
+    /// - restart OS
+    ///
+    /// - Note: In case an error is thrown, restarting the system is a good idea.
+    /// Thrown errors mainly originate from bus communication failures and therefore render the system unmanoeuvrable which requires a restart.
+    /// Status errors from EV chargers are generally not registered in ``ChargingController/sysError``, every charger has it's own way to communicate an
+    /// error or warning.
+    func restartSystem() {
+        self.sysError = nil // Pointless...
+        logger.info("\(LogMessages.restartMsg)")
+        // TODO: implement
+        // reboot system with command: "nohup bash -c 'sleep 8 && systemctl reboot' &"
+        self.shutdown()
     }
 
     // MARK: - static methods
