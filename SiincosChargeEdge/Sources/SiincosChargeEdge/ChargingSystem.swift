@@ -48,9 +48,9 @@ actor ChargingSystem {
     /// Charging Points Charging
     ///
     /// - Returns: Number of charging points which are currently busy with `.charging`
-    var chargingPointsCharging: Int {
+    var chargingPointsCharging: UInt8 {
         get async throws {
-            var chargingCount = 0
+            var chargingCount: UInt8 = 0
             for (_, cp) in await self.chargingPointContainer.chargingPoints {
                 if try await cp.chargingState == .charging {
                     chargingCount += 1
