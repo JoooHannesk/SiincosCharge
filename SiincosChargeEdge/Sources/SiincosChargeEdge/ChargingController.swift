@@ -48,7 +48,7 @@ actor ChargingController {
     /// Start the main run loop
     func startRunLoop() {
         self.runLoopTask?.cancel()
-        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 300.0) { [weak self] in
+        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
             await self?.runLoop()
         }
     }

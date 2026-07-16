@@ -124,8 +124,11 @@ class ThingsBoardBackend: BackendController {
             let method = (msgDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
             switch method {
             case .requestChargingSession:
-                let chargingSession: ChargingSession? = try self.decodeMessagePayload(msgDict: msgDict)
-                print(chargingSession)
+                if let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: msgDict) {
+                    Task { [chargingController] in
+                        await chargingController.requestChargingSession(chargingSession)
+                    }
+                }
             default:
                 break
             }
