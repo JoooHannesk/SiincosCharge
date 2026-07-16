@@ -20,6 +20,10 @@ enum TBMQTTTopics: String {
     case attributeTopic = "v1/devices/me/attributes"
 }
 
+enum SupportedRPC: String, Codable {
+    case requestChargingSession
+}
+
 class ThingsBoardBackend: BackendController {
 
     var client: TinyTBDeviceClient?
@@ -102,21 +106,49 @@ class ThingsBoardBackend: BackendController {
         )
     }
 
+    // MARK: - Private methods
+
+    /// Message Processor
+    ///
+    /// Process incoming message by calling corresponding method from ``ChargingController``
+    private func messageProcessor(message: String, topic: String? = nil) {
+        do {
+            guard let msgData = message.data(using: .utf8) else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
+            guard let msgDict = try JSONSerialization.jsonObject(with: msgData) as? [String: Any] else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
+            let method = (msgDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
+            switch method {
+            case .requestChargingSession:
+                if let paramsData = msgDict["params"] as? [String: Any] {
+                    let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
+                    let chargingSession = try JSONDecoder().decode(ChargingSession.self, from: paramsJson)
+                    print(chargingSession)
+                }
+            default:
+                break
+            }
+        } catch {
+            self.logger.warning("\(LogMessages.dataConversionFailed)", metadata: ["error": "\(error.localizedDescription)"])
+        }
+    }
+
     /// Set a message listener
     ///
     /// Handle inbound messages (messages are related to subscribed topics)
     private func setMessageListener() {
         self.client?.registerMessageListener(
             named: "MainListener",
-            onMessage: { [weak self] message, topic in
-                print("Received: \(topic), \(message)")
+            onMessage: { message, topic in
+                self.messageProcessor(message: message, topic: topic)
             }, onError: { error in
                 self.logger.error("\(LogMessages.mqttMessageHandlingFailed)", metadata: ["error": "\(error.localizedDescription)"])
             })
     }
-
-
-    // MARK: - Private methods
 
     /// Create MQTT Client
     ///
