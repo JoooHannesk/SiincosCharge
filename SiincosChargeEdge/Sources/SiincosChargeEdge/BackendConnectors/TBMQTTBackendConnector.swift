@@ -124,11 +124,8 @@ class ThingsBoardBackend: BackendController {
             let method = (msgDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
             switch method {
             case .requestChargingSession:
-                if let paramsData = msgDict["params"] as? [String: Any] {
-                    let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
-                    let chargingSession = try JSONDecoder().decode(ChargingSession.self, from: paramsJson)
-                    print(chargingSession)
-                }
+                let chargingSession: ChargingSession? = try self.decodeMessagePayload(msgDict: msgDict)
+                print(chargingSession)
             default:
                 break
             }
@@ -150,10 +147,27 @@ class ThingsBoardBackend: BackendController {
             })
     }
 
+    /// Decode RPC message payload
+    ///
+    /// Decode the `params` field of an RPC message into the inferred `Codable` type.
+    /// - Parameter msgDict: RPC message as dictionary, containing a `params` field with the payload
+    /// - Returns: Decoded payload object, or `nil` if the message contains no `params` field
+    /// - Throws: An error if serialization or decoding of the payload fails
+    private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T? {
+        if let paramsData = msgDict["params"] as? [String: Any] {
+            let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
+            let payloadObject = try JSONDecoder().decode(T.self, from: paramsJson)
+            return payloadObject
+        } else {
+            return nil
+        }
+    }
+
     /// Create MQTT Client
     ///
     /// Create client from config provided through ``ThingsBoardBackend/chargingController``.
     /// - Returns: MQTT client
+    /// - Throws: An error if instantiating of ``TinyTBDeviceClient``
     private func createMQTTClient() throws -> TinyTBDeviceClient? {
         let config = self.chargingController.systemConfig
         client = try TinyTBDeviceClient(
