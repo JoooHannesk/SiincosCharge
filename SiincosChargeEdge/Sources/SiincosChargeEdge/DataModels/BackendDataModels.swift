@@ -46,7 +46,7 @@ protocol BackendController {
     /// Update Charging Tasks
     ///
     /// Propagate charging tasks to backend
-    /// - Parameter chargingTasks: Charging tasks as array
-    func updateChargingTasks(with chargingTasks: [ChargingSession])
+    /// - Parameter chargingTasks: Charging tasks as `[UInt8: ChargingSession]`
+    func updateChargingTasks(with chargingTasks: [UInt8: ChargingSession])
 }
 

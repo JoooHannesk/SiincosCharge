@@ -93,13 +93,9 @@ class ThingsBoardBackend: BackendController {
     /// Update Charging Tasks
     ///
     /// Propagate charging tasks to backend
-    /// - Parameter chargingTasks: Charging tasks as array
-    func updateChargingTasks(with chargingTasks: [ChargingSession]) {
-        for chargingTask in chargingTasks {
-            if let msg = chargingTask.asJson {
-                self.publish(message: msg, to: .attributeTopic)
-            }
-        }
+    /// - Parameter chargingTasks: Charging tasks as `[UInt8: ChargingSession]`
+    func updateChargingTasks(with chargingTasks: [UInt8: ChargingSession]) {
+        // TODO: implement
     }
 
     // MARK: - Backend specific Methods
