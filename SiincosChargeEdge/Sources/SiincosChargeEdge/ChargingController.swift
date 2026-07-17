@@ -46,7 +46,7 @@ actor ChargingController {
     /// Start the run loop
     ///
     /// Start the main run loop
-    func startRunLoop() {
+    private func startRunLoop() {
         self.runLoopTask?.cancel()
         self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
             await self?.runLoop()
@@ -65,7 +65,7 @@ actor ChargingController {
     /// Run Loop
     ///
     /// Charging controller's main run loop
-    func runLoop() async {
+    private func runLoop() async {
         await self.updateChargingPointStatus()
         do {
             try await self.updateChargingSystemInformation()
@@ -128,7 +128,7 @@ actor ChargingController {
     ///
     /// Update charging system status information in backend by
     /// collecting all charging point status information.
-    func updateChargingPointStatus() async {
+    private func updateChargingPointStatus() async {
         do {
             if let cpsStatus = try await self.chargingSystem?.systemStatus {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
@@ -151,7 +151,7 @@ actor ChargingController {
     /// - max. installation line current (amperes)
     /// - load balanced max. current
     /// - system error
-    func updateChargingSystemInformation() async throws {
+    private func updateChargingSystemInformation() async throws {
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
@@ -172,7 +172,7 @@ actor ChargingController {
     /// - converting it to the project specific ``SystemError``
     /// - set local member
     /// - log it
-    func handleError(err: Error) {
+    private func handleError(err: Error) {
         self.sysError = err as? SystemError
         if let sysError = self.sysError {
             self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
