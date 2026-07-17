@@ -136,6 +136,9 @@ actor ChargingController {
         } catch {
             self.handleError(err: error)
         }
+        if let chargingTasks = await self.chargingSystem?.chargingPointContainer.chargingTasks.values {
+            self.backend?.updateChargingTasks(with: Array(chargingTasks))
+        }
     }
 
     /// Update Charging System Information

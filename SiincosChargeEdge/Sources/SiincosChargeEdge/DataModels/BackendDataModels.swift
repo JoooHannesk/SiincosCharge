@@ -42,5 +42,11 @@ protocol BackendController {
     ///
     /// Propagate charging system information to backend
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation)
+
+    /// Update Charging Tasks
+    ///
+    /// Propagate charging tasks to backend
+    /// - Parameter chargingTasks: Charging tasks as array
+    func updateChargingTasks(with chargingTasks: [ChargingSession])
 }
 

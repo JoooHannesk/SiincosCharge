@@ -135,7 +135,7 @@ extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConver
 /// Charging Session Extension
 ///
 /// Custom model extension for ThingsBoard/MQTT backend
-extension ChargingSession: JsonStringConvertible {
+extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertible {
 
     enum CodingKeys: String, CodingKey {
         case sessionId

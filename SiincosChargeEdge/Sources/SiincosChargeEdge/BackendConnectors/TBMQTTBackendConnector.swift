@@ -90,6 +90,18 @@ class ThingsBoardBackend: BackendController {
         }
     }
 
+    /// Update Charging Tasks
+    ///
+    /// Propagate charging tasks to backend
+    /// - Parameter chargingTasks: Charging tasks as array
+    func updateChargingTasks(with chargingTasks: [ChargingSession]) {
+        for chargingTask in chargingTasks {
+            if let msg = chargingTask.asJson {
+                self.publish(message: msg, to: .attributeTopic)
+            }
+        }
+    }
+
     // MARK: - Backend specific Methods
 
     /// Subscribe to MQTT topics
