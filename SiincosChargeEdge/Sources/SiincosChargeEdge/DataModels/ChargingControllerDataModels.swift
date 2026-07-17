@@ -46,7 +46,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
     /// Charging Session Status
     ///
     /// Either `.running`, `.finished`, `.paused`, `.waiting`
-    var chargingSessionStatus: ChargingSessionStatus
+    var status: ChargingSessionStatus
 
     /// Total Energy Consumed
     ///
@@ -68,7 +68,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
             Meter Reading Start (kWh): \(meterReadingStart, default: "<n/a>"),
             Meter Reading End (kWh): \(meterReadingEnd, default: "<n/a>"),
             User: \(userName),
-            Charging Session Status: \(chargingSessionStatus),
+            Status: \(status),
             Total Energy Consumption: \(totalEnergyConsumed, default: "<n/a>"),
             Charging Current Setpoint: \(chargingCurrentSetpoint)
             """
@@ -93,7 +93,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.meterReadingStart = meterReadingStart
         self.meterReadingEnd = meterReadingEnd
         self.userName = userName
-        self.chargingSessionStatus = chargingSessionStatus
+        self.status = chargingSessionStatus
         self.totalEnergyConsumed = totalEnergyConsumed
         self.chargingCurrentSetpoint = chargingCurrentSetpoint
     }
