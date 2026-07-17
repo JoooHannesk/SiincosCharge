@@ -89,6 +89,33 @@ class ChargingPointTests {
         #expect(await chargingPointContainer.getChargingTask(by: 2) != ct1)
     }
 
+    @Test("Test-Update-Charging-Task")
+    func updateChargingTask() async throws {
+        let chargingPointContainer = await ChargingPointContainer(chargingPoints: self.chargingPoints)
+        #expect(await chargingPointContainer.count == self.chargingPoints.count)
+        let origCt1 = ChargingSession(
+            sessionId: "sampleSession1",
+            cpId: 1,
+            startTime: Date(),
+            endTime: Date(),
+            meterReadingStart: Measurement(value: 4.3, unit: .kilowattHours),
+            meterReadingEnd: Measurement(value: 8.6, unit: .kilowattHours),
+            userName: "sampleuser@sample.com",
+            chargingSessionStatus: .paused,
+            totalEnergyConsumed: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
+            chargingCurrentSetpoint: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
+            )
+        await chargingPointContainer.addChargingTask(origCt1)
+        try #require(await chargingPointContainer.chargingTasks.count == 1)
+        var copyCt1 = await chargingPointContainer.getChargingTask(by: 1)!
+        copyCt1.status = .running
+        await chargingPointContainer.updateChargingTask(copyCt1)
+        #expect(await chargingPointContainer.getChargingTask(by: 1) == copyCt1)
+        await chargingPointContainer.addChargingTask(copyCt1)
+        #expect(await chargingPointContainer.getChargingTask(by: 1) == copyCt1)
+        #expect(await chargingPointContainer.chargingTasks.count == 1)
+    }
+
     @Test("Test-Charging-System-Properties")
     func chargingSystemProperties() async throws {
         for chargingPoint in chargingPoints {

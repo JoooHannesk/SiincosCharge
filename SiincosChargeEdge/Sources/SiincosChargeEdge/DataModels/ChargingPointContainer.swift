@@ -61,7 +61,18 @@ actor ChargingPointContainer {
     ///
     /// Add a new charging task
     func addChargingTask(_ ct: ChargingSession) {
-        self.chargingTasks[ct.cpId] = ct
+        if self.chargingTasks[ct.cpId] == nil {
+            self.chargingTasks[ct.cpId] = ct
+        }
+    }
+
+    /// Update charging task
+    ///
+    /// Update an existing charging task
+    func updateChargingTask(_ ct: ChargingSession) {
+        if self.chargingTasks[ct.cpId] != nil {
+            self.chargingTasks[ct.cpId] = ct
+        }
     }
 
     /// Get charging task by ID
