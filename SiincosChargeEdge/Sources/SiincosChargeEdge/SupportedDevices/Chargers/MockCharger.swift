@@ -13,6 +13,7 @@ struct MockCharger: EVCharger {
     let unitId: UInt8
     let modelName: SupportedCharger
     let chargingState: ChargerState = { Bool.random() ? .notCharging : .charging }()
+    let evState: EVState = { Bool.random() ? .pluggedIn : .unplugged }()
 
     func setupConfig() async throws {
         print("MockCharger: Config Setup completed!")
@@ -24,9 +25,8 @@ struct MockCharger: EVCharger {
     }
 
     func getEVPluggedState() async throws -> EVState {
-        let evState: EVState = .pluggedIn
-        print("EV is currently: \(evState)")
-        return evState
+        print("EV is currently: \(self.evState)")
+        return self.evState
     }
 
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
