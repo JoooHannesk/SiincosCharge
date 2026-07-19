@@ -36,6 +36,9 @@ enum SimpleLoopTimer {
     ///
     static func getSimpleLoopTimerWith(interval: TimeInterval, _ body: @Sendable @escaping () async -> Void) -> Task<Void, Never> {
         return Task { @Sendable in
+            // Initial delay
+            try? await Task.sleep(for: .seconds(interval))
+
             var nextFire = Date()
             while !Task.isCancelled {
                 await body()
