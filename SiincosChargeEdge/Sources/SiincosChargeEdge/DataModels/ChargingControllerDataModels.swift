@@ -98,6 +98,27 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.chargingCurrentSetpoint = chargingCurrentSetpoint
     }
 
+    /// Start charging
+    ///
+    /// Set `sessionId`, `startTime`, `meterReadingStart` and `status` to `.running`.
+    ///
+    /// - Parameters:
+    ///   - systemId: `systemId` from config, required to generate `sessionId`.
+    ///   - meterReading: Current meter reading
+    mutating func startCharging(systemId: String, startTime: Date, meterReading: Measurement<UnitEnergy>) {
+        self.sessionId = "\(systemId)-\(DataModelsHelpers.getDateTimeString(from: startTime))-\(cpId)"
+        self.startTime = startTime
+        self.meterReadingStart = meterReading
+        self.status = .running
+    }
+
+    /// Resume charging
+    ///
+    /// Set `status` to `.running`.
+    mutating func resumeCharging() {
+        self.status = .running
+    }
+
 }
 
 /// Charging Session Status

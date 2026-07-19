@@ -24,11 +24,11 @@ actor ChargingController {
     /// Init and start-up phase
     ///
     /// Load required assets and log errors. In case of critical errors, shut down.
-    init() async {
+    init(systemConfig: SystemConfig? = nil) async {
         print(LogMessages.welcomMsg)
         self.logger.info("\(LogMessages.welcomMsg)")
 
-        self.systemConfig = Self.loadSystemConfig()
+        self.systemConfig = systemConfig ?? Self.loadSystemConfig()
         self.backend = ThingsBoardBackend(chargingController: self)
 
         do {
@@ -77,27 +77,105 @@ actor ChargingController {
 
     /// Request a charging session
     ///
-    /// In case a charging session is requested, it is registered as a charging session if:
+    /// In case a charging session is requested, it is registered or updated as a charging session if:
     /// - no other charging session is registered or running for the given charging point
     /// - the EV is plugged in, recognized by the charger and the charger is in state ``EVState/pluggedIn``.
+    /// - a session is paused, resumed or stopped (finished) only if the requesting member is the owner of the currently registered session
     /// In any other cases, the charging session request is ignored.
     ///
     /// - Parameter session: charging session details
-    func requestChargingSession(_ session: ChargingSession) {
+    func requestChargingSession(_ session: ChargingSession) async {
         print(session)
+        do {
+            switch session.status {
+            case .running:
+                try await self.handleChargingRequestRunning(request: session)
+
+            case .waiting:
+                // Add a new session in case:
+                // 1. no other session is registered
+                // 2. the car is plugged in
+                // TODO: implement
+                break
+
+            case .paused:
+                // Update an existing session in case:
+                // 1. current session owner is the same as the request owner
+                // TODO: implement
+                break
+
+            case .finished:
+                // Update an existing session in case:
+                // 1. current session owner is the same as the request owner
+                // TODO: implement
+                break
+            }
+        } catch {
+            self.handleError(err: error)
+        }
+    }
+
+
+    /// Handle Charging Session Request…
+    ///
+    /// … for `.running`.
+    ///
+    /// Add a new session in case:
+    /// 1. no other session is registered
+    /// 2. the car is plugged in
+    ///
+    /// Update an existing session in case:
+    /// 1. current session is paused - will be set to running
+    /// 2. current session owner is the same as the request owner
+    ///
+    /// - Parameter request: charging session request from backend
+    private func handleChargingRequestRunning(request: ChargingSession) async throws {
+        let chargingPointId = request.cpId
+        let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: chargingPointId) == .pluggedIn
+        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingPointId)
+
+        if currentChargingSession == nil && evPluggedIn {
+            // start a new charging session immediately: set to running
+            try await self.startCharging(with: request)
+        }
+
+        if currentChargingSession?.status == .paused && currentChargingSession?.userName == request.userName {
+            // resume an existing, paused session: set to running
+            await self.resumeChargingSession(for: chargingPointId)
+        }
+    }
+
+    /// Handle Charging Session Request…
+    ///
+    /// … for `.finished`.
+    ///
+    /// Gracefully end a charging session, generate a session receipt, and forward it to the backend for safe keeping.
+    /// Make sure current session and request share the same owner.
+    ///
+    /// - Parameter request: charging session request from backend
+    private func handleChargingRequestFinished(request: ChargingSession) async {
+        let chargingPointId = request.cpId
+        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingPointId)
+
+        if currentChargingSession?.userName == request.userName {
+            // stop charging session and write receipt
+            // TODO: implement
+        }
     }
 
     /// Start a charging session
     ///
     /// Start a charging session for the provided charging poind id.
     ///
-    /// - Parameter cpId: Charging Point Id
-    ///
-    /// - Note: In case the charging point already has a running charging session, the request will be
-    /// ignored. If a charging session is paused, it won't be resumed. Use
-    /// ``ChargingController/resumeChargingSession(for:)`` instead.
-    func startChargingSession(for cpId: UInt8) {
-        // TODO: implement
+    /// - Parameter session: Charging session to start
+    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    @discardableResult
+    private func startCharging(with session: ChargingSession) async throws -> ChargingSession? {
+        var newSession = session
+        guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
+        newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
+        await self.chargingSystem?.chargingPointContainer.addChargingTask(newSession)
+        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: session.cpId)
     }
 
     /// Stop a running charging session
@@ -120,8 +198,14 @@ actor ChargingController {
     /// Resume a running charging session
     ///
     /// - Parameter cpId: Charging Point Id
-    func resumeChargingSession(for cpId: UInt8) {
-        // TODO: implement
+    /// - Returns: Charging task that was resumed. In case `nil` is returned, activation of the desired task failed.
+    @discardableResult
+    private func resumeChargingSession(for cpId: UInt8) async -> ChargingSession? {
+        if var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) {
+            runningChargingSession.resumeCharging()
+            await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
+        }
+        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId)
     }
 
     /// Update Charging Points Status
@@ -133,11 +217,13 @@ actor ChargingController {
             if let cpsStatus = try await self.chargingSystem?.systemStatus {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
             }
+
+            if let chargingTasks = await self.chargingSystem?.chargingPointContainer.chargingTasks {
+                self.backend?.updateChargingTasks(with: chargingTasks)
+            }
+
         } catch {
             self.handleError(err: error)
-        }
-        if let chargingTasks = await self.chargingSystem?.chargingPointContainer.chargingTasks.values {
-            self.backend?.updateChargingTasks(with: Array(chargingTasks))
         }
     }
 
