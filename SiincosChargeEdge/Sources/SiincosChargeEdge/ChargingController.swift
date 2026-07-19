@@ -24,7 +24,10 @@ actor ChargingController {
     /// Init and start-up phase
     ///
     /// Load required assets and log errors. In case of critical errors, shut down.
-    init(systemConfig: SystemConfig? = nil) async {
+    /// - Parameters:
+    ///   - systemConfig: system configuration to use, optional; if left blanc the config loaded from file will be used
+    ///   - autostart: default true; automatically start run loop
+    init(systemConfig: SystemConfig? = nil, autostart: Bool = true) async {
         print(LogMessages.welcomMsg)
         self.logger.info("\(LogMessages.welcomMsg)")
 
@@ -36,11 +39,9 @@ actor ChargingController {
             try self.backend?.startup()
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
-            self.shutdown()
+            if autostart { self.shutdown() }
         }
-        try? await Task.sleep(for: .seconds(5))
-        self.startRunLoop()
-
+        if autostart { self.startRunLoop() }
     }
 
     /// Start the run loop
