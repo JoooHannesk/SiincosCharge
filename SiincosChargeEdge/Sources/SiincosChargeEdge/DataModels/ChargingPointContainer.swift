@@ -84,4 +84,17 @@ actor ChargingPointContainer {
         return self.chargingTasks[cpId]
     }
 
+    /// Remove a charging task by ID
+    ///
+    /// - Parameter cpId: Charging Point Id
+    /// - Returns: the requested ``ChargingTask`` (if no charging point with the given `cpId` exists, nil is returned)
+    @discardableResult
+    func removeChargingTask(by cpId: UInt8) -> ChargingSession? {
+        if let task = self.chargingTasks[cpId] {
+            self.chargingTasks.removeValue(forKey: cpId)
+            return task
+        }
+        return nil
+    }
+
 }

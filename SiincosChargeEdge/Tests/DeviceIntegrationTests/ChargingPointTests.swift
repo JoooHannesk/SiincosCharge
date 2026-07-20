@@ -87,6 +87,11 @@ class ChargingPointTests {
         #expect(await chargingPointContainer.getChargingTask(by: 2) == ct2)
         #expect(await chargingPointContainer.getChargingTask(by: 1) != ct2)
         #expect(await chargingPointContainer.getChargingTask(by: 2) != ct1)
+
+        await chargingPointContainer.removeChargingTask(by: 1)
+        #expect(await chargingPointContainer.chargingTasks.count == 1)
+        await chargingPointContainer.removeChargingTask(by: 2)
+        #expect(await chargingPointContainer.chargingTasks.count == 0)
     }
 
     @Test("Test-Update-Charging-Task")
