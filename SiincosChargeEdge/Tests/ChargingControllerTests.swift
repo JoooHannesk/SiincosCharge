@@ -36,7 +36,7 @@ struct ChargingControllerTests {
     let chargingController: ChargingController
 
     init() async throws {
-        self.chargingController = try await ChargingController(systemConfig: Self.testSystemConfig, autostart: false)
+        self.chargingController = try await ChargingController(systemConfig: Self.testSystemConfig)
     }
 
     /// Get charging points sorted by ``EVState``

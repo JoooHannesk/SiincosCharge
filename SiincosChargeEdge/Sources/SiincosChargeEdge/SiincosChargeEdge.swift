@@ -19,9 +19,10 @@ struct SiincosChargeEdge {
         })
 
         let siincosChargeEdge = await ChargingController()
+        await siincosChargeEdge.start()
 
         while !Self.shutdownRequested {
-            try? await Task.sleep(for: .seconds(5))
+            try? await Task.sleep(for: .seconds(2))
         }
 
         await siincosChargeEdge.shutdown()

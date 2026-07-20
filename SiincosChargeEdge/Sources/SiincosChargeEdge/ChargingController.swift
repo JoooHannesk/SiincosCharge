@@ -21,13 +21,12 @@ actor ChargingController {
     /// The application-wide main logger
     private let logger = ComponentSupplier.mainLogger
 
-    /// Init and start-up phase
+    /// Init phase
     ///
-    /// Load required assets and log errors. In case of critical errors, shut down.
-    /// - Parameters:
-    ///   - systemConfig: system configuration to use, optional; if left blanc the config loaded from file will be used
-    ///   - autostart: default true; automatically start run loop
-    init(systemConfig: SystemConfig? = nil, autostart: Bool = true) async {
+    /// Load required assets and log errors. Does not connect to the backend or
+    /// start the run loop; call ``start()`` for that.
+    /// - Parameter systemConfig: system configuration to use, optional; if left blanc the config loaded from file will be used
+    init(systemConfig: SystemConfig? = nil) async {
         print(LogMessages.welcomMsg)
         self.logger.info("\(LogMessages.welcomMsg)")
 
@@ -36,12 +35,23 @@ actor ChargingController {
 
         do {
             try self.chargingSystem = await ChargingSystem(config: self.systemConfig as DeviceConfig)
+        } catch {
+            self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
+        }
+    }
+
+    /// Start-up phase
+    ///
+    /// Connect to the backend and start the main run loop.
+    /// In case of critical errors, shut down.
+    func start() {
+        do {
             try self.backend?.startup()
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
-            if autostart { self.shutdown() }
+            self.shutdown()
         }
-        if autostart { self.startRunLoop() }
+        self.startRunLoop()
     }
 
     /// Start the run loop
