@@ -119,6 +119,23 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.status = .running
     }
 
+    /// Finish Charging
+    ///
+    /// Set `status` to `.finished`, set `endTime` to current datetime, `meterReadingEnd` to current meter
+    /// reading and based on this calculate `totalEnergyConsumed`
+    ///
+    /// - Parameters:
+    ///   - endTime: Session ending datetime
+    ///   - meterReading: Meter reading for this exact datetime
+    mutating func finishCharging(endTime: Date, meterReading: Measurement<UnitEnergy>) {
+        self.status = .finished
+        self.endTime = endTime
+        self.meterReadingEnd = meterReading
+        guard let meterEnd = self.meterReadingEnd, let meterStart = self.meterReadingStart else {
+            return
+        }
+        self.totalEnergyConsumed = Measurement(value: meterEnd.value - meterStart.value, unit: UnitEnergy.kilowattHours)
+    }
 }
 
 /// Charging Session Status

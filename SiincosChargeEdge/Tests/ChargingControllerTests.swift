@@ -66,24 +66,24 @@ struct ChargingControllerTests {
                 unplugged: unpluggedChargingPointIds)
     }
 
-    /// Create a new charging session
+    /// Create a new mock charging session
     ///
-    /// - Parameter cpId: Charging point id
+    /// Create a new mock charging session based on a mock charger which is ready to accept a charging request (ev status: pluggedIn)
+    ///
     /// - Returns: Simple chargin session with status `.running`
-    func getChargingSession(cpId: UInt8) async throws -> ChargingSession {
-        return ChargingSession(cpId: cpId,
+    func getChargingSession() async throws -> ChargingSession {
+        let chargingPointId = try await self.getChargingPointIdsByPluggedState().pluggedIn.first
+        try #require(chargingPointId != nil)
+        return ChargingSession(cpId: chargingPointId!,
                                userName: "mockUser@mockserver.com",
                                chargingSessionStatus: .running,
                                chargingCurrentSetpoint: Measurement(value: 10.0, unit: .amperes))
     }
 
-    @Test("Test-Request-Charging-Session")
-    func testRequestChargingSession() async throws {
-        let chargingPointId = try await self.getChargingPointIdsByPluggedState().pluggedIn.first
-        try #require(chargingPointId != nil)
-        let chargingSession = try await self.getChargingSession(cpId: chargingPointId!)
+    @Test("Test-Request-New-Charging-Session")
+    func testRequestNewChargingSession() async throws {
+        let chargingSession = try await self.getChargingSession()
         await self.chargingController.requestChargingSession(chargingSession)
-        print(chargingSession)
         let startedChargingSession = await self.chargingController.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
         try #require(startedChargingSession != nil)
         #expect(chargingSession.cpId == startedChargingSession?.cpId); #expect(chargingSession.userName == startedChargingSession?.userName)
@@ -91,4 +91,23 @@ struct ChargingControllerTests {
         try #require(startedChargingSession!.meterReadingStart != nil)
     }
 
+    @Test("Test-Request-Pause-Charging-Session")
+    func testRequestPauseExistingChargingSession() async throws {
+
+    }
+
+    @Test("Test-Request-Finish-Charging-Session")
+    func testRequestFinishExistingChargingSession() async throws {
+        let chargingSession = try await self.getChargingSession()
+        var newSession = await self.chargingController.requestChargingSession(chargingSession)
+        try #require(newSession != nil)
+        newSession!.status = .finished
+        let finishedChargingSession = await self.chargingController.requestChargingSession(newSession!)
+        try #require(finishedChargingSession != nil)
+        #expect(finishedChargingSession!.status == .finished)
+        #expect(finishedChargingSession!.meterReadingEnd!.value > finishedChargingSession!.meterReadingStart!.value)
+        #expect(finishedChargingSession!.totalEnergyConsumed!.value > 0)
+        let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
+        #expect(noSession == nil)
+    }
 }

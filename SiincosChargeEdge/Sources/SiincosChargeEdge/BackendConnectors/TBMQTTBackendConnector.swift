@@ -98,6 +98,16 @@ class ThingsBoardBackend: BackendController {
         // TODO: implement
     }
 
+    /// Write a charging session receipt
+    ///
+    /// Generate a charging session receipt for the finished charging session. Persist the receipt according to
+    /// the backend implementation
+    ///
+    /// - Parameter session: The charging session to write the receipt for
+    func writeChargingSessionReceipt(for session: ChargingSession) {
+        // TODO: implement
+    }
+
     // MARK: - Backend specific Methods
 
     /// Subscribe to MQTT topics

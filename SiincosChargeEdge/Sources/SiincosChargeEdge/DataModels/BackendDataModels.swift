@@ -48,5 +48,14 @@ protocol BackendController {
     /// Propagate charging tasks to backend
     /// - Parameter chargingTasks: Charging tasks as `[UInt8: ChargingSession]`
     func updateChargingTasks(with chargingTasks: [UInt8: ChargingSession])
+
+
+    /// Write a charging session receipt
+    ///
+    /// Generate a charging session receipt for the finished charging session. Persist the receipt according to
+    /// the backend implementation
+    ///
+    /// - Parameter session: The charging session to write the receipt for
+    func writeChargingSessionReceipt(for session: ChargingSession)
 }
 
