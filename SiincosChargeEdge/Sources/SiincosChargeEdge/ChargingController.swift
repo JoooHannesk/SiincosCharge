@@ -103,7 +103,7 @@ actor ChargingController {
             case .running:
                 return try await self.handleChargingRequestRunning(request: session)
 
-            case .waiting:
+            case .scheduled:
                 // Add a new session in case:
                 // 1. no other session is registered
                 // 2. the car is plugged in

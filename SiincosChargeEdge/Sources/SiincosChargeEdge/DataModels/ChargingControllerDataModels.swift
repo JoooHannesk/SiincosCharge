@@ -45,7 +45,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
 
     /// Charging Session Status
     ///
-    /// Either `.running`, `.finished`, `.paused`, `.waiting`
+    /// Either `.running`, `.finished`, `.paused`, `.scheduled`
     var status: ChargingSessionStatus
 
     /// Total Energy Consumed
@@ -149,7 +149,7 @@ enum ChargingSessionStatus: String, Codable {
     case running
     case finished
     case paused
-    case waiting
+    case scheduled
 }
 
 /// Charging System Information Data Model
