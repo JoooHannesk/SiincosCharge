@@ -29,7 +29,7 @@ struct DataModelTests {
         try #require(csysInfo.asJson != nil)
         if let jsonString = csysInfo.asJson {
             let jsonData = jsonString.data(using: .utf8)!
-            let csysInfo2 = try JSONDecoder().decode(ChargingSystemInformation.self, from: jsonData)
+            let csysInfo2 = try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingSystemInformation.self, from: jsonData)
             #expect(csysInfo == csysInfo2)
         }
     }
@@ -47,7 +47,7 @@ struct DataModelTests {
         try #require(csysInfo.asJson != nil)
         if let jsonString = csysInfo.asJson {
             let jsonData = jsonString.data(using: .utf8)!
-            let csysInfo2 = try JSONDecoder().decode(ChargingSystemInformation.self, from: jsonData)
+            let csysInfo2 = try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingSystemInformation.self, from: jsonData)
             #expect(csysInfo == csysInfo2)
         }
     }
@@ -70,7 +70,7 @@ struct DataModelTests {
         try #require(csysStatus.asJson != nil)
         if let jsonString = csysStatus.asJson {
             let jsonData = jsonString.data(using: .utf8)!
-            let csysStatus2 = try JSONDecoder().decode(ChargingPointStatus.self, from: jsonData)
+            let csysStatus2 = try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingPointStatus.self, from: jsonData)
             #expect(csysStatus == csysStatus2)
         }
     }
@@ -107,15 +107,18 @@ struct DataModelTests {
         try #require(originalA.asJson != nil)
         if let originalAjson = originalA.asJson {
             let jsonData = originalAjson.data(using: .utf8)!
-            let originalABack = try JSONDecoder().decode(ChargingSession.self, from: jsonData)
+            let originalABack = try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingSession.self, from: jsonData)
             #expect(originalA == originalABack)
         }
 
+        // Dates on whole-millisecond boundaries, since the JSON convention encodes integer
+        // milliseconds and sub-millisecond precision would break the exact equality check below
+        let startTime = Date(timeIntervalSince1970: (Date().timeIntervalSince1970 * 1000).rounded() / 1000)
         let originalB = ChargingSession(
             sessionId: "SessionID4711",
             cpId: 2,
-            startTime: Date(),
-            endTime: Date().addingTimeInterval(TimeInterval(60)),
+            startTime: startTime,
+            endTime: startTime.addingTimeInterval(TimeInterval(60)),
             meterReadingStart: Measurement(value: 9.4, unit: .kilowattHours),
             meterReadingEnd: Measurement(value: 12.4, unit: .kilowattHours),
             userName: "user@example.com",
@@ -126,7 +129,7 @@ struct DataModelTests {
         try #require(originalB.asJson != nil)
         if let originalBjson = originalB.asJson {
             let jsonData = originalBjson.data(using: .utf8)!
-            let originalBBack = try JSONDecoder().decode(ChargingSession.self, from: jsonData)
+            let originalBBack = try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingSession.self, from: jsonData)
             #expect(originalB == originalBBack)
         }
 

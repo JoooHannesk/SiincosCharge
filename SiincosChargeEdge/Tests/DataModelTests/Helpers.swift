@@ -40,7 +40,7 @@ func deserializeChargingPoint(from str: String) throws -> ChargingPointStatus? {
             }
             let normalized = unprefixTelemetry(flat, cpId: cpId)
             let data = try JSONSerialization.data(withJSONObject: normalized)
-            return try JSONDecoder().decode(ChargingPointStatus.self, from: data)
+            return try JSONDecoder.customTelemetryCompatibleDecoder.decode(ChargingPointStatus.self, from: data)
     }
     return nil
 }

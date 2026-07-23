@@ -177,7 +177,7 @@ class ThingsBoardBackend: BackendController {
     private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T? {
         if let paramsData = msgDict["params"] as? [String: Any] {
             let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
-            let payloadObject = try JSONDecoder().decode(T.self, from: paramsJson)
+            let payloadObject = try JSONDecoder.customTelemetryCompatibleDecoder.decode(T.self, from: paramsJson)
             return payloadObject
         } else {
             return nil

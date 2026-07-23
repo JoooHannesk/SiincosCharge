@@ -23,7 +23,7 @@ extension JsonStringConvertible {
     /// - Note: If conversion fails, `nil` is returned.
     var asJson: String? {
         var asJson: String? = nil
-        let encoder = JSONEncoder()
+        let encoder = JSONEncoder.customTelemetryCompatibleEncoder
         //encoder.outputFormatting = .prettyPrinted
         let data = try? encoder.encode(self)
         if let data {
@@ -53,7 +53,7 @@ extension SerializedJsonStringConvertible {
     /// data structure when intensive use of dashboarding is considered.
     var asSerializedJson: String? {
         var asDict: [String: Any]? = nil
-        if let data = try? JSONEncoder().encode(self) {
+        if let data = try? JSONEncoder.customTelemetryCompatibleEncoder.encode(self) {
             asDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         }
 
