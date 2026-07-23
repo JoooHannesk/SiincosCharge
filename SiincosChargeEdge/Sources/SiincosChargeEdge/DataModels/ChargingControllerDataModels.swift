@@ -104,6 +104,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
     ///
     /// - Parameters:
     ///   - systemId: `systemId` from config, required to generate `sessionId`.
+    ///   - startTime: Datetime the charging session starts
     ///   - meterReading: Current meter reading
     mutating func startCharging(systemId: String, startTime: Date, meterReading: Measurement<UnitEnergy>) {
         self.sessionId = "\(systemId)-\(DataModelsHelpers.getDateTimeString(from: startTime))-\(cpId)"
