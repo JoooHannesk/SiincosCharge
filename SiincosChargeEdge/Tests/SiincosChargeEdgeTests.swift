@@ -80,7 +80,8 @@ struct SiincosChargeEdgeTests {
     /// See this test as a first smoke test to ensure everything inits correctly.
     @Test("App-Smoke-Test")
     func appSmokeTest() async throws {
-        _ = await ChargingController()
+        let chargingController = await ChargingController()
+        await chargingController.start()
         try? await Task.sleep(for: .seconds(30))
     }
 }
