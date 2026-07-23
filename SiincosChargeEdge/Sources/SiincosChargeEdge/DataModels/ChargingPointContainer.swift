@@ -96,5 +96,4 @@ actor ChargingPointContainer {
         }
         return nil
     }
-
 }

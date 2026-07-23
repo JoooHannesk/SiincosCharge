@@ -14,6 +14,7 @@ enum LogMessages {
     static let sysInfo = "System information:"
     static let dataConversionFailed = "Failed to convert message to object."
     static let chargingSessionRequest = "Charging session requested: "
+    static let noChargingPointsFound = "No charging points found. Please check your configuration."
     static let mqttConnectionSuccess = "✓ Successfully connected to MQTT broker."
     static let mqttConnectionFailed = "⨯ Failure connecting to MQTT broker."
     static let mqttSubscriptionSuccess = "✓ Successfully subscribed to topics:"

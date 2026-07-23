@@ -25,6 +25,11 @@ actor ChargingSystem {
     /// the power grid for the local installation.
     let systemTotalMaxCurrent: Measurement<UnitElectricCurrent>
 
+    /// Default charging current
+    ///
+    /// Defines the default charging current for the charging points which are currently not in use
+    let defaultChargingCurrent: Measurement<UnitElectricCurrent> = Measurement(value: 8.0, unit: .amperes)
+
     /// Load balanced maxminum current
     ///
     /// When more than one charger is connected, the system has to ensure that the total current drawn from
@@ -110,6 +115,7 @@ actor ChargingSystem {
     ///    - chargingPermission: Charging permission either granted (`.enabled`) or denied (`.disabled`)
     ///    - chargingPointId: ChargingPoint Id
     /// - Returns: Actual charging permission returned by charging point for provided charging point id
+    @discardableResult
     func setChargingPermission(to chargingPermission: Status, for chargingPointId: UInt8) async throws -> Status {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         var newChargingPermission: Status = .unknown
@@ -141,6 +147,7 @@ actor ChargingSystem {
     ///    - current: Maximum current setpoint allowed to draw from EV charging point
     ///    - chargingPointId: ChargingPoint Id
     /// - Returns: Actual charging current setpoint for given charging point
+    @discardableResult
     func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>, for chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
         let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
         let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: min(current, self.loadBalancedMaxCurrent))
