@@ -144,6 +144,7 @@ struct ChargingControllerTests {
         #expect(finishedChargingSession!.status == .finished)
         #expect(finishedChargingSession!.meterReadingEnd!.value > finishedChargingSession!.meterReadingStart!.value)
         #expect(finishedChargingSession!.totalEnergyConsumed!.value > 0)
+        #expect(finishedChargingSession!.totalChargingDuration! > 0.0)
         let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
         #expect(noSession == nil)
     }

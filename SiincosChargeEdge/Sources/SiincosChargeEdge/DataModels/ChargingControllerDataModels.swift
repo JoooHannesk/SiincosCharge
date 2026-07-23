@@ -53,6 +53,9 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
     /// Total energy drawn from the charging point by the EV
     var totalEnergyConsumed: Measurement<UnitEnergy>?
 
+    /// Total Charging Duration
+    var totalChargingDuration: TimeInterval?
+
     /// Charging Current Setpoint
     ///
     /// Charging current for the session set by the user
@@ -70,6 +73,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
             User: \(userName),
             Status: \(status),
             Total Energy Consumption: \(totalEnergyConsumed, default: "<n/a>"),
+            Total Charging Duration: \(totalChargingDuration, default: "<n/a>"),
             Charging Current Setpoint: \(chargingCurrentSetpoint)
             """
     }
@@ -84,6 +88,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         userName: String,
         chargingSessionStatus: ChargingSessionStatus,
         totalEnergyConsumed: Measurement<UnitEnergy>? = nil,
+        totalChargingDuration: TimeInterval? = nil,
         chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
     ) {
         self.sessionId = sessionId
@@ -95,6 +100,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.userName = userName
         self.status = chargingSessionStatus
         self.totalEnergyConsumed = totalEnergyConsumed
+        self.totalChargingDuration = totalChargingDuration
         self.chargingCurrentSetpoint = chargingCurrentSetpoint
     }
 
@@ -156,10 +162,12 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.status = .finished
         self.endTime = endTime
         self.meterReadingEnd = meterReading
-        guard let meterEnd = self.meterReadingEnd, let meterStart = self.meterReadingStart else {
+        guard let meterEnd = self.meterReadingEnd, let meterStart = self.meterReadingStart,
+              let startTime = self.startTime, let endTime = self.endTime else {
             return
         }
         self.totalEnergyConsumed = Measurement(value: meterEnd.value - meterStart.value, unit: UnitEnergy.kilowattHours)
+        self.totalChargingDuration = endTime.timeIntervalSince(startTime)
     }
 }
 

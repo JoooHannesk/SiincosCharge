@@ -147,6 +147,7 @@ extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertibl
         case userName
         case status
         case totalEnergyConsumedkWh
+        case totalChargingDuration
         case chargingCurrentSetpointA
     }
 
@@ -162,6 +163,7 @@ extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertibl
         try container.encode(userName, forKey: .userName)
         try container.encode(status, forKey: .status)
         try container.encode(totalEnergyConsumed?.value, forKey: .totalEnergyConsumedkWh)
+        try container.encode(totalChargingDuration, forKey: .totalChargingDuration)
         try container.encode(chargingCurrentSetpoint.value, forKey: .chargingCurrentSetpointA)
     }
 
@@ -183,6 +185,7 @@ extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertibl
         if let totalEnergyConsumed = try container.decodeIfPresent(Double.self, forKey: .totalEnergyConsumedkWh) {
             self.totalEnergyConsumed = Measurement(value: totalEnergyConsumed, unit: .kilowattHours)
         }
+        self.totalChargingDuration = try container.decodeIfPresent(TimeInterval.self, forKey: .totalChargingDuration)
         self.chargingCurrentSetpoint = Measurement(value: try container.decode(Double.self, forKey: .chargingCurrentSetpointA), unit: .amperes)
 
     }
