@@ -91,9 +91,18 @@ struct ChargingControllerTests {
         try #require(startedChargingSession!.meterReadingStart != nil)
     }
 
-    @Test("Test-Request-Pause-Charging-Session")
-    func testRequestPauseExistingChargingSession() async throws {
-
+    @Test("Test-Request-Pause-Resume-Charging-Session")
+    func testRequestPauseAndResumeExistingChargingSession() async throws {
+        let chargingSession = try await self.getChargingSession()
+        var newSession = await self.chargingController.requestChargingSession(chargingSession)
+        try #require(newSession != nil)
+        try #require(newSession?.status == .running)
+        newSession?.status = .paused
+        let pausedChargingSession = await self.chargingController.requestChargingSession(newSession!)
+        #expect(pausedChargingSession?.status == .paused)
+        newSession?.status = .running
+        let resumedChargingSession = await self.chargingController.requestChargingSession(newSession!)
+        #expect(resumedChargingSession?.status == .running)
     }
 
     @Test("Test-Request-Finish-Charging-Session")
@@ -110,4 +119,10 @@ struct ChargingControllerTests {
         let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
         #expect(noSession == nil)
     }
+
+    @Test("Test-Schedule-Charging-Session")
+    func testScheduleChargingSession() async throws {
+        
+    }
+
 }

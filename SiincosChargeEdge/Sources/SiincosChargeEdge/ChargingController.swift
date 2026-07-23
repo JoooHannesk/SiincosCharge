@@ -111,10 +111,7 @@ actor ChargingController {
                 break
 
             case .paused:
-                // Update an existing session in case:
-                // 1. current session owner is the same as the request owner
-                // TODO: implement
-                break
+                return try await self.handleChargingRequestPausing(request: session)
 
             case .finished:
                 return try await self.handleChargingRequestFinished(request: session)
@@ -171,8 +168,31 @@ actor ChargingController {
             return nil
         }
 
-        if currentChargingSession.userName == request.userName {
+        if currentChargingSession.userName == request.userName && currentChargingSession.status != .finished {
             return try await self.stopChargingSession(for: request.cpId)
+        } else {
+            return nil
+        }
+    }
+
+    /// Handle Charging Session Request…
+    ///
+    /// … for `.paused`.
+    ///
+    /// Update an existing session in case:
+    /// 1. current session is running - will be set to running
+    /// 2. current session owner is the same as the request owner
+    ///
+    /// - Parameter request: charging session request from backend
+    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    @discardableResult
+    private func handleChargingRequestPausing(request: ChargingSession) async throws -> ChargingSession? {
+        guard let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId) else {
+            return nil
+        }
+
+        if currentChargingSession.userName == request.userName {
+            return await self.pauseChargingSession(for: request.cpId)
         } else {
             return nil
         }
@@ -190,6 +210,7 @@ actor ChargingController {
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
         await self.chargingSystem?.chargingPointContainer.addChargingTask(newSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(newSession)")
         return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: session.cpId)
     }
 
@@ -199,7 +220,8 @@ actor ChargingController {
     ///
     /// - Parameter cpId: Charging Point Id
     /// - Returns: Charging task that was finished.  In case `nil` is returned, terminating the desired task failed.
-    func stopChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
+    @discardableResult
+    private func stopChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
         guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId),
               let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: cpId) else {
             return nil
@@ -207,15 +229,21 @@ actor ChargingController {
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
         await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
         self.backend?.writeChargingSessionReceipt(for: runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
         return await self.chargingSystem?.chargingPointContainer.removeChargingTask(by: cpId)
     }
 
     /// Pause a running charging session
     ///
     /// - Parameter cpId: Charging Point Id
-    func pauseChargingSession(for cpId: UInt8) -> ChargingSession? {
-        // TODO: implement
-        return nil
+    private func pauseChargingSession(for cpId: UInt8) async -> ChargingSession? {
+        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
+            return nil
+        }
+        runningChargingSession.pauseCharging()
+        await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
+        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId)
     }
 
     /// Resume a running charging session
@@ -224,10 +252,12 @@ actor ChargingController {
     /// - Returns: Charging task that was resumed. In case `nil` is returned, activation of the desired task failed.
     @discardableResult
     private func resumeChargingSession(for cpId: UInt8) async -> ChargingSession? {
-        if var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) {
-            runningChargingSession.resumeCharging()
-            await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
+        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
+            return nil
         }
+        runningChargingSession.resumeCharging()
+        await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
         return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId)
     }
 

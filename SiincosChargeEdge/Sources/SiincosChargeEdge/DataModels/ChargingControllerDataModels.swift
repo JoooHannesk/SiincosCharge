@@ -120,6 +120,15 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.status = .running
     }
 
+    /// Pause charging
+    ///
+    /// Set `status` to `.paused`.
+    mutating func pauseCharging() {
+        if self.status == .running {
+            self.status = .paused
+        }
+    }
+
     /// Finish Charging
     ///
     /// Set `status` to `.finished`, set `endTime` to current datetime, `meterReadingEnd` to current meter
