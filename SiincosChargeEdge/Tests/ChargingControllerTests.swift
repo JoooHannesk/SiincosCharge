@@ -76,7 +76,7 @@ struct ChargingControllerTests {
         try #require(chargingPointId != nil)
         return ChargingSession(cpId: cpId ?? chargingPointId!,
                                userName: userName,
-                               chargingSessionStatus: .running,
+                               chargingSessionStatus: status,
                                chargingCurrentSetpoint: Measurement(value: 10.0, unit: .amperes))
     }
 
@@ -161,7 +161,13 @@ struct ChargingControllerTests {
 
     @Test("Test-Schedule-Charging-Session")
     func testScheduleChargingSession() async throws {
-        
+        var scheduledSession = try await self.getChargingSession(status: .scheduled)
+        var thisSession = await self.chargingController.requestChargingSession(scheduledSession)
+        #expect(thisSession == nil)
+        scheduledSession.startTime = Date().addingTimeInterval(3600)
+        scheduledSession.endTime = Date().addingTimeInterval(7200)
+        thisSession = await self.chargingController.requestChargingSession(scheduledSession)
+        #expect(thisSession?.status == .scheduled)
     }
 
 }

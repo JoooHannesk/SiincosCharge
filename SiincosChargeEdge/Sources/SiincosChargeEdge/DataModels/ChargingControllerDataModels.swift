@@ -113,6 +113,21 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.status = .running
     }
 
+    /// Schedule charging
+    ///
+    /// Set `sessionId`, `startTime`, `endTime`,  and `status` to `.scheduled`.
+    ///
+    /// - Parameters:
+    ///   - systemId: `systemId` from config, required to generate `sessionId`.
+    ///   - startTime: Datetime the charging session starts, should be in the future
+    ///   - endTime: Datetime the charging session ends, should be in the future
+    mutating func scheduleCharging(systemId: String, startTime: Date, endTime: Date) {
+        self.sessionId = "\(systemId)-\(DataModelsHelpers.getDateTimeString(from: startTime))-\(cpId)"
+        self.startTime = startTime
+        self.endTime = endTime
+        self.status = .scheduled
+    }
+
     /// Resume charging
     ///
     /// Set `status` to `.running`.
