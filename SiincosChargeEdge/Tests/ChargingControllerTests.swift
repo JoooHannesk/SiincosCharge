@@ -71,11 +71,11 @@ struct ChargingControllerTests {
     /// Create a new mock charging session based on a mock charger which is ready to accept a charging request (ev status: pluggedIn)
     ///
     /// - Returns: Simple chargin session with status `.running`
-    func getChargingSession() async throws -> ChargingSession {
+    func getChargingSession(cpId: UInt8? = nil, userName: String = "mockUser@mockserver.com", status: ChargingSessionStatus = .running) async throws -> ChargingSession {
         let chargingPointId = try await self.getChargingPointIdsByPluggedState().pluggedIn.first
         try #require(chargingPointId != nil)
-        return ChargingSession(cpId: chargingPointId!,
-                               userName: "mockUser@mockserver.com",
+        return ChargingSession(cpId: cpId ?? chargingPointId!,
+                               userName: userName,
                                chargingSessionStatus: .running,
                                chargingCurrentSetpoint: Measurement(value: 10.0, unit: .amperes))
     }
@@ -105,6 +105,34 @@ struct ChargingControllerTests {
         #expect(resumedChargingSession?.status == .running)
     }
 
+    @Test("Test-Request-Pause-Charging-Session-Different-User")
+    func testRequestPauseExistingChargingSessionFromDifferentUser() async throws {
+        let chargingSessionOwner = try await self.getChargingSession()
+        let chargingSessionDifferentOwner = try await self.getChargingSession(cpId: chargingSessionOwner.cpId, userName: "differentUser@mockserver.com", status: .paused)
+        let thisSession = await self.chargingController.requestChargingSession(chargingSessionOwner)
+        try #require(thisSession != nil)
+        try #require(thisSession?.status == .running)
+        let changedSession = await self.chargingController.requestChargingSession(chargingSessionDifferentOwner)
+        #expect(changedSession == nil)
+    }
+
+    @Test("Test-Request-Resume-Charging-Session-Different-User")
+    func testRequestResumeExistingChargingSessionFromDifferentUser() async throws {
+        var chargingSessionOwner = try await self.getChargingSession()
+        let chargingSessionDifferentOwner = try await self.getChargingSession(cpId: chargingSessionOwner.cpId, userName: "differentUser@mockserver.com")
+        var thisSession = await self.chargingController.requestChargingSession(chargingSessionOwner)
+        try #require(thisSession != nil)
+        try #require(thisSession?.status == .running)
+        chargingSessionOwner.status = .paused
+        thisSession = await self.chargingController.requestChargingSession(chargingSessionOwner)
+        try #require(thisSession != nil)
+        try #require(thisSession?.status == .paused)
+        let changedSession = await self.chargingController.requestChargingSession(chargingSessionDifferentOwner)
+        #expect(changedSession == nil)
+        let chargingSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSessionOwner.cpId)
+        #expect(chargingSession! == thisSession!)
+    }
+
     @Test("Test-Request-Finish-Charging-Session")
     func testRequestFinishExistingChargingSession() async throws {
         let chargingSession = try await self.getChargingSession()
@@ -118,6 +146,17 @@ struct ChargingControllerTests {
         #expect(finishedChargingSession!.totalEnergyConsumed!.value > 0)
         let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
         #expect(noSession == nil)
+    }
+
+    @Test("Test-Finish-Existing-Charging-Session-Different-User")
+    func testRequestFinishExistingChargingSessionFromDifferentOwner() async throws {
+        let chargingSessionOwner = try await self.getChargingSession()
+        let chargingSessionDifferentOwner = try await self.getChargingSession(cpId: chargingSessionOwner.cpId, userName: "differentUser@mockserver.com", status: .finished)
+        let thisSession = await self.chargingController.requestChargingSession(chargingSessionOwner)
+        try #require(thisSession != nil)
+        try #require(thisSession?.status == .running)
+        let changedSession = await self.chargingController.requestChargingSession(chargingSessionDifferentOwner)
+        #expect(changedSession == nil)
     }
 
     @Test("Test-Schedule-Charging-Session")
