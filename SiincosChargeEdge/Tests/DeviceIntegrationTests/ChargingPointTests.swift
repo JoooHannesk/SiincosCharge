@@ -80,18 +80,18 @@ class ChargingPointTests {
             totalEnergyConsumed: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
             chargingCurrentSetpoint: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
             )
-        await chargingPointContainer.addChargingTask(ct1)
-        await chargingPointContainer.addChargingTask(ct2)
-        #expect(await chargingPointContainer.chargingTasks.count == 2)
-        #expect(await chargingPointContainer.getChargingTask(by: 1) == ct1)
-        #expect(await chargingPointContainer.getChargingTask(by: 2) == ct2)
-        #expect(await chargingPointContainer.getChargingTask(by: 1) != ct2)
-        #expect(await chargingPointContainer.getChargingTask(by: 2) != ct1)
+        await chargingPointContainer.addChargingSession(ct1)
+        await chargingPointContainer.addChargingSession(ct2)
+        #expect(await chargingPointContainer.chargingSessions.count == 2)
+        #expect(await chargingPointContainer.getChargingSession(by: 1) == ct1)
+        #expect(await chargingPointContainer.getChargingSession(by: 2) == ct2)
+        #expect(await chargingPointContainer.getChargingSession(by: 1) != ct2)
+        #expect(await chargingPointContainer.getChargingSession(by: 2) != ct1)
 
-        await chargingPointContainer.removeChargingTask(by: 1)
-        #expect(await chargingPointContainer.chargingTasks.count == 1)
-        await chargingPointContainer.removeChargingTask(by: 2)
-        #expect(await chargingPointContainer.chargingTasks.count == 0)
+        await chargingPointContainer.removeChargingSession(by: 1)
+        #expect(await chargingPointContainer.chargingSessions.count == 1)
+        await chargingPointContainer.removeChargingSession(by: 2)
+        #expect(await chargingPointContainer.chargingSessions.count == 0)
     }
 
     @Test("Test-Update-Charging-Task")
@@ -110,15 +110,15 @@ class ChargingPointTests {
             totalEnergyConsumed: Measurement(value: 12.3, unit: UnitEnergy.kilowattHours),
             chargingCurrentSetpoint: Measurement(value: 11.2, unit: UnitElectricCurrent.amperes)
             )
-        await chargingPointContainer.addChargingTask(origCt1)
-        try #require(await chargingPointContainer.chargingTasks.count == 1)
-        var copyCt1 = await chargingPointContainer.getChargingTask(by: 1)!
+        await chargingPointContainer.addChargingSession(origCt1)
+        try #require(await chargingPointContainer.chargingSessions.count == 1)
+        var copyCt1 = await chargingPointContainer.getChargingSession(by: 1)!
         copyCt1.status = .running
-        await chargingPointContainer.updateChargingTask(copyCt1)
-        #expect(await chargingPointContainer.getChargingTask(by: 1) == copyCt1)
-        await chargingPointContainer.addChargingTask(copyCt1)
-        #expect(await chargingPointContainer.getChargingTask(by: 1) == copyCt1)
-        #expect(await chargingPointContainer.chargingTasks.count == 1)
+        await chargingPointContainer.updateChargingSession(copyCt1)
+        #expect(await chargingPointContainer.getChargingSession(by: 1) == copyCt1)
+        await chargingPointContainer.addChargingSession(copyCt1)
+        #expect(await chargingPointContainer.getChargingSession(by: 1) == copyCt1)
+        #expect(await chargingPointContainer.chargingSessions.count == 1)
     }
 
     @Test("Test-Charging-System-Properties")

@@ -72,6 +72,7 @@ actor ChargingController {
         do {
             try await self.updateChargingSystemInformation()
             try await self.chargingSystem?.updateLoadBalancedCurrent()
+            try await self.executeChargingSessions()
         } catch {
             self.handleError(err: error)
         }
@@ -122,11 +123,11 @@ actor ChargingController {
     /// 2. current session owner is the same as the request owner
     ///
     /// - Parameter request: charging session request from backend
-    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was started.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func handleChargingRequestRunning(request: ChargingSession) async throws -> ChargingSession? {
         let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
-        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId)
+        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
         if currentChargingSession == nil && evPluggedIn {
             return try await self.startChargingSession(request)
@@ -147,11 +148,11 @@ actor ChargingController {
     /// 2. the car is plugged in
     ///
     /// - Parameter request: charging session request from backend
-    /// - Returns: Charging task that was scheduled.  In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was scheduled.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func handleChargingRequestScheduled(request: ChargingSession) async throws -> ChargingSession? {
         let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
-        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId)
+        let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
         if currentChargingSession == nil && evPluggedIn {
             return try await self.scheduleChargingSession(request)
@@ -167,10 +168,10 @@ actor ChargingController {
     /// Gracefully end a charging session, generate a session receipt, and forward it to the backend for safe keeping.
     ///
     /// - Parameter request: charging session request from backend
-    /// - Returns: Charging task that was finished.  In case `nil` is returned, terminating the desired task failed.
+    /// - Returns: Charging session that was finished.  In case `nil` is returned, terminating the desired session failed.
     @discardableResult
     private func handleChargingRequestFinished(request: ChargingSession) async throws -> ChargingSession? {
-        guard let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId) else {
+        guard let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId) else {
             return nil
         }
 
@@ -190,10 +191,10 @@ actor ChargingController {
     /// 2. current session owner is the same as the request owner
     ///
     /// - Parameter request: charging session request from backend
-    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was started.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func handleChargingRequestPausing(request: ChargingSession) async throws -> ChargingSession? {
-        guard let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId) else {
+        guard let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId) else {
             return nil
         }
 
@@ -209,13 +210,13 @@ actor ChargingController {
     /// Start a charging session for the provided charging poind id.
     ///
     /// - Parameter session: Charging session to start
-    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was started.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func startChargingSession(_ session: ChargingSession) async throws -> ChargingSession? {
         var newSession = session
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
-        let chargingSession = try await self.handelChargingTask(action: .add, chargingTask: newSession)
+        let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
         return chargingSession
     }
 
@@ -224,13 +225,13 @@ actor ChargingController {
     /// Schedule a charging session for the provided charging point id
     ///
     /// - Parameter session: Charging session to start
-    /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was started.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func scheduleChargingSession(_ session: ChargingSession) async throws -> ChargingSession? {
         var newSession = session
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
-            let chargingSession = try await self.handelChargingTask(action: .add, chargingTask: newSession)
+            let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
             return chargingSession
         }
         return nil
@@ -241,15 +242,15 @@ actor ChargingController {
     /// Stop a running charging session for the provided charging poind id. Notify the backend to write a charging session receipt.
     ///
     /// - Parameter cpId: Charging Point Id
-    /// - Returns: Charging task that was finished.  In case `nil` is returned, terminating the desired task failed.
+    /// - Returns: Charging session that was finished.  In case `nil` is returned, terminating the desired session failed.
     @discardableResult
     private func stopChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
-        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId),
+        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId),
               let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: cpId) else {
             return nil
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
-        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
         return chargingSession
     }
 
@@ -257,63 +258,63 @@ actor ChargingController {
     ///
     /// - Parameter cpId: Charging Point Id
     private func pauseChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
-        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
+        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId) else {
             return nil
         }
         runningChargingSession.pauseCharging()
-        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
         return chargingSession
     }
 
     /// Resume a running charging session
     ///
     /// - Parameter cpId: Charging Point Id
-    /// - Returns: Charging task that was resumed. In case `nil` is returned, activation of the desired task failed.
+    /// - Returns: Charging session that was resumed. In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func resumeChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
-        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
+        guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId) else {
             return nil
         }
         runningChargingSession.resumeCharging()
-        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
         return chargingSession
     }
 
-    // MARK: - Handle Charging Task
+    // MARK: - Handle Charging Sessions
 
-    /// Charging Task Handling Actions
-    private enum ChargingTaskHandlingActions {
+    /// Charging Session Handling Actions
+    private enum ChargingSessionHandlingActions {
         case add
         case update
         case remove
     }
 
-    /// Handle Charging Task
+    /// Handle Charging Session
     ///
-    /// Add, update or remove a charging task from the charging system. After the requested action was carried out,
-    /// trigger a charging task execution.
+    /// Add, update or remove a charging session from the charging system. After the requested action was carried out,
+    /// trigger a charging session execution.
     ///
     /// - Parameters:
     ///   - action: Action to execute: add, update or remove
-    ///   - chargingTask: the charging task to handle
+    ///   - session: the charging session to handle
     ///
-    /// - Returns: the charging task that was handled.
+    /// - Returns: the charging session that was handled.
     ///
-    /// - Note: The charging task that is returned was requested from the charging system after it was added, updated or deleted. It should be a 1:1 copy of the charging task
-    /// that was passed as an argument to that method. If both differ, then the requested action (add, update or delete) wasn't able to execute properly. This could be the case if a task
+    /// - Note: The charging session that is returned was requested from the charging system after it was added, updated or deleted. It should be a 1:1 copy of the charging session
+    /// that was passed as an argument to that method. If both differ, then the requested action (add, update or delete) wasn't able to execute properly. This could be the case if a session
     /// was added, but should have been updated (and vice versa).
-    private func handelChargingTask(action: ChargingTaskHandlingActions, chargingTask: ChargingSession) async throws -> ChargingSession? {
+    private func handelChargingSession(action: ChargingSessionHandlingActions, session: ChargingSession) async throws -> ChargingSession? {
         switch action {
         case .add:
-            await self.chargingSystem?.chargingPointContainer.addChargingTask(chargingTask)
+            await self.chargingSystem?.chargingPointContainer.addChargingSession(session)
         case .update:
-            await self.chargingSystem?.chargingPointContainer.updateChargingTask(chargingTask)
+            await self.chargingSystem?.chargingPointContainer.updateChargingSession(session)
         case .remove:
-            await self.chargingSystem?.chargingPointContainer.removeChargingTask(by: chargingTask.cpId)
+            await self.chargingSystem?.chargingPointContainer.removeChargingSession(by: session.cpId)
         }
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingTask)")
-        try await self.executeChargingTasks()
-        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingTask.cpId)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(session)")
+        try await self.executeChargingSessions()
+        return await self.chargingSystem?.chargingPointContainer.getChargingSession(by: session.cpId)
     }
 
     // MARK: - Charging Point Commands
@@ -347,8 +348,9 @@ actor ChargingController {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
             }
 
-            if let chargingTasks = await self.chargingSystem?.chargingPointContainer.chargingTasks {
-                self.backend?.updateChargingTasks(with: chargingTasks)
+            if let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions {
+                // TODO: implement
+                //self.backend?.updateChargingSessions(chargingPoints: chargingSessions)
             }
 
         } catch {

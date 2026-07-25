@@ -177,7 +177,7 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
 /// - running: a charging session is running, the ev charger is unlocked and the ev is ready to request power
 /// - finished: a charging session is finished, mainly used in charging session receipts
 /// - paused: a charging session is paused (by the charging session owner) and waits for being resumed
-/// - waiting: a charging session is scheduled for the future and is waiting to start (when scheduled datetime is reached)
+/// - scheduled: a charging session is scheduled for the future and is waiting to start (when scheduled datetime is reached)
 enum ChargingSessionStatus: String, Codable {
     case running
     case finished

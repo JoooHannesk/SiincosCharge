@@ -43,11 +43,12 @@ protocol BackendController {
     /// Propagate charging system information to backend
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation)
 
-    /// Update Charging Tasks
+    /// Update Charging Sessions
     ///
-    /// Propagate charging tasks to backend
-    /// - Parameter chargingTasks: Charging tasks as `[UInt8: ChargingSession]`
-    func updateChargingTasks(with chargingTasks: [UInt8: ChargingSession])
+    /// Update charging sessions in backend
+    /// - Parameter chargingPointIds: Array containing all registered charging point IDs
+    /// - Parameter chargingSessions: Array containing all charging sessions
+    func updateChargingSessions(chargingPointIds: [UInt8], chargingSessions: [ChargingSession])
 
 
     /// Write a charging session receipt

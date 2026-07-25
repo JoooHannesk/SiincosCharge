@@ -84,7 +84,7 @@ struct ChargingControllerTests {
     func testRequestNewChargingSession() async throws {
         let chargingSession = try await self.getChargingSession()
         await self.chargingController.requestChargingSession(chargingSession)
-        let startedChargingSession = await self.chargingController.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
+        let startedChargingSession = await self.chargingController.chargingSystem?.chargingPointContainer.getChargingSession(by: chargingSession.cpId)
         try #require(startedChargingSession != nil)
         #expect(chargingSession.cpId == startedChargingSession?.cpId); #expect(chargingSession.userName == startedChargingSession?.userName)
         try #require(startedChargingSession!.startTime != nil); #expect(startedChargingSession!.startTime! < Date())
@@ -129,7 +129,7 @@ struct ChargingControllerTests {
         try #require(thisSession?.status == .paused)
         let changedSession = await self.chargingController.requestChargingSession(chargingSessionDifferentOwner)
         #expect(changedSession == nil)
-        let chargingSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSessionOwner.cpId)
+        let chargingSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingSession(by: chargingSessionOwner.cpId)
         #expect(chargingSession! == thisSession!)
     }
 
@@ -145,7 +145,7 @@ struct ChargingControllerTests {
         #expect(finishedChargingSession!.meterReadingEnd!.value > finishedChargingSession!.meterReadingStart!.value)
         #expect(finishedChargingSession!.totalEnergyConsumed!.value > 0)
         #expect(finishedChargingSession!.totalChargingDuration! > 0.0)
-        let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingTask(by: chargingSession.cpId)
+        let noSession = await self.chargingController.chargingSystem!.chargingPointContainer.getChargingSession(by: chargingSession.cpId)
         #expect(noSession == nil)
     }
 
