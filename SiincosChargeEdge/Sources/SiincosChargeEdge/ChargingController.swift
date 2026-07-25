@@ -64,15 +64,6 @@ actor ChargingController {
         }
     }
 
-    /// Shutdown
-    ///
-    /// Shutdown gracefully
-    func shutdown() {
-        self.runLoopTask?.cancel()
-        try? self.backend?.shutdown()
-        ChargingController.shutdown()
-    }
-
     /// Run Loop
     ///
     /// Charging controller's main run loop
@@ -138,7 +129,7 @@ actor ChargingController {
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId)
 
         if currentChargingSession == nil && evPluggedIn {
-            return try await self.startCharging(with: request)
+            return try await self.startChargingSession(request)
         }
 
         if currentChargingSession?.status == .paused && currentChargingSession?.userName == request.userName {
@@ -163,7 +154,7 @@ actor ChargingController {
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: request.cpId)
 
         if currentChargingSession == nil && evPluggedIn {
-            return try await self.scheduleChargingSession(for: request)
+            return try await self.scheduleChargingSession(request)
         }
         return nil
     }
@@ -183,7 +174,7 @@ actor ChargingController {
             return nil
         }
 
-        if currentChargingSession.userName == request.userName && currentChargingSession.status != .finished {
+        if currentChargingSession.status != .finished && currentChargingSession.userName == request.userName {
             return try await self.stopChargingSession(for: request.cpId)
         } else {
             return nil
@@ -206,7 +197,7 @@ actor ChargingController {
             return nil
         }
 
-        if currentChargingSession.userName == request.userName {
+        if currentChargingSession.status == .running && currentChargingSession.userName == request.userName {
             return await self.pauseChargingSession(for: request.cpId)
         } else {
             return nil
@@ -220,7 +211,7 @@ actor ChargingController {
     /// - Parameter session: Charging session to start
     /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
     @discardableResult
-    private func startCharging(with session: ChargingSession) async throws -> ChargingSession? {
+    private func startChargingSession(_ session: ChargingSession) async throws -> ChargingSession? {
         var newSession = session
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
@@ -236,7 +227,7 @@ actor ChargingController {
     /// - Parameter session: Charging session to start
     /// - Returns: Charging task that was started.  In case `nil` is returned, activation of the desired task failed.
     @discardableResult
-    private func scheduleChargingSession(for session: ChargingSession) async throws -> ChargingSession? {
+    private func scheduleChargingSession(_ session: ChargingSession) async throws -> ChargingSession? {
         var newSession = session
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
@@ -351,6 +342,18 @@ actor ChargingController {
         }
     }
 
+
+    // MARK: - Maintenance Methods
+
+    /// Shutdown
+    ///
+    /// Shutdown gracefully
+    func shutdown() {
+        self.runLoopTask?.cancel()
+        try? self.backend?.shutdown()
+        ChargingController.shutdown()
+    }
+
     /// Restart System
     ///
     /// Completely restart the system:
@@ -369,7 +372,7 @@ actor ChargingController {
         self.shutdown()
     }
 
-    // MARK: - static methods
+    // MARK: - Static Methods
 
     static let logger = ComponentSupplier.mainLogger
 
