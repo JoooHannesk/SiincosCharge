@@ -78,6 +78,70 @@ actor ChargingController {
         }
     }
 
+    // MARK: - Charging Session Execution
+
+    /// Execute Charging Session
+    ///
+    /// Iterate through the all defined charging points and check if charging sessions are registered. Execute these charging sessions.
+    /// In case there is no charging session registered, lock this charging point and provide a default current setpoint.
+    ///
+    /// - Note: ModbusRTU devices (which are currently in use here) often require to permanently write into their registers to stay awake and to prevent them
+    /// from throwing a communication error. Therefore, we continuously disable charging and provide a default current setpoint value for all chargers which are
+    /// currently not involved in a charging session.
+    private func executeChargingSessions() async throws {
+        guard let chargingPoints = await self.chargingSystem?.chargingPointContainer.chargingPoints.values,
+        let defaultChargingCurrent = self.chargingSystem?.defaultChargingCurrent else {
+            self.logger.critical("\(LogMessages.noChargingPointsFound)")
+            self.shutdown()
+            return
+        }
+        for chargingPoint in chargingPoints {
+            if let chargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: chargingPoint.cpId) {
+                switch chargingSession.status {
+                case .running:
+                    try await self.executeChargingSessionRunning(chargingSession)
+
+                case .paused:
+                    try await self.executeChargingSessionPaused(chargingSession)
+
+                case .scheduled:
+                    try await self.executeChargingSessionScheduled(chargingSession)
+
+                case .finished:
+                    try await self.executeChargingSessionFinished(chargingSession)
+                }
+            } else {
+                try await self.setChargingPoint(chargingPoint.cpId, to: .disabled, with: defaultChargingCurrent)
+            }
+        }
+    }
+
+
+    private func executeChargingSessionRunning(_ session: ChargingSession) async throws {
+        try await self.setChargingPoint(session.cpId, to: .enabled, with: session.chargingCurrentSetpoint)
+        // TODO: implement
+    }
+
+    private func executeChargingSessionPaused(_ session: ChargingSession) async throws {
+        try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
+        // TODO: implement
+    }
+
+    private func executeChargingSessionScheduled(_ session: ChargingSession) async throws {
+        try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
+        // TODO: implement
+    }
+
+    private func executeChargingSessionFinished(_ session: ChargingSession) async throws {
+        try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
+        // TODO: implement
+        self.backend?.writeChargingSessionReceipt(for: session)
+        try await self.handelChargingSession(action: .remove, session: session)
+    }
+
+
+    // MARK: - Charging Session Requests
+
     /// Request a charging session
     ///
     /// In case a charging session is requested, it is registered or updated as a charging session if:
