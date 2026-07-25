@@ -217,6 +217,7 @@ actor ChargingController {
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -232,6 +233,7 @@ actor ChargingController {
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
             let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+            try await self.executeChargingSessions()
             return chargingSession
         }
         return nil
@@ -242,7 +244,7 @@ actor ChargingController {
     /// Stop a running charging session for the provided charging poind id. Notify the backend to write a charging session receipt.
     ///
     /// - Parameter cpId: Charging Point Id
-    /// - Returns: Charging session that was finished.  In case `nil` is returned, terminating the desired session failed.
+    /// - Returns: Charging session that was finished
     @discardableResult
     private func stopChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
         guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId),
@@ -251,18 +253,22 @@ actor ChargingController {
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        try await self.executeChargingSessions()
         return chargingSession
     }
 
     /// Pause a running charging session
     ///
     /// - Parameter cpId: Charging Point Id
+    /// - Returns: Charging session that was paused
+    @discardableResult
     private func pauseChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
         guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId) else {
             return nil
         }
         runningChargingSession.pauseCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -277,6 +283,7 @@ actor ChargingController {
         }
         runningChargingSession.resumeCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -291,18 +298,17 @@ actor ChargingController {
 
     /// Handle Charging Session
     ///
-    /// Add, update or remove a charging session from the charging system. After the requested action was carried out,
-    /// trigger a charging session execution.
+    /// Add, update or remove a charging session from the charging system.
     ///
     /// - Parameters:
     ///   - action: Action to execute: add, update or remove
     ///   - session: the charging session to handle
     ///
-    /// - Returns: the charging session that was handled.
+    /// - Returns: the charging session that was handled
     ///
-    /// - Note: The charging session that is returned was requested from the charging system after it was added, updated or deleted. It should be a 1:1 copy of the charging session
-    /// that was passed as an argument to that method. If both differ, then the requested action (add, update or delete) wasn't able to execute properly. This could be the case if a session
-    /// was added, but should have been updated (and vice versa).
+    /// - Note: The charging session that is returned is requested from the charging system after it was processed (added, updated or removed). If a charging session was
+    /// removed `nil` is going top be returned.
+    @discardableResult
     private func handelChargingSession(action: ChargingSessionHandlingActions, session: ChargingSession) async throws -> ChargingSession? {
         switch action {
         case .add:
@@ -313,7 +319,6 @@ actor ChargingController {
             await self.chargingSystem?.chargingPointContainer.removeChargingSession(by: session.cpId)
         }
         self.logger.info("\(LogMessages.chargingSessionRequest)\(session)")
-        try await self.executeChargingSessions()
         return await self.chargingSystem?.chargingPointContainer.getChargingSession(by: session.cpId)
     }
 
