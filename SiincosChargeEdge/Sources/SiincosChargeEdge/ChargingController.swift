@@ -133,7 +133,7 @@ actor ChargingController {
         }
 
         if currentChargingSession?.status == .paused && currentChargingSession?.userName == request.userName {
-            return await self.resumeChargingSession(for: request.cpId)
+            return try await self.resumeChargingSession(for: request.cpId)
         }
         return nil
     }
@@ -198,7 +198,7 @@ actor ChargingController {
         }
 
         if currentChargingSession.status == .running && currentChargingSession.userName == request.userName {
-            return await self.pauseChargingSession(for: request.cpId)
+            return try await self.pauseChargingSession(for: request.cpId)
         } else {
             return nil
         }
@@ -215,9 +215,8 @@ actor ChargingController {
         var newSession = session
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
-        await self.chargingSystem?.chargingPointContainer.addChargingTask(newSession)
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(newSession)")
-        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: session.cpId)
+        let chargingSession = try await self.handelChargingTask(action: .add, chargingTask: newSession)
+        return chargingSession
     }
 
     /// Schedule a charging session
@@ -231,9 +230,8 @@ actor ChargingController {
         var newSession = session
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
-            await self.chargingSystem?.chargingPointContainer.addChargingTask(newSession)
-            self.logger.info("\(LogMessages.chargingSessionRequest)\(newSession)")
-            return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: session.cpId)
+            let chargingSession = try await self.handelChargingTask(action: .add, chargingTask: newSession)
+            return chargingSession
         }
         return nil
     }
@@ -251,23 +249,20 @@ actor ChargingController {
             return nil
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
-        await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
-        self.backend?.writeChargingSessionReceipt(for: runningChargingSession)
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
-        return await self.chargingSystem?.chargingPointContainer.removeChargingTask(by: cpId)
+        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        return chargingSession
     }
 
     /// Pause a running charging session
     ///
     /// - Parameter cpId: Charging Point Id
-    private func pauseChargingSession(for cpId: UInt8) async -> ChargingSession? {
+    private func pauseChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
         guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
             return nil
         }
         runningChargingSession.pauseCharging()
-        await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
-        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId)
+        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        return chargingSession
     }
 
     /// Resume a running charging session
@@ -275,15 +270,72 @@ actor ChargingController {
     /// - Parameter cpId: Charging Point Id
     /// - Returns: Charging task that was resumed. In case `nil` is returned, activation of the desired task failed.
     @discardableResult
-    private func resumeChargingSession(for cpId: UInt8) async -> ChargingSession? {
+    private func resumeChargingSession(for cpId: UInt8) async throws -> ChargingSession? {
         guard var runningChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId) else {
             return nil
         }
         runningChargingSession.resumeCharging()
-        await self.chargingSystem?.chargingPointContainer.updateChargingTask(runningChargingSession)
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(runningChargingSession)")
-        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: cpId)
+        let chargingSession = try await self.handelChargingTask(action: .update, chargingTask: runningChargingSession)
+        return chargingSession
     }
+
+    // MARK: - Handle Charging Task
+
+    /// Charging Task Handling Actions
+    private enum ChargingTaskHandlingActions {
+        case add
+        case update
+        case remove
+    }
+
+    /// Handle Charging Task
+    ///
+    /// Add, update or remove a charging task from the charging system. After the requested action was carried out,
+    /// trigger a charging task execution.
+    ///
+    /// - Parameters:
+    ///   - action: Action to execute: add, update or remove
+    ///   - chargingTask: the charging task to handle
+    ///
+    /// - Returns: the charging task that was handled.
+    ///
+    /// - Note: The charging task that is returned was requested from the charging system after it was added, updated or deleted. It should be a 1:1 copy of the charging task
+    /// that was passed as an argument to that method. If both differ, then the requested action (add, update or delete) wasn't able to execute properly. This could be the case if a task
+    /// was added, but should have been updated (and vice versa).
+    private func handelChargingTask(action: ChargingTaskHandlingActions, chargingTask: ChargingSession) async throws -> ChargingSession? {
+        switch action {
+        case .add:
+            await self.chargingSystem?.chargingPointContainer.addChargingTask(chargingTask)
+        case .update:
+            await self.chargingSystem?.chargingPointContainer.updateChargingTask(chargingTask)
+        case .remove:
+            await self.chargingSystem?.chargingPointContainer.removeChargingTask(by: chargingTask.cpId)
+        }
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingTask)")
+        try await self.executeChargingTasks()
+        return await self.chargingSystem?.chargingPointContainer.getChargingTask(by: chargingTask.cpId)
+    }
+
+    // MARK: - Charging Point Commands
+
+    /// Set Charging Point Command
+    ///
+    /// Enable or disable a charging point and set the desired maximum current setpoint.
+    ///
+    /// - Parameters:
+    ///   - cpId: Charging point id
+    ///   - chargingPermission: Grant or deny charging permission (enable or disable charging at this charging point)
+    ///   - currentSetpoint: Set maximum charging current setpoint
+    ///
+    /// - Returns: Tuple containing the charging permission status and the charging current setpoint acknowledged by the charging point.
+    @discardableResult
+    private func setChargingPoint(_ cpId: UInt8, to chargingPermission: Status, with currentSetpoint: Measurement<UnitElectricCurrent>) async throws -> (cpChargingPermission: Status?, cpChargingCurrentSetpoint: Measurement<UnitElectricCurrent>?) {
+        let chargingPermission = try await self.chargingSystem?.setChargingPermission(to: chargingPermission, for: cpId)
+        let chargingCurrentSetpoint = try await self.chargingSystem?.setChargingCurrentSetpoint(to: currentSetpoint, for: cpId)
+        return (chargingPermission, chargingCurrentSetpoint)
+    }
+
+    // MARK: - Backend involved Tasks
 
     /// Update Charging Points Status
     ///
