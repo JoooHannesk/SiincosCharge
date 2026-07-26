@@ -12,16 +12,20 @@ import ModbusSerial
 struct MockCharger: EVCharger {
     let unitId: UInt8
     let modelName: SupportedCharger
-    let chargingState: ChargerState = { Bool.random() ? .notCharging : .charging }()
     let evState: EVState = { Bool.random() ? .pluggedIn : .unplugged }()
+    let chargerDataStore: MockChargerDataStore = MockChargerDataStore()
 
     func setupConfig() async throws {
         print("MockCharger: Config Setup completed!")
     }
     
     func getChargerState() async throws -> ChargerState {
-        print("Current charging state: \(self.chargingState)")
-        return self.chargingState
+        var chargingState: ChargerState = .notCharging
+        if self.evState == .pluggedIn {
+            chargingState = await chargerDataStore.softwareLockState == .locked ? ChargerState.notCharging : ChargerState.charging
+        }
+        print("Current charging state: \(chargingState)")
+        return chargingState
     }
 
     func getEVPluggedState() async throws -> EVState {
@@ -44,26 +48,24 @@ struct MockCharger: EVCharger {
     }
     
     func getCurrentLimit() async throws -> Measurement<UnitElectricCurrent> {
-        print("Currently set max. current: \(await MockChargerDataStore.maxCurrentLimit)")
-        return await MockChargerDataStore.maxCurrentLimit
+        print("Currently set max. current: \(await self.chargerDataStore.maxCurrentLimit)")
+        return await self.chargerDataStore.maxCurrentLimit
     }
 
     /// Set maximum current limit
     ///
     /// ``MockCharger`` has to make sure that current limit setpoint stays within the predefined bounds (6A...16A)
     func setCurrentLimit(to setpoint: Measurement<UnitElectricCurrent>) async throws -> Measurement<UnitElectricCurrent> {
-        await MainActor.run {
-            if setpoint.value >= 16.0 {
-                MockChargerDataStore.maxCurrentLimit.value = 16.0
-            } else if setpoint.value <= 6.0 {
-                MockChargerDataStore.maxCurrentLimit.value = 6.0
-            } else {
-                var setpointFloored = setpoint
-                setpointFloored.value = floor(setpoint.value)
-                MockChargerDataStore.maxCurrentLimit = setpointFloored
-            }
+        if setpoint.value >= 16.0 {
+            await self.chargerDataStore.setMaxCurrentLimit(Measurement(value: 16.0, unit: .amperes))
+        } else if setpoint.value <= 6.0 {
+            await self.chargerDataStore.setMaxCurrentLimit(Measurement(value: 6.0, unit: .amperes))
+        } else {
+            var setpointFloored = setpoint
+            setpointFloored.value = floor(setpoint.value)
+            await self.chargerDataStore.setMaxCurrentLimit(setpointFloored)
         }
-        await print("Setting max. current to: \(MockChargerDataStore.maxCurrentLimit)")
+        await print("Setting max. current to: \(self.chargerDataStore.maxCurrentLimit)")
         return try await self.getCurrentLimit()
     }
     
@@ -74,16 +76,14 @@ struct MockCharger: EVCharger {
     }
     
     func getSoftwareLockState() async throws -> LockState {
-        await print("Current lock state: \(MockChargerDataStore.softwareLockState)")
-        return await MockChargerDataStore.softwareLockState
+        await print("Current lock state: \(self.chargerDataStore.softwareLockState)")
+        return await self.chargerDataStore.softwareLockState
     }
     
     func setSoftwareLock(to: LockState) async throws -> LockState {
-        await MainActor.run {
-            MockChargerDataStore.softwareLockState = to
-        }
-        await print("Setting lock state to: \(MockChargerDataStore.softwareLockState)")
-        return await MockChargerDataStore.softwareLockState
+        await self.chargerDataStore.setSoftwareLockState(to: to)
+        await print("Setting lock state to: \(self.chargerDataStore.softwareLockState)")
+        return await self.chargerDataStore.softwareLockState
     }
 }
 
@@ -91,6 +91,7 @@ struct MockCharger: EVCharger {
 struct MockChargerPowerMeter: PowerMeter {
     let unitId: UInt8
     let modelName: SupportedPowerMeter
+    let chargerDataStore: MockChargerDataStore = MockChargerDataStore()
 
     func getElectricCurrent() async throws -> ElectricCurrent3PhaseGrid {
         let current = ElectricCurrent3PhaseGrid(
@@ -124,19 +125,33 @@ struct MockChargerPowerMeter: PowerMeter {
     }
     
     func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
-        await MainActor.run {
-            MockChargerDataStore.energy.value += 0.5
-        }
-        await print("Energy drawn since installation: \(MockChargerDataStore.energy)")
-        return await MockChargerDataStore.energy
+        let newEnergy = await self.chargerDataStore.energy.value + 0.5
+        await self.chargerDataStore.setEnergy(Measurement(value: newEnergy, unit: UnitEnergy.kilowattHours))
+        await print("Energy drawn since installation: \(self.chargerDataStore.energy)")
+        return await self.chargerDataStore.energy
     }
 }
 
 
-@MainActor
-enum MockChargerDataStore {
-    static var maxCurrentLimit = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
-    static var softwareLockState: LockState = .locked
-    static var energy = Measurement(value: 1.0, unit: UnitEnergy.kilowattHours)
+
+actor MockChargerDataStore: Sendable {
+    var maxCurrentLimit = Measurement(value: 16.0, unit: UnitElectricCurrent.amperes)
+    var softwareLockState: LockState = .locked
+    var energy = Measurement(value: 1.0, unit: UnitEnergy.kilowattHours)
+
+    /// Set maximum current limit Setpoint
+    func setMaxCurrentLimit(_ limit: Measurement<UnitElectricCurrent>) {
+        self.maxCurrentLimit = limit
+    }
+
+    /// Set software lock-state
+    func setSoftwareLockState(to: LockState) {
+        self.softwareLockState = to
+    }
+
+    /// Set energy
+    func setEnergy(_ energy: Measurement<UnitEnergy>) {
+        self.energy = energy
+    }
 }
 
