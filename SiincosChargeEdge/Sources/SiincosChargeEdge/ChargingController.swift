@@ -194,7 +194,7 @@ actor ChargingController {
         let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
-        if currentChargingSession == nil && evPluggedIn {
+        if currentChargingSession == nil && evPluggedIn && !request.userName.isEmpty {
             return try await self.startChargingSession(request)
         }
 
@@ -219,7 +219,7 @@ actor ChargingController {
         let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
-        if currentChargingSession == nil && evPluggedIn {
+        if currentChargingSession == nil && evPluggedIn && !request.userName.isEmpty {
             return try await self.scheduleChargingSession(request)
         }
         return nil
