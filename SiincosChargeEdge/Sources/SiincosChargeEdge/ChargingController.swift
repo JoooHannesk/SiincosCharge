@@ -134,7 +134,6 @@ actor ChargingController {
 
     private func executeChargingSessionFinished(_ session: ChargingSession) async throws {
         try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
-        // TODO: implement
         self.backend?.writeChargingSessionReceipt(for: session)
         try await self.handelChargingSession(action: .remove, session: session)
     }
@@ -153,24 +152,26 @@ actor ChargingController {
     /// - Parameter session: charging session details
     @discardableResult
     func requestChargingSession(_ session: ChargingSession) async -> ChargingSession? {
+        var requestedSession: ChargingSession? = nil
         do {
             switch session.status {
             case .running:
-                return try await self.handleChargingRequestRunning(request: session)
+                requestedSession = try await self.handleChargingRequestRunning(request: session)
 
             case .scheduled:
-                return try await self.handleChargingRequestScheduled(request: session)
+                requestedSession = try await self.handleChargingRequestScheduled(request: session)
 
             case .paused:
-                return try await self.handleChargingRequestPausing(request: session)
+                requestedSession = try await self.handleChargingRequestPausing(request: session)
 
             case .finished:
-                return try await self.handleChargingRequestFinished(request: session)
+                requestedSession = try await self.handleChargingRequestFinished(request: session)
             }
+            try await self.executeChargingSessions()
         } catch {
             self.handleError(err: error)
         }
-        return nil
+        return requestedSession
     }
 
 
@@ -281,7 +282,6 @@ actor ChargingController {
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
-        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -297,7 +297,6 @@ actor ChargingController {
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
             let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
-            try await self.executeChargingSessions()
             return chargingSession
         }
         return nil
@@ -317,7 +316,6 @@ actor ChargingController {
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
-        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -332,7 +330,6 @@ actor ChargingController {
         }
         runningChargingSession.pauseCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
-        try await self.executeChargingSessions()
         return chargingSession
     }
 
@@ -347,7 +344,6 @@ actor ChargingController {
         }
         runningChargingSession.resumeCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
-        try await self.executeChargingSessions()
         return chargingSession
     }
 
