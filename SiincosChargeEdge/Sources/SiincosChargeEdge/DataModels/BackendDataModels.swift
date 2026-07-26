@@ -46,9 +46,9 @@ protocol BackendController {
     /// Update Charging Sessions
     ///
     /// Update charging sessions in backend
-    /// - Parameter chargingPointIds: Array containing all registered charging point IDs
-    /// - Parameter chargingSessions: Array containing all charging sessions
-    func updateChargingSessions(chargingPointIds: [UInt8], chargingSessions: [ChargingSession])
+    /// - Parameter chargingPointIds: Collection containing all registered charging point IDs
+    /// - Parameter chargingSessions: Collection containing all charging sessions
+    func updateChargingSessions(chargingPointIds: some Collection<UInt8>, chargingSessions: some Collection<ChargingSession>)
 
 
     /// Write a charging session receipt

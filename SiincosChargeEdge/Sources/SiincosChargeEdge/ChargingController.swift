@@ -412,12 +412,10 @@ actor ChargingController {
             if let cpsStatus = try await self.chargingSystem?.systemStatus {
                 self.backend?.updateChargingPointStatus(with: cpsStatus)
             }
-
-            if let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions {
-                // TODO: implement
-                //self.backend?.updateChargingSessions(chargingPoints: chargingSessions)
+            if let chargingPointIds = await self.chargingSystem?.chargingPointContainer.chargingPoints.keys,
+               let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions.values {
+                self.backend?.updateChargingSessions(chargingPointIds: chargingPointIds, chargingSessions: chargingSessions)
             }
-
         } catch {
             self.handleError(err: error)
         }

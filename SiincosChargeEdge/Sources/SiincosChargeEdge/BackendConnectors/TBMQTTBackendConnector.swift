@@ -93,10 +93,18 @@ class ThingsBoardBackend: BackendController {
     /// Update Charging Sessions
     ///
     /// Update charging sessions in backend
-    /// - Parameter chargingPointIds: Array containing all registered charging point IDs
-    /// - Parameter chargingSessions: Array containing all charging sessions
-    func updateChargingSessions(chargingPointIds: [UInt8], chargingSessions: [ChargingSession]) {
-        // TODO: implement
+    /// - Parameter chargingPointIds: Collection containing all registered charging point IDs
+    /// - Parameter chargingSessions: Collection containing all charging sessions
+    func updateChargingSessions(chargingPointIds: some Collection<UInt8>, chargingSessions: some Collection<ChargingSession>) {
+        for cpId in chargingPointIds {
+            var sessionMessage = ""
+            if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
+                sessionMessage = #"{"cp\#(cpId)_session": \#(session.asJson, default: "")}"#
+            } else {
+                sessionMessage = #"{"cp\#(cpId)_session": ""}"#
+            }
+            self.publish(message: sessionMessage, to: .attributeTopic)
+        }
     }
 
     /// Write a charging session receipt
