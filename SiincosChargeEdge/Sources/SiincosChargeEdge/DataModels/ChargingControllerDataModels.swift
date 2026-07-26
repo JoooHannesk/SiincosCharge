@@ -51,10 +51,21 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
     /// Total Energy Consumed
     ///
     /// Total energy drawn from the charging point by the EV
-    var totalEnergyConsumed: Measurement<UnitEnergy>?
+    var totalEnergyConsumed: Measurement<UnitEnergy>? {
+        guard let meterEnd = self.meterReadingEnd, let meterStart = self.meterReadingStart else {
+            return nil
+        }
+        let energyConsumed = meterEnd.converted(to: .kilowattHours).value - meterStart.converted(to: .kilowattHours).value
+        return Measurement(value: energyConsumed, unit: .kilowattHours)
+    }
 
     /// Total Charging Duration
-    var totalChargingDuration: TimeInterval?
+    var totalChargingDuration: TimeInterval? {
+        guard let startTime = self.startTime, let endTime = self.endTime else {
+            return nil
+        }
+        return endTime.timeIntervalSince(startTime)
+    }
 
     /// Charging Current Setpoint
     ///
@@ -87,8 +98,6 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         meterReadingEnd: Measurement<UnitEnergy>? = nil,
         userName: String,
         chargingSessionStatus: ChargingSessionStatus,
-        totalEnergyConsumed: Measurement<UnitEnergy>? = nil,
-        totalChargingDuration: TimeInterval? = nil,
         chargingCurrentSetpoint: Measurement<UnitElectricCurrent>
     ) {
         self.sessionId = sessionId
@@ -99,8 +108,6 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.meterReadingEnd = meterReadingEnd
         self.userName = userName
         self.status = chargingSessionStatus
-        self.totalEnergyConsumed = totalEnergyConsumed
-        self.totalChargingDuration = totalChargingDuration
         self.chargingCurrentSetpoint = chargingCurrentSetpoint
     }
 
@@ -162,12 +169,13 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
         self.status = .finished
         self.endTime = endTime
         self.meterReadingEnd = meterReading
-        guard let meterEnd = self.meterReadingEnd, let meterStart = self.meterReadingStart,
-              let startTime = self.startTime, let endTime = self.endTime else {
-            return
-        }
-        self.totalEnergyConsumed = Measurement(value: meterEnd.value - meterStart.value, unit: UnitEnergy.kilowattHours)
-        self.totalChargingDuration = endTime.timeIntervalSince(startTime)
+    }
+
+    /// Update Meter Reading
+    ///
+    /// Update the meter reading to continuously track energy consumption during this session.
+    mutating func update(with meterReading: Measurement<UnitEnergy>) {
+        self.meterReadingEnd = meterReading
     }
 }
 

@@ -118,7 +118,11 @@ actor ChargingController {
 
 
     private func executeChargingSessionRunning(_ session: ChargingSession) async throws {
-        try await self.setChargingPoint(session.cpId, to: .enabled, with: session.chargingCurrentSetpoint)
+        var runningChargingSession = session
+        try await self.setChargingPoint(runningChargingSession.cpId, to: .enabled, with: runningChargingSession.chargingCurrentSetpoint)
+        guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: runningChargingSession.cpId) else { return }
+        runningChargingSession.update(with: meterReading)
+        try await self.handelChargingSession(action: .update, session: runningChargingSession)
         // TODO: implement
     }
 

@@ -123,8 +123,6 @@ struct DataModelTests {
             meterReadingEnd: Measurement(value: 12.4, unit: .kilowattHours),
             userName: "user@example.com",
             chargingSessionStatus: .running,
-            totalEnergyConsumed: Measurement(value: 3.0, unit: .kilowattHours),
-            totalChargingDuration: 1234.56,
             chargingCurrentSetpoint: Measurement(value: 16.0, unit: .amperes)
         )
         try #require(originalB.asJson != nil)

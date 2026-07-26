@@ -182,10 +182,6 @@ extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertibl
         }
         userName = try container.decode(String.self, forKey: .userName)
         status = try container.decode(ChargingSessionStatus.self, forKey: .status)
-        if let totalEnergyConsumed = try container.decodeIfPresent(Double.self, forKey: .totalEnergyConsumedkWh) {
-            self.totalEnergyConsumed = Measurement(value: totalEnergyConsumed, unit: .kilowattHours)
-        }
-        self.totalChargingDuration = try container.decodeIfPresent(TimeInterval.self, forKey: .totalChargingDuration)
         self.chargingCurrentSetpoint = Measurement(value: try container.decode(Double.self, forKey: .chargingCurrentSetpointA), unit: .amperes)
 
     }
