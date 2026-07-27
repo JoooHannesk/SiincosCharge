@@ -116,26 +116,82 @@ actor ChargingController {
         }
     }
 
-
+    /// Execute running charging Session
+    ///
+    /// Enable the corresponding EV charger and update the charging session with the current meter reading.
+    /// Perform the following checks to terminate a running charging session gracefully:
+    /// 1. Check for an ev unplugged event
+    /// 2. Check if `endTime` is provided and finish charging session if it is in the past
     private func executeChargingSessionRunning(_ session: ChargingSession) async throws {
         var runningChargingSession = session
+
+        // Enable charging point
         try await self.setChargingPoint(runningChargingSession.cpId, to: .enabled, with: runningChargingSession.chargingCurrentSetpoint)
+
+        // Update charging session with meter reading
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: runningChargingSession.cpId) else { return }
         runningChargingSession.update(with: meterReading)
         try await self.handelChargingSession(action: .update, session: runningChargingSession)
-        // TODO: implement
+
+        // Check for ev unplugged event
+        if try await self.chargingSystem?.getEvState(chargingPointId: runningChargingSession.cpId) == .unplugged {
+            try await self.stopChargingSession(for: runningChargingSession.cpId)
+        }
+
+        // Check for `endTime`
+        if let endTime = runningChargingSession.endTime, endTime < Date() {
+            try await self.stopChargingSession(for: runningChargingSession.cpId)
+        }
     }
 
+    /// Execute pausing charging Session
+    ///
+    /// Disable the corresponding EV charger. Perform the following checks to terminate a running charging session gracefully:
+    /// 1. Check for an ev unplugged event
+    /// 2. Check if `endTime` is provided and finish charging session if it is in the past
     private func executeChargingSessionPaused(_ session: ChargingSession) async throws {
+        // Disable Charging point
         try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
-        // TODO: implement
+
+        // Check for ev unplugged event
+        if try await self.chargingSystem?.getEvState(chargingPointId: session.cpId) == .unplugged {
+            try await self.stopChargingSession(for: session.cpId)
+        }
+
+        // Check for `endTime`
+        if let endTime = session.endTime, endTime < Date() {
+            try await self.stopChargingSession(for: session.cpId)
+        }
     }
 
+    /// Execute scheduled charging Session
+    ///
+    /// Disable the corresponding EV charger. Perform the following checks to terminate a running charging session gracefully:
+    /// 1. Check for an ev unplugged event
+    ///
+    /// Perform the following checks to start the scheduled charging session:
+    /// 1. Check if `startTime` is in the past and start a new charging session
     private func executeChargingSessionScheduled(_ session: ChargingSession) async throws {
+        // Disable Charging point
         try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
-        // TODO: implement
+
+        // Check for ev unplugged event
+        if try await self.chargingSystem?.getEvState(chargingPointId: session.cpId) == .unplugged {
+            try await self.stopChargingSession(for: session.cpId)
+        }
+
+        // Check for `startTime`
+        if let startTime = session.startTime, startTime < Date() {
+            try await self.handelChargingSession(action: .remove, session: session)
+            try await self.startChargingSession(session)
+        }
+
     }
 
+    /// Execute finish charging Session
+    ///
+    /// Disable the corresponding EV charger, tell the backend to write a charging session receipt
+    /// and remove the current charging session from the executor.
     private func executeChargingSessionFinished(_ session: ChargingSession) async throws {
         try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
         self.backend?.writeChargingSessionReceipt(for: session)
