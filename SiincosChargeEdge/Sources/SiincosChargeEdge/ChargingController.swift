@@ -15,6 +15,7 @@ actor ChargingController {
     var chargingSystem: ChargingSystem? = nil
     var sysError: SystemError? = nil
     var runLoopTask: Task<Void, Never>? = nil
+    private var opQueue: Task<Void, Never>? = nil
 
     /// Logger
     ///
@@ -60,8 +61,26 @@ actor ChargingController {
     private func startRunLoop() {
         self.runLoopTask?.cancel()
         self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 8.0) { [weak self] in
-            await self?.runLoop()
+            guard let self else { return }
+            await self.enqueue { await self.runLoop() }.value
         }
+    }
+
+    /// Enqueue an operation on the serial pipeline
+    ///
+    /// Run `op` strictly after all previously enqueued operations have finished. Run loop
+    /// iterations and charging session requests share this pipeline, so a request can never
+    /// interleave with a half-finished run loop iteration (actors are reentrant at suspension
+    /// points, which would otherwise let the loop overwrite the request's device commands
+    /// with stale decisions).
+    private func enqueue<T: Sendable>(_ op: @escaping @Sendable () async -> T) -> Task<T, Never> {
+        let previous = self.opQueue
+        let task = Task {
+            await previous?.value
+            return await op()
+        }
+        self.opQueue = Task { _ = await task.value }
+        return task
     }
 
     /// Run Loop
@@ -210,8 +229,20 @@ actor ChargingController {
     /// In any other cases, the charging session request is ignored.
     ///
     /// - Parameter session: charging session details
+    ///
+    /// - Note: The request is enqueued on the serial pipeline and executes right after the
+    /// currently running run loop iteration (if any), so it cannot be overwritten by
+    /// in-flight stale run loop decisions.
     @discardableResult
     func requestChargingSession(_ session: ChargingSession) async -> ChargingSession? {
+        await self.enqueue { await self.processChargingSessionRequest(session) }.value
+    }
+
+    /// Process a charging session request
+    ///
+    /// Executes the request as described in ``requestChargingSession(_:)``. Must only be
+    /// called through the serial pipeline (see ``enqueue(_:)``).
+    private func processChargingSessionRequest(_ session: ChargingSession) async -> ChargingSession? {
         var requestedSession: ChargingSession? = nil
         do {
             switch session.status {
@@ -512,6 +543,8 @@ actor ChargingController {
         self.sysError = err as? SystemError
         if let sysError = self.sysError {
             self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
+        } else {
+            self.logger.error("\(err.localizedDescription)", metadata: ["error": "\(err)"])
         }
     }
 
