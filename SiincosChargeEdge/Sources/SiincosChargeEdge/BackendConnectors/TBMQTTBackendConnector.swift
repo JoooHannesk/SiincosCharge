@@ -114,7 +114,8 @@ class ThingsBoardBackend: BackendController {
     ///
     /// - Parameter session: The charging session to write the receipt for
     func writeChargingSessionReceipt(for session: ChargingSession) {
-        // TODO: implement
+        let sessionReceiptMessage = #"{"cp\#(session.cpId)_sessionReceipt": \#(session.asJson, default: "")}"#
+        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
     }
 
     // MARK: - Backend specific Methods
