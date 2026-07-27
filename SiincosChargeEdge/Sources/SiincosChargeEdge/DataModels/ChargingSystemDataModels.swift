@@ -237,9 +237,9 @@ enum LockState: UInt {
 /// Represent a simple status: `.enabled` or `.disabled` and `.unknown`
 /// if not supported by a device or functionality
 enum Status: UInt8, Codable, CaseIterable {
-    case enabled
-    case disabled
-    case unknown
+    case disabled = 0
+    case enabled = 1
+    case unknown = 2
 }
 
 /// Electric Current
