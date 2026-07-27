@@ -60,7 +60,7 @@ actor ChargingController {
     /// Start the main run loop
     private func startRunLoop() {
         self.runLoopTask?.cancel()
-        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 8.0) { [weak self] in
+        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
             guard let self else { return }
             await self.enqueue { await self.runLoop() }.value
         }
@@ -232,7 +232,8 @@ actor ChargingController {
     ///
     /// - Note: The request is enqueued on the serial pipeline and executes right after the
     /// currently running run loop iteration (if any), so it cannot be overwritten by
-    /// in-flight stale run loop decisions.
+    /// in-flight stale run loop decisions. After the request is processed, the charging point
+    /// status is published to the backend immediately instead of waiting for the next run loop tick.
     @discardableResult
     func requestChargingSession(_ session: ChargingSession) async -> ChargingSession? {
         await self.enqueue { await self.processChargingSessionRequest(session) }.value
@@ -259,6 +260,7 @@ actor ChargingController {
                 requestedSession = try await self.handleChargingRequestFinished(request: session)
             }
             try await self.executeChargingSessions()
+            await self.updateChargingPointStatus()
         } catch {
             self.handleError(err: error)
         }
