@@ -59,7 +59,7 @@ actor ChargingController {
     /// Start the main run loop
     private func startRunLoop() {
         self.runLoopTask?.cancel()
-        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
+        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 8.0) { [weak self] in
             await self?.runLoop()
         }
     }
@@ -241,7 +241,6 @@ actor ChargingController {
     ///
     /// Add a new session in case:
     /// 1. no other session is registered
-    /// 2. the car is plugged in
     ///
     /// Update an existing session in case:
     /// 1. current session is paused - will be set to running
@@ -251,10 +250,9 @@ actor ChargingController {
     /// - Returns: Charging session that was started.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func handleChargingRequestRunning(request: ChargingSession) async throws -> ChargingSession? {
-        let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
-        if currentChargingSession == nil && evPluggedIn && !request.userName.isEmpty {
+        if currentChargingSession == nil && !request.userName.isEmpty {
             return try await self.startChargingSession(request)
         }
 
@@ -270,16 +268,14 @@ actor ChargingController {
     ///
     /// Add a new session in case:
     /// 1. no other session is registered
-    /// 2. the car is plugged in
     ///
     /// - Parameter request: charging session request from backend
     /// - Returns: Charging session that was scheduled.  In case `nil` is returned, activation of the desired session failed.
     @discardableResult
     private func handleChargingRequestScheduled(request: ChargingSession) async throws -> ChargingSession? {
-        let evPluggedIn = try await self.chargingSystem?.getEvState(chargingPointId: request.cpId) == .pluggedIn
         let currentChargingSession = await self.chargingSystem?.chargingPointContainer.getChargingSession(by: request.cpId)
 
-        if currentChargingSession == nil && evPluggedIn && !request.userName.isEmpty {
+        if currentChargingSession == nil && !request.userName.isEmpty {
             return try await self.scheduleChargingSession(request)
         }
         return nil

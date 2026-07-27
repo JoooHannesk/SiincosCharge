@@ -63,8 +63,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// - Watchdog Timeout: 60 seconds (prevent watchdog to trigger failsafe mode too early, e.g. the gateway power-cycles should not trigger the watchdog)
     /// - Failsafe Mode max. Current: 8A (for most cases assuming at most 2 chargers on the line – with 8 amps each, the circuit breaker will not trip)
     func setupConfig() async throws {
-        // Power Saving Mode: enabled
-        let powerSavingModeSetpoint: Status = .enabled
+        let powerSavingModeSetpoint: Status = .disabled
         let powerSavingModeActual = try await self.setPowerSavingState(to: powerSavingModeSetpoint)
 
         // Watchdog Timeout: 60sec
