@@ -4,7 +4,7 @@
 ```json
     {
         "cpId": 1,
-        "userName": "mail@johanneskinzig.com",
+        "userName": "user@mockserver.com",
         "startTime": 1785150015000,
         "endTime": 1785150075000,
         "status": "scheduled",
