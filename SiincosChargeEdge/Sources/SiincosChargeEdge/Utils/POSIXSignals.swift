@@ -9,8 +9,8 @@ import Foundation
 
 enum PosixSignals {
 
-    static let sigintSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
-    static let sigtermSource = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+    @MainActor static let sigintSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+    @MainActor static let sigtermSource = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
 
     @MainActor static var shutdownHandler: (() -> Void)? = nil
 
