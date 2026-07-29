@@ -1,6 +1,7 @@
-# Setup reComputer as Edge Device for SiincosChargeEdge
+# Setup a Linux Target and install SiincosChargeEdge
+Setup a Linux embedded PC as an edge device for SiincosChargeEdge. This guide covers Raspberry Pi or Raspberry Pi based devices, such as the reComputer R110x (from Seeed Studio).
 
-This documentation is written for a reComputer R1124-10.
+This documentation is specifically tailored for the reComputer R1124-10, but can easily be adapted for other platforms. Only the sections explicitly marked under 'R1124-10 Specific' contain hardware-dependent details; all remaining instructions apply universally to other Raspberry Pi platforms.
 
 ## Flash Raspberry Pi OS (using Raspberry Pi Imager)
 1. Use: Raspberry Pi OS Lite, 64-bit
@@ -33,11 +34,19 @@ Run `sudo raspi-config` to perform the following tasks.
 * (3) Interface Options --> (I6) Disable *login shell via serial* to enable *serial interface*
 * Reboot when finished
 
-## Install Linux Device Tree Overlay for reComputer
+## R1124-10 Specific: Install Linux Device Tree Overlay for reComputer and enable internal RS485 transceivers
 0. Make sure `git` is installed, install via: `sudo apt update && sudo apt install git`
 1. Clone repo: `git clone --depth 1 https://github.com/Seeed-Studio/seeed-linux-dtoverlays.git && cd seeed-linux-dtoverlays`
 2. Install for e.g. reComputer R110x series: `sudo ./scripts/reTerminal.sh --device reComputer-R110x`
 3. Reboot: `sudo reboot`
+4. Open the firmware config: `sudo nano /boot/firmware/config.txt` and make sure the following configuration parameters are set correspondingly.
+```env
+enable_uart=1
+dtoverlay=dwc2,dr_mode=host
+dtoverlay=vc4-kms-v3d
+dtoverlay=reComputer-R100x,uart2
+```
+5. Reboot: `sudo reboot`
 
 ## Install and configure SiincosChargeEdge
 * TODO
@@ -51,9 +60,9 @@ Run `sudo raspi-config` to perform the following tasks.
 * When installing Swift on Raspberry Pi OS based on Debian 13 (trixie), the installer may warn you that no direct matching toolchain version could be found and that you should chose the closesd matching distro. I selected `Debian 12` and it seems to work.
 
 #### Prepare the Swift Toolchain
-The project currently requires Swift 6.2 to build
-1. Install Swift 6.2 toolchain: `swiftly install 6.2`
-2. Activate toolchain: `swiftly use 6.2`
+The project currently requires Swift 6.3 to build
+1. Install Swift 6.3 toolchain: `swiftly install 6.3`
+2. Activate toolchain: `swiftly use 6.3`
 3. Double check: `swift --version`
 
 #### Prepare the Project
@@ -67,8 +76,11 @@ On the target (Raspberry, reComputer, etc.), run the following steps:
  * `mkdir -p /opt/SiincosChargeEdge/Logs`
 3. Clone repo (e.g. into your home folder) and walk to the swift package folder: `git clone https://github.com/JoooHannesk/SiincosCharge.git && cd SiincosCharge/SiincosChargeEdge/`
 4. Run `swift build` to check if everything builds correctly
-5. Copy and rename the config file to the install location `cp Assets/config.json.sample /opt/SiincosChargeEdge/Asset/config.json`
+5. Copy and rename the config file to the install location `cp Assets/config.json.sample /opt/SiincosChargeEdge/Assets/config.json`
 6. Now run `swift test` to check if all tests pass.
+7. Edit the config file in place: TODO
+8. Add the MQTT (ThingsBoard) certificate: TODO
+9. Build a standalone binary: 
 
 ## Configure OverlayFS (Readonly filesystem)
 Run `sudo raspi-config` to perform the following tasks.

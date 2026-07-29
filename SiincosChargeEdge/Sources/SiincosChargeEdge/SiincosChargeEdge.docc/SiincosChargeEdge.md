@@ -3,4 +3,4 @@
 Siincos Charge Edge Documentation
 
 ## Table of Contents
-- <doc:Setup-reComputer>
+- <doc:Setup-Linux-Target>

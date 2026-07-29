@@ -14,4 +14,4 @@ TARGET_SSH_USERNAME=$1
 TARGET_HOSTNAME=$2
 PROJECT_HOME=$3
 TARGET_PROJECT_HOME=$4
-rsync -av --delete --progress --exclude '.git' --exclude '.build' $PROJECT_HOME $TARGET_SSH_USERNAME@$TARGET_HOSTNAME:$TARGET_PROJECT_HOME/..
+rsync -av --delete --progress --exclude '.git' --exclude '.build' $PROJECT_HOME/ $TARGET_SSH_USERNAME@$TARGET_HOSTNAME:$TARGET_PROJECT_HOME/
