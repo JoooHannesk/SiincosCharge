@@ -562,24 +562,6 @@ actor ChargingController {
         ChargingController.shutdown()
     }
 
-    /// Restart System
-    ///
-    /// Completely restart the system:
-    /// - exit application
-    /// - restart OS
-    ///
-    /// - Note: In case an error is thrown, restarting the system is a good idea.
-    /// Thrown errors mainly originate from bus communication failures and therefore render the system unmanoeuvrable which requires a restart.
-    /// Status errors from EV chargers are generally not registered in ``ChargingController/sysError``, every charger has it's own way to communicate an
-    /// error or warning.
-    func restartSystem() {
-        self.sysError = nil // Pointless...
-        logger.info("\(LogMessages.restartMsg)")
-        // TODO: implement
-        // reboot system with command: "nohup bash -c 'sleep 8 && systemctl reboot' &"
-        self.shutdown()
-    }
-
     // MARK: - Static Methods
 
     static let logger = ComponentSupplier.mainLogger

@@ -6,7 +6,7 @@ This documentation is written for a reComputer R1124-10.
 1. Use: Raspberry Pi OS Lite, 64-bit
 2. Set Hostname: `siincoschargeedge`
 3. Set Username: `evchargermanager`
-4. Set Password: `solut2026AdvProdCharge`
+4. Set Password: `YourSuperSecretPassword`
 
 (Or set according to your needs.)
 
