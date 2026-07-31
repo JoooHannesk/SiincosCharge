@@ -3,8 +3,12 @@ Setup a Linux embedded PC as an edge device for SiincosChargeEdge. This guide co
 
 This documentation is specifically tailored for the reComputer R1124-10, but can easily be adapted for other platforms. Only the sections explicitly marked under 'R1124-10 Specific' contain hardware-dependent details; all remaining instructions apply universally to other Raspberry Pi platforms.
 
-## Flash Raspberry Pi OS (using Raspberry Pi Imager)
-1. Use: Raspberry Pi OS Lite, 64-bit
+## Minimum Hardware requirements
+* Linux device with RS485 capability (USB-to-RS485 transceivers will work)
+* Raspberry Pi 4 (or higher, I tested with a Compute Module 4, I assume RPi 3 will work, as well - I did not test it)
+
+## Setup your Raspberry Pi (e.g. using Raspberry Pi Imager)
+1. Flash your Raspberry Pi OS, recommended image: Raspberry Pi OS Lite, 64-bit
 2. Set Hostname: `siincoschargeedge`
 3. Set Username: `evchargermanager`
 4. Set Password: `YourSuperSecretPassword`
@@ -39,54 +43,25 @@ Run `sudo raspi-config` to perform the following tasks.
 1. Clone repo: `git clone --depth 1 https://github.com/Seeed-Studio/seeed-linux-dtoverlays.git && cd seeed-linux-dtoverlays`
 2. Install for e.g. reComputer R110x series: `sudo ./scripts/reTerminal.sh --device reComputer-R110x`
 3. Reboot: `sudo reboot`
-4. Open the firmware config: `sudo nano /boot/firmware/config.txt` and make sure the following configuration parameters are set correspondingly.
+4. Open the firmware config: `sudo nano /boot/firmware/config.txt` and make sure the following configuration parameters are set as shown below. Reboot afterwards.
 ```env
 enable_uart=1
 dtoverlay=dwc2,dr_mode=host
 dtoverlay=vc4-kms-v3d
 dtoverlay=reComputer-R100x,uart2
 ```
-5. Reboot: `sudo reboot`
 
-## Install and configure SiincosChargeEdge
+## Build and install
+Proceed to the <doc:Build-Install> section. Once complete, return here to continue configuring the edge device.
+
+## Post configuration steps
+The post configuration steps are not needed but I recommend them to enhance system stability.
+
+### Configure OverlayFS (Readonly filesystem)
+Configuring an overlay filesystem sets the `/` mount point to read-only, which means that all data that is written is persistent between reboots. This drastically reduces physical storage wearout when using an SD card or eMMC flash device. Run `sudo raspi-config` to perform the following tasks:
 * TODO
 
-### Install Binary
-* TODO
-
-### Build from source
-#### Install Swift
-* Follow the steps on: [https://www.swift.org/install/linux/](https://www.swift.org/install/linux/)
-* When installing Swift on Raspberry Pi OS based on Debian 13 (trixie), the installer may warn you that no direct matching toolchain version could be found and that you should chose the closesd matching distro. I selected `Debian 12` and it seems to work.
-
-#### Prepare the Swift Toolchain
-The project currently requires Swift 6.3 to build
-1. Install Swift 6.3 toolchain: `swiftly install 6.3`
-2. Activate toolchain: `swiftly use 6.3`
-3. Double check: `swift --version`
-
-#### Prepare the Project
-On the target (Raspberry, reComputer, etc.), run the following steps:
-1. Make sure the path `/opt/SiincosChargeEdge` exists:
- * Create folder `sudo mkdir -p /opt/SiincosChargeEdge`
- * Change ownership to common user: `sudo chown evchargermanager:evchargermanager /opt/SiincosChargeEdge`
- * This is the install location (and is currently fixed)
-2. Create the following directory layout:
- * `mkdir -p /opt/SiincosChargeEdge/Assets`
- * `mkdir -p /opt/SiincosChargeEdge/Logs`
-3. Clone repo (e.g. into your home folder) and walk to the swift package folder: `git clone https://github.com/JoooHannesk/SiincosCharge.git && cd SiincosCharge/SiincosChargeEdge/`
-4. Run `swift build` to check if everything builds correctly
-5. Copy and rename the config file to the install location `cp Assets/config.json.sample /opt/SiincosChargeEdge/Assets/config.json`
-6. Now run `swift test` to check if all tests pass.
-7. Edit the config file in place: TODO
-8. Add the MQTT (ThingsBoard) certificate: TODO
-9. Build a standalone binary: 
-
-## Configure OverlayFS (Readonly filesystem)
-Run `sudo raspi-config` to perform the following tasks.
-* TODO
-
-## Backup & Restore using dd
+### Backup & Restore using dd
 Backup is compressed/decompressed in a single command using *gzip* together with *dd* for comfort reasons.
 
 * Backup: `sudo dd if=/dev/rdiskX bs=1M status=progress | gzip > backup_image_name.gz`

@@ -1,5 +1,5 @@
 {
-  "originHash" : "33a9ecfe381bf0e4026121ae3a8caa0243604e5bfea9ec50a6149360a55b4233",
+  "originHash" : "1ad7640f4a7b7e29d24e249abeda0046d1ebb6cc3efa586b417eaf7f7619412d",
   "pins" : [
     {
       "identity" : "modbus-swift",
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoooHannesk/TinyTBDeviceClient.git",
       "state" : {
-        "revision" : "28a8ce8c72296c5708268b984d3e45304a61f7c3",
-        "version" : "0.0.3"
+        "revision" : "2595851044b2cd498c45709172598de183e54a48",
+        "version" : "0.0.6"
       }
     }
   ],
