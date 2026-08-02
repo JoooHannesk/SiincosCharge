@@ -28,7 +28,7 @@ enum AppConstants {
     /// device grows accordingly. Since this app manages load balancing for the EV chargers, the time required to set the
     /// maximum allowed current per charger also rises. To maintain system stability and prevent unintended circuit breaker
     /// trips, this maximum bus length is defined here as a safeguard.
-    static let maxRS485BusDevices: UInt8 = 5
+    static let maxRS485BusDevices: UInt8 = 10
 
     /// Absolute maximum allowed current per EV charger
     ///

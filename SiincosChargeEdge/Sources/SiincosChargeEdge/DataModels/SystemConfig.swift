@@ -83,7 +83,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
          cloudCACertPath: String,
          cloudClientId: String,
          cloudUsername: String,
-         cloudPassword: String) {
+         cloudPassword: String) throws {
         self.systemId = systemId
         self.chargerModel = chargerModel
         self.chargerBus = chargerBus
@@ -97,6 +97,8 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         self.cloudClientId = cloudClientId
         self.cloudUsername = cloudUsername
         self.cloudPassword = cloudPassword
+
+        try self.validate()
     }
 
     /**
@@ -122,6 +124,8 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         cloudClientId = try container.decode(String.self, forKey: .cloudClientId)
         cloudUsername = try container.decode(String.self, forKey: .cloudUsername)
         cloudPassword = try container.decode(String.self, forKey: .cloudPassword)
+
+        try self.validate()
     }
 
     /**

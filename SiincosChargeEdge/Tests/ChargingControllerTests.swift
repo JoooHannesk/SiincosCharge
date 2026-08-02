@@ -16,7 +16,7 @@ struct ChargingControllerTests {
     /// Static Device Config
     static var testSystemConfig: SystemConfig {
         get async throws {
-            let config = SystemConfig(systemId: "TestcaseConfig",
+            let config = try SystemConfig(systemId: "TestcaseConfig",
                                       chargerModel: .mockCharger,
                                       chargerBus: "",
                                       meterModel: .nope,

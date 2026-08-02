@@ -128,7 +128,7 @@ class ChargingSystemLoadBalancerTests {
     /// Static Device Config
     static var deviceConfig: DeviceConfig {
         get async throws {
-            let config = SystemConfig(systemId: "TestcaseConfig",
+            let config = try SystemConfig(systemId: "TestcaseConfig",
                                       chargerModel: .mockCharger,
                                       chargerBus: "",
                                       meterModel: .nope,
