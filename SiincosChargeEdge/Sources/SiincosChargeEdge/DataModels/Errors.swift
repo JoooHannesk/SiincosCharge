@@ -11,6 +11,7 @@ import Foundation
 ///
 enum SystemError: String, RawRepresentable, Codable, Error {
     case configFileNotFound
+    case configurationIntegrityError
     case boundaryViolation
     case dataMissing
     case chargersMissing
@@ -28,6 +29,8 @@ extension SystemError: LocalizedError {
         switch self {
         case .configFileNotFound:
             return "Configuration file not found or not readable!"
+        case .configurationIntegrityError:
+            return "Configuration file contains invalid configurations! Aborting!"
         case .boundaryViolation:
             return "Upper and lower bounds do not match!"
         case .dataMissing:

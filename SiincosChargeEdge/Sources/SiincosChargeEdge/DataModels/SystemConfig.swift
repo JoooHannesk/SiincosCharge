@@ -50,6 +50,8 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let cloudUsername: String
     let cloudPassword: String
 
+    let logger = ComponentSupplier.mainLogger
+
     enum CodingKeys: String, CodingKey {
         case systemId
         case chargerModel
@@ -144,6 +146,27 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         try container.encode(cloudClientId, forKey: .cloudClientId)
         try container.encode(cloudUsername, forKey: .cloudUsername)
         try container.encode(cloudPassword, forKey: .cloudPassword)
+    }
+
+    /// Validate System Configuration
+    ///
+    /// Validate configuration to ensure compatibility between all settings parameters. Currently validating:
+    /// - `lineLenght` is minimum 1 and does not exceed 10 devices
+    /// -
+    private func validate() throws {
+        // Validate line length
+        guard self.lineLength >= 1 && self.lineLength <= AppConstants.maxRS485BusDevices else {
+            self.logger.critical("Provided line length has to be between 1 and \(AppConstants.maxRS485BusDevices), but was provided as \(self.lineLength)")
+            throw SystemError.configurationIntegrityError
+        }
+
+        // Validate line max current
+        let definedLineMaxCurrent = self.lineMaxCurrent.converted(to: .amperes).value
+        let maximumAllowedLineMaxCurrent = Double(self.lineLength*AppConstants.maxChargerCurrentA)
+        guard definedLineMaxCurrent <= maximumAllowedLineMaxCurrent else {
+            self.logger.critical("Defined maximum system current (\(definedLineMaxCurrent)) exceeds the maximum allowed system current (\(maximumAllowedLineMaxCurrent)")
+            throw SystemError.configurationIntegrityError
+        }
     }
 
     var description: String {

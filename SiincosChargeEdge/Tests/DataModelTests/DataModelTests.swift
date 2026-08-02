@@ -12,7 +12,7 @@ import Foundation
 
 /// Data Model Tests
 ///
-/// Test data model related functionality, e.g. conversion and encoding
+/// Test data model related functionality, e.g. conversion, encoding, integrity
 @Suite("Data-Model-Tests", .serialized)
 struct DataModelTests {
 
