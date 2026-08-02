@@ -49,6 +49,7 @@ class ThingsBoardBackend: BackendController {
     /// Prepare client and connect to MQTT broker.
     func startup() throws {
         self.client = try self.createMQTTClient()
+        self.client?.enableAutoReconnect()
         self.client?.connect(
             onSuccess: {
                 self.logger.info("\(LogMessages.mqttConnectionSuccess)")
@@ -56,8 +57,7 @@ class ThingsBoardBackend: BackendController {
             },
             onError: { error in
                 self.logger.error("\(LogMessages.mqttConnectionFailed)", metadata: ["error": "\(error.localizedDescription)"])
-                // throw SystemError.mqttConnectError
-                exit(1) // TODO: replace with a throwing error, therefore the TinyTBDeviceClient library needs to be updated
+                ChargingController.shutdown(exitCode: 1)
             }
         )
     }
@@ -209,7 +209,8 @@ class ThingsBoardBackend: BackendController {
             username: config.cloudUsername,
             password: config.cloudPassword,
             eventLoopGroupProvider: self.eventLoopGroupProvider,
-            logger: self.logger
+            logger: self.logger,
+            exhaustiveLogging: false
         )
         return client
     }
