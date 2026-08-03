@@ -45,12 +45,12 @@ actor ChargingController {
     ///
     /// Connect to the backend and start the main run loop.
     /// In case of critical errors, shut down.
-    func start() {
+    func start() async {
         do {
             try self.backend?.startup()
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
-            self.shutdown()
+            await self.shutdown()
         }
         self.startRunLoop()
     }
@@ -111,7 +111,7 @@ actor ChargingController {
         guard let chargingPoints = await self.chargingSystem?.chargingPointContainer.chargingPoints.values,
         let defaultChargingCurrent = self.chargingSystem?.defaultChargingCurrent else {
             self.logger.critical("\(LogMessages.noChargingPointsFound)")
-            self.shutdown()
+            self.shutdownNow()
             return
         }
         for chargingPoint in chargingPoints {
@@ -371,6 +371,7 @@ actor ChargingController {
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
 
@@ -386,6 +387,7 @@ actor ChargingController {
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
             let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+            self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
             return chargingSession
         }
         return nil
@@ -405,6 +407,7 @@ actor ChargingController {
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
 
@@ -419,6 +422,7 @@ actor ChargingController {
         }
         runningChargingSession.pauseCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
 
@@ -433,7 +437,20 @@ actor ChargingController {
         }
         runningChargingSession.resumeCharging()
         let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
+    }
+
+    /// Terminate all charging sessions
+    ///
+    /// Stop all running charging sessions gracefully.
+    func terminateChargingSessions() async throws {
+        guard let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions.values else {
+            return
+        }
+        for chargingSession in chargingSessions {
+            try await self.stopChargingSession(for: chargingSession.cpId)
+        }
     }
 
     // MARK: - Handle Charging Sessions
@@ -467,7 +484,6 @@ actor ChargingController {
         case .remove:
             await self.chargingSystem?.chargingPointContainer.removeChargingSession(by: session.cpId)
         }
-        self.logger.info("\(LogMessages.chargingSessionRequest)\(session)")
         return await self.chargingSystem?.chargingPointContainer.getChargingSession(by: session.cpId)
     }
 
@@ -531,7 +547,6 @@ actor ChargingController {
             loadBalancedMaxCurrent: await self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
             sysError: self.sysError
         )
-        self.logger.info("\(LogMessages.sysInfo)\n\(chargingSystemInformation.description)")
         self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)
     }
 
@@ -555,8 +570,31 @@ actor ChargingController {
 
     /// Shutdown
     ///
-    /// Shutdown gracefully
-    func shutdown() {
+    /// Shutdown gracefully.
+    ///
+    /// Stops the run loop, then — strictly after any in-flight run loop iteration
+    /// (see ``enqueue(_:)``) — terminates all charging sessions and runs one final
+    /// execution pass so chargers are disabled, receipts are written and the final
+    /// status reaches the backend before it disconnects.
+    func shutdown() async {
+        self.runLoopTask?.cancel()
+        await self.enqueue {
+            do {
+                try await self.terminateChargingSessions()
+                try await self.executeChargingSessions()
+            } catch {
+                await self.handleError(err: error)
+            }
+            await self.updateChargingPointStatus()
+        }.value
+        self.shutdownNow()
+    }
+
+    /// Immediate shutdown without draining the serial pipeline
+    ///
+    /// Safe to call from within a pipelined operation (see ``enqueue(_:)``),
+    /// where the graceful ``shutdown()`` would deadlock waiting on itself.
+    private func shutdownNow() {
         self.runLoopTask?.cancel()
         try? self.backend?.shutdown()
         ChargingController.shutdown()
