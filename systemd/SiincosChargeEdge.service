@@ -16,11 +16,11 @@ Restart=always
 RestartSec=20
 TimeoutStartSec=90
 TimeoutStopSec=30
-
-# Hardening
 NoNewPrivileges=true
+AmbientCapabilities=CAP_SYS_NICE
+CapabilityBoundingSet=CAP_SYS_NICE
 ProtectSystem=strict
-ProtectHome=true
+ProtectHome=read-only
 PrivateTmp=true
 ReadWritePaths=/opt/SiincosChargeEdge/Assets /opt/SiincosChargeEdge/Logs
 
