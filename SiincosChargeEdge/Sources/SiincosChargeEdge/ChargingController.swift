@@ -586,8 +586,8 @@ actor ChargingController {
     /// Shutdown system gracefully
     /// - Parameter exitCode: The exit code with which to terminate the application. A value of 0 typically
     ///                       indicates successful completion, while nonzero values indicate an error.
-    static func shutdown(exitCode: UInt8 = 0) {
+    static func shutdown(exitCode: Int32 = 0) {
         logger.info("\(LogMessages.goodbyMsg)")
-        exit(0)
+        exit(exitCode)
     }
 }
