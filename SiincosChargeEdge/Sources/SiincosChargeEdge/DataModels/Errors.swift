@@ -25,7 +25,7 @@ enum SystemError: String, RawRepresentable, Codable, Error {
 
 
 extension SystemError: LocalizedError {
-    public var localizedDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .configFileNotFound:
             return "Configuration file not found or not readable!"
@@ -36,7 +36,7 @@ extension SystemError: LocalizedError {
         case .dataMissing:
             return "Device did not return data!"
         case .chargersMissing:
-            return "No chargers found! Config invalid?"
+            return "Charger(s) not found! Config invalid?"
         case .powerMetersMissing:
             return "No power meters found! Config invalid?"
         case .deviceConfigurationError:

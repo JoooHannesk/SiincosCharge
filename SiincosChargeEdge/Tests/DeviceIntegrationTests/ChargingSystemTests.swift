@@ -52,7 +52,7 @@ class ChargingSystemTests {
     @Test("Get-Charging-Permission")
     func testGetChargingPermission() async throws {
         for cpId in allChargingPointIds {
-            let result = await self.chargingSystem.getChargingPermission(chargingPointId: cpId)
+            let result = try await self.chargingSystem.getChargingPermission(chargingPointId: cpId)
             #expect(result != .unknown)
         }
     }

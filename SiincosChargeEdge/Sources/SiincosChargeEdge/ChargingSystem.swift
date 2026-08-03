@@ -82,9 +82,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: ``EVState``
     func getEvState(chargingPointId: UInt8) async throws -> EVState {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let evState = try await chargingPoint?.evState
-        return evState ?? .unknown
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let evState = try await chargingPoint.evState
+        return evState
     }
 
     /// Get Charging State
@@ -94,19 +96,23 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: ``ChargerState``
     func getChargingState(chargingPointId: UInt8) async throws -> ChargerState {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let chargingState = try await chargingPoint?.chargingState
-        return chargingState ?? .unknown
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let chargingState = try await chargingPoint.chargingState
+        return chargingState
     }
 
     /// Get Charging Permission
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Charging permission for given charging point ``Status``
-    func getChargingPermission(chargingPointId: UInt8) async -> Status {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let chargingPermission = await chargingPoint?.chargingPermission
-        return chargingPermission ?? .unknown
+    func getChargingPermission(chargingPointId: UInt8) async throws -> Status {
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let chargingPermission = await chargingPoint.chargingPermission
+        return chargingPermission
     }
 
     /// Set Charging Permission
@@ -117,12 +123,14 @@ actor ChargingSystem {
     /// - Returns: Actual charging permission returned by charging point for provided charging point id
     @discardableResult
     func setChargingPermission(to chargingPermission: Status, for chargingPointId: UInt8) async throws -> Status {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
         var newChargingPermission: Status = .unknown
         if chargingPermission == .enabled {
-            newChargingPermission = try await chargingPoint?.enableCharging() ?? .unknown
+            newChargingPermission = try await chargingPoint.enableCharging()
         } else if chargingPermission == .disabled {
-            newChargingPermission = try await chargingPoint?.disableCharging() ?? .unknown
+            newChargingPermission = try await chargingPoint.disableCharging()
         }
         return newChargingPermission
     }
@@ -134,9 +142,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Charging current setpoint for given charging point
     func getChargingCurrenSetpoint(chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let currentSetpoint = try await chargingPoint?.chargingCurrentSetpoint
-        return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let currentSetpoint = try await chargingPoint.chargingCurrentSetpoint
+        return currentSetpoint
     }
 
     /// Set Charging Current Setpoint
@@ -149,9 +159,11 @@ actor ChargingSystem {
     /// - Returns: Actual charging current setpoint for given charging point
     @discardableResult
     func setChargingCurrentSetpoint(to current: Measurement<UnitElectricCurrent>, for chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let currentSetpoint = try await chargingPoint?.setChargingCurrentSetpoint(to: min(current, self.loadBalancedMaxCurrent))
-        return currentSetpoint ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes)
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let currentSetpoint = try await chargingPoint.setChargingCurrentSetpoint(to: min(current, self.loadBalancedMaxCurrent))
+        return currentSetpoint
     }
 
     /// Get charging current
@@ -161,9 +173,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Realtime charging current for given charging point ``ElectricCurrent3PhaseGrid``
     func getChargingCurrent(chargingPointId: UInt8) async throws -> ElectricCurrent3PhaseGrid {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let chargingCurrent = try await chargingPoint?.chargingCurrent
-        return chargingCurrent ?? ElectricCurrent3PhaseGrid()
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let chargingCurrent = try await chargingPoint.chargingCurrent
+        return chargingCurrent
     }
 
     /// Get Meter Reading
@@ -173,9 +187,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Power Meter reading for provided charging point
     func getMeterReading(chargingPointId: UInt8) async throws -> Measurement<UnitEnergy> {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let meterReading = try await chargingPoint?.meterReading
-        return meterReading ?? Measurement(value: 0.0, unit: UnitEnergy.kilowattHours)
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let meterReading = try await chargingPoint.meterReading
+        return meterReading
     }
 
     /// Get Charging Power
@@ -185,9 +201,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Realtime charging power for given charging point ``ElectricPower3PhaseGrid``
     func getChargingPower(chargingPointId: UInt8) async throws -> ElectricPower3PhaseGrid {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let chargingPower = try await chargingPoint?.chargingPower
-        return chargingPower ?? ElectricPower3PhaseGrid(powerTotal: Measurement(value: 0.0, unit: UnitPower.watts))
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let chargingPower = try await chargingPoint.chargingPower
+        return chargingPower
     }
 
     /// Get Grid Voltage
@@ -197,9 +215,11 @@ actor ChargingSystem {
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Realtime voltage for given charging point ``ElectricVoltage3PhaseGrid``
     func getGridVoltage(chargingPointId: UInt8) async throws -> ElectricVoltage3PhaseGrid {
-        let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId)
-        let gridVoltage = try await chargingPoint?.gridVoltage
-        return gridVoltage ?? ElectricVoltage3PhaseGrid()
+        guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
+            throw SystemError.chargersMissing
+        }
+        let gridVoltage = try await chargingPoint.gridVoltage
+        return gridVoltage
     }
 
     /// Update max. Current setpoint

@@ -155,11 +155,13 @@ actor ChargingController {
         // Check for ev unplugged event
         if try await self.chargingSystem?.getEvState(chargingPointId: runningChargingSession.cpId) == .unplugged {
             try await self.stopChargingSession(for: runningChargingSession.cpId)
+            return
         }
 
         // Check for `endTime`
         if let endTime = runningChargingSession.endTime, endTime < Date() {
             try await self.stopChargingSession(for: runningChargingSession.cpId)
+            return
         }
     }
 

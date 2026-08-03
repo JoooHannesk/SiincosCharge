@@ -238,13 +238,13 @@ actor ChargingPoint {
     private func checkDeviceConsistency() throws {
         if self.evCharger.unitId != self.powerMeter.unitId {
             let err = SystemError.unitIdMissmatch
-            self.logger.critical("\(err.localizedDescription ?? String(describing: err))")
+            self.logger.critical("\(err.localizedDescription)")
             throw err
         }
 
         if self.evCharger.modelName == .unknown || self.powerMeter.modelName == .unknown {
             let err = SystemError.unsupportedDevice
-            self.logger.critical("\(err.localizedDescription ?? String(describing: err))")
+            self.logger.critical("\(err.localizedDescription)")
             throw err
         }
     }
