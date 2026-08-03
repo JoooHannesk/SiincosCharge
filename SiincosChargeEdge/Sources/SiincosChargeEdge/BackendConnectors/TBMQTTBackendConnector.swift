@@ -229,7 +229,10 @@ class ThingsBoardBackend: BackendController {
     ///   be configured before calling this function. If the client is not set,
     ///   no message will be published.
     private func publish(message: String, to topic: TBMQTTTopics) {
-        self.client?.publish(
+        guard let client = self.client, client.isConnected else {
+            return
+        }
+        client.publish(
             message: message,
             to: topic.rawValue,
             onSuccess: {
