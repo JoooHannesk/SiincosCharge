@@ -143,7 +143,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         try container.encode(meterModel, forKey: .meterModel)
         try container.encode(meterBus, forKey: .meterBus)
         try container.encode(lineLength, forKey: .lineLength)
-        try container.encode(lineMaxCurrent.value, forKey: .lineMaxCurrentA)
+        try container.encode(lineMaxCurrent.converted(to: .amperes).value, forKey: .lineMaxCurrentA)
         try container.encode(cloudHost, forKey: .cloudHost)
         try container.encode(cloudPort, forKey: .cloudPort)
         try container.encode(cloudCACertPath, forKey: .cloudCACertPath)
@@ -166,7 +166,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
 
         // Validate line max current
         let definedLineMaxCurrent = self.lineMaxCurrent.converted(to: .amperes).value
-        let maximumAllowedLineMaxCurrent = Double(self.lineLength*AppConstants.maxChargerCurrentA)
+        let maximumAllowedLineMaxCurrent = Double(self.lineLength)*Double(AppConstants.maxChargerCurrentA)
         guard definedLineMaxCurrent <= maximumAllowedLineMaxCurrent else {
             self.logger.critical("Defined maximum system current (\(definedLineMaxCurrent)) exceeds the maximum allowed system current (\(maximumAllowedLineMaxCurrent)")
             throw SystemError.configurationIntegrityError
