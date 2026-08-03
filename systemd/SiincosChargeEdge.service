@@ -1,0 +1,28 @@
+[Unit]
+Description=Siincos Charge Edge charging controller service.
+After=syslog.target network-online.target
+Wants=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=30
+
+[Service]
+Type=simple
+User=evchargermanager
+Group=evchargermanager
+SupplementaryGroups=dialout
+WorkingDirectory=/opt/SiincosChargeEdge
+ExecStart=/opt/SiincosChargeEdge/SiincosChargeEdge
+Restart=always
+RestartSec=20
+TimeoutStartSec=90
+TimeoutStopSec=30
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/SiincosChargeEdge/Assets /opt/SiincosChargeEdge/Logs
+
+[Install]
+WantedBy=multi-user.target

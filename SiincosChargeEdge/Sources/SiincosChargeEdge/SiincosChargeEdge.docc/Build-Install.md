@@ -65,5 +65,7 @@ The next steps mainly focus on configuring the edge device's Linux system to run
 TODO
 
 
+
+
 ## Understanding the configuration file
 * TODO
