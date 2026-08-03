@@ -575,7 +575,7 @@ actor ChargingController {
     /// Shutdown gracefully.
     ///
     /// Stops the run loop, then — strictly after any in-flight run loop iteration
-    /// (see ``enqueue(_:)``) — terminates all charging sessions and runs one final
+    /// (see `enqueue()`) — terminates all charging sessions and runs one final
     /// execution pass so chargers are disabled, receipts are written and the final
     /// status reaches the backend before it disconnects.
     func shutdown() async {
