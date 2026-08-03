@@ -171,4 +171,35 @@ struct ChargingControllerTests {
         #expect(thisSession?.status == .scheduled)
     }
 
+    @Test("Test-Terminate-All-Charging-Sessions")
+    func testTerminateAllChargingSessions() async throws {
+        let pluggedInChargingPointIds = try await self.getChargingPointIdsByPluggedState().pluggedIn
+        try #require(!pluggedInChargingPointIds.isEmpty)
+
+        // Start a running charging session on every plugged-in charging point
+        for cpId in pluggedInChargingPointIds {
+            let chargingSession = try await self.getChargingSession(cpId: cpId)
+            let startedChargingSession = await self.chargingController.requestChargingSession(chargingSession)
+            try #require(startedChargingSession != nil)
+            try #require(startedChargingSession?.status == .running)
+        }
+
+        try await self.chargingController.terminateChargingSessions()
+
+        // All sessions are finished but remain registered until the next execution pass removes them
+        for cpId in pluggedInChargingPointIds {
+            let terminatedChargingSession = await self.chargingController.chargingSystem?.chargingPointContainer.getChargingSession(by: cpId)
+            try #require(terminatedChargingSession != nil)
+            #expect(terminatedChargingSession!.status == .finished)
+            #expect(terminatedChargingSession!.endTime != nil)
+            try #require(terminatedChargingSession!.meterReadingEnd != nil)
+            #expect(terminatedChargingSession!.meterReadingEnd!.value > terminatedChargingSession!.meterReadingStart!.value)
+            #expect(terminatedChargingSession!.totalEnergyConsumed!.value > 0)
+            #expect(terminatedChargingSession!.totalChargingDuration! > 0.0)
+        }
+
+        // Terminating again with only finished sessions must not throw
+        try await self.chargingController.terminateChargingSessions()
+    }
+
 }
