@@ -58,8 +58,13 @@ Proceed with the <doc:Build-Install> section. Once complete, return here to cont
 The post configuration steps are not needed but I recommend them to enhance system stability.
 
 ### Configure OverlayFS (Readonly filesystem)
-Configuring an overlay filesystem sets the `/` mount point to read-only, which means that all data that is written is persistent between reboots. This drastically reduces physical storage wearout when using an SD card or eMMC flash device. Run `sudo raspi-config` to perform the following tasks:
-* TODO
+Configuring an overlay filesystem sets the `/` mount point to read-only, which means that all data that is written is not persistent between reboots. This drastically reduces physical storage wearout when using an SD card or eMMC flash device. Run `sudo raspi-config` to perform the following tasks:
+* (4) Performance Options --> (P2) Confirm activation of the vverlay filesystem
+* Confirm the write protection for the */boot* partition (optinally)
+* Finish and confirm immediate system reboot
+
+If you login after the reboot you'll be greeted with a message saying the `/` is now overlayroot. When you do a `df -h` this becomes even more obvious: Mountpoint */* is shown as filesystem type *overlayroot*.
+![Raspberry Pi OS with enabled overlayroot](OverlayrootEnabled.png)
 
 ### Backup & Restore using dd
 Backup is compressed/decompressed in a single command using *gzip* together with *dd* for comfort reasons.

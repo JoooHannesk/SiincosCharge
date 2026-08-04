@@ -62,12 +62,12 @@ cp ${BIN_PATH}/SiincosChargeEdge /opt/SiincosChargeEdge
 
 12. You should be able to run the installed binary manually: `cd /opt/SiincosChargeEdge/ && ./SiincosChargeEdge`. Now, your terminal should look like this and the binary keeps running (is not killing itself):
 
-![SiincosChargeEdge executable is running](SiincosChargeEdge-Executable-Running.png)
+![SiincosChargeEdge executable is running](SiincosChargeEdgeExecutableRunning.png)
 
 You now have the *SiincosChargeEdge* executable in place. When you start it manually, your charging system is ready to take action. So make sure everything is configured according to your needs and is working properly before proceeding with the next steps. Make sure that:
 * Connection to ThingsBoard is working, device appears as *online*
 * The executable keeps running and is not *killing* itself
-* No error messages appear in the logs `tail -f /opt/SiincosChargeEdge/Logs/****-**-**.log` when running `./SiincosChargeEdge`
+* No error messages appear in the logs `tail -f /opt/SiincosChargeEdge/Logs/????-??-??.log` when running `./SiincosChargeEdge`
 * Your configuration uses a phyiscal charger and not the `MockCharger`
 * You have physical devices connected (at least one charger) and you are able to control them via the ThingsBoard Dashboard
 
@@ -81,12 +81,14 @@ As *installing* in this case mainly involved steps 10...12 from the previous cha
 
 1. Copy the systemd unit file from the cloned repo to the local installation directory (assuming you cloned the repo into the home folder): `cp /home/evchargermanager/SiincosCharge/systemd/SiincosChargeEdge.service /opt/SiincosChargeEdge/SiincosChargeEdge.service`
 
-2. Enable the service on the system `sudo systemctl enable /opt/SiincosChargeEdge/SiincosChargeEdge.service` (It is important to provide the absolute path here, as *systemd* is creating a *symlink*.)
+2. Enable the service on the system `sudo systemctl enable /opt/SiincosChargeEdge/SiincosChargeEdge.service` (It is important to provide the absolute path here, as *systemd* is creating a *symlink*.) This automatically starts the service on boot. To disable the service use `sudo systemctl enable /opt/SiincosChargeEdge/SiincosChargeEdge.service`.
 
-3. Start the service now: `sudo systemctl start SiincosChargeEdge.service`
+3. Start the service now: `sudo systemctl start SiincosChargeEdge.service` (This starts the service now, the counterpart to stop the service is `sudo systemctl stop SiincosChargeEdge.service`)
 
-4. Check if the service is running: `sudo systemctl status SiincosChargeEdge.service`. In case it is not, check the journal: `sudo journalctl -u SiincosChargeEdge.service -f`
+4. Check if the service is running: `sudo systemctl status SiincosChargeEdge.service`. In case it is not, check the journal: `sudo journalctl -u SiincosChargeEdge.service -f` and the logs `tail -f /opt/SiincosChargeEdge/Logs/????-??-??.log`
 
+Once the service is up and running, the output for `sudo systemctl status SiincosChargeEdge.service` should look like as shown in the screenshot below.
+![SiincosCharge service is up and running](SiincosChargeServiceStartedandRunning.png)
 
 ## Understanding the configuration file
 * TODO
