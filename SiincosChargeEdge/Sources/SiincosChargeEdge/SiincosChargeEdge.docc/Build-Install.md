@@ -54,7 +54,7 @@ On the target (Raspberry, reComputer, etc.), run the following steps:
 
 10. Build a standalone binary: `swift build -c release --product SiincosChargeEdge`. This is the *release* executable which is going to be *installed*.
 
-11. Check the binary path and copy it to its destination (`swift build -c release --show-bin-path` is not building again, instead it is just showing where the binary is residing):
+11. Check the binary path and copy it to its destination using the following little script (`swift build -c release --show-bin-path` is not building again, instead it is just showing where the binary is residing):
 ```bash
 BIN_PATH=$(swift build -c release --show-bin-path)
 cp ${BIN_PATH}/SiincosChargeEdge /opt/SiincosChargeEdge
