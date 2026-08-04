@@ -17,7 +17,7 @@ enum SystemError: String, RawRepresentable, Codable, Error {
     case chargersMissing
     case powerMetersMissing
     case deviceConfigurationError
-    case unitIdMissmatch
+    case unitIdMismatch
     case unsupportedDevice
     case mqttCommunicationError
     case mqttConnectError
@@ -41,7 +41,7 @@ extension SystemError: LocalizedError {
             return "No power meters found! Config invalid?"
         case .deviceConfigurationError:
             return "Device did not acknowledge desired configuration! Aborting!"
-        case .unitIdMissmatch:
+        case .unitIdMismatch:
             return "Charger and power meter unit ID missmatch! Aborting!"
         case .unsupportedDevice:
             return "Provided device not supported! Aborting!"

@@ -83,7 +83,7 @@ class ChargingSystemTests {
             for setExpected in testValuesFrame {
                 var result = try await self.chargingSystem.setChargingCurrentSetpoint(to: Measurement(value: setExpected.0, unit: UnitElectricCurrent.amperes), for: cpId)
                 #expect(result == Measurement(value: setExpected.1, unit: UnitElectricCurrent.amperes))
-                result = try await self.chargingSystem.getChargingCurrenSetpoint(chargingPointId: cpId)
+                result = try await self.chargingSystem.getChargingCurrentSetpoint(chargingPointId: cpId)
                 #expect(result == Measurement(value: setExpected.1, unit: UnitElectricCurrent.amperes))
             }
         }

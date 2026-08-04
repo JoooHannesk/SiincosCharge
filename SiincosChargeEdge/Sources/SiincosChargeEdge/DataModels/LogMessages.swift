@@ -8,7 +8,7 @@
 import Foundation
 
 enum LogMessages {
-    static let welcomMsg = "Hello, I am SiincosChargeEdge charging controller. – My PID is: \(getpid())"
+    static let welcomeMsg = "Hello, I am SiincosChargeEdge charging controller. – My PID is: \(getpid())"
     static let goodbyMsg = "Shutting down... Goodbye!"
     static let sysInfo = "System information:"
     static let dataConversionFailed = "Failed to convert message to object."

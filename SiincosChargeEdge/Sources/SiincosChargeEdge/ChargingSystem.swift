@@ -141,7 +141,7 @@ actor ChargingSystem {
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
     /// - Returns: Charging current setpoint for given charging point
-    func getChargingCurrenSetpoint(chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
+    func getChargingCurrentSetpoint(chargingPointId: UInt8) async throws -> Measurement<UnitElectricCurrent> {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
         }
@@ -233,8 +233,9 @@ actor ChargingSystem {
             self.loadBalancedMaxCurrent = min(forceSetpoint, self.systemTotalMaxCurrent)
             return self.loadBalancedMaxCurrent
         } else {
-            let chargingPointsCharging = try await self.chargingPointsCharging == 0 ? 1 : try await self.chargingPointsCharging
-            let loadBalancedCurrent = self.systemTotalMaxCurrent.value / Double(chargingPointsCharging)
+            let chargingPointsCharging = try await self.chargingPointsCharging
+            let currentDivider = chargingPointsCharging == 0 ? 1 : chargingPointsCharging
+            let loadBalancedCurrent = self.systemTotalMaxCurrent.converted(to: .amperes).value / Double(currentDivider)
             self.loadBalancedMaxCurrent = Measurement(value: loadBalancedCurrent, unit: .amperes)
             return self.loadBalancedMaxCurrent
         }

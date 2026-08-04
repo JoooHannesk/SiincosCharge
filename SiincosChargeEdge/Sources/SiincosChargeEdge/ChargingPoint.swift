@@ -234,10 +234,10 @@ actor ChargingPoint {
     ///
     /// Ensure that charger and power meter are not set to `.unknown`. This indicates an unsupported device.
     ///
-    /// - Throws: ``SystemError/unitIdMissmatch``
+    /// - Throws: ``SystemError/unitIdMismatch``
     private func checkDeviceConsistency() throws {
         if self.evCharger.unitId != self.powerMeter.unitId {
-            let err = SystemError.unitIdMissmatch
+            let err = SystemError.unitIdMismatch
             self.logger.critical("\(err.localizedDescription)")
             throw err
         }

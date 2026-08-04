@@ -33,10 +33,10 @@ class ChargingPointTests {
     func chargingSystemConsistencyCheck() async throws {
         let mockCharger = MockCharger(unitId: 2, modelName: .mockCharger)
         let mockChargerPowerMeter = MockChargerPowerMeter(unitId: 1, modelName: .nope)
-        let error = await #expect(throws: SystemError.unitIdMissmatch) {
+        let error = await #expect(throws: SystemError.unitIdMismatch) {
             let _ = try await ChargingPoint(evCharger: mockCharger, powerMeter: mockChargerPowerMeter)
         }
-        #expect(error == .unitIdMissmatch)
+        #expect(error == .unitIdMismatch)
     }
 
     @Test("Test-Charging-Point-Container-Subscript-Access")

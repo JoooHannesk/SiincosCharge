@@ -24,18 +24,18 @@ struct MockCharger: EVCharger {
         if self.evState == .pluggedIn {
             chargingState = await chargerDataStore.softwareLockState == .locked ? ChargerState.notCharging : ChargerState.charging
         }
-        print("Current charging state: \(chargingState)")
+        //print("Current charging state: \(chargingState)")
         return chargingState
     }
 
     func getEVPluggedState() async throws -> EVState {
-        print("EV is currently: \(self.evState)")
+        //print("EV is currently: \(self.evState)")
         return self.evState
     }
 
     func getInternalTemperature() async throws -> Measurement<UnitTemperature> {
         let internalTemperature = Measurement(value: 32.4, unit: UnitTemperature.celsius)
-        print("Internal Temperature: \(internalTemperature)")
+        //print("Internal Temperature: \(internalTemperature)")
         return internalTemperature
     }
     
@@ -43,12 +43,12 @@ struct MockCharger: EVCharger {
         let boundaries = try Boundaries(
             minimal: Measurement(value: 6.0, unit: UnitElectricCurrent.amperes),
             maximal: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes))
-        print("Hardware electric current limits: \(boundaries)")
+        //print("Hardware electric current limits: \(boundaries)")
         return boundaries
     }
     
     func getCurrentLimit() async throws -> Measurement<UnitElectricCurrent> {
-        print("Currently set max. current: \(await self.chargerDataStore.maxCurrentLimit)")
+        //print("Currently set max. current: \(await self.chargerDataStore.maxCurrentLimit)")
         return await self.chargerDataStore.maxCurrentLimit
     }
 
@@ -65,24 +65,24 @@ struct MockCharger: EVCharger {
             setpointFloored.value = floor(setpoint.value)
             await self.chargerDataStore.setMaxCurrentLimit(setpointFloored)
         }
-        await print("Setting max. current to: \(self.chargerDataStore.maxCurrentLimit)")
+        //await print("Setting max. current to: \(self.chargerDataStore.maxCurrentLimit)")
         return try await self.getCurrentLimit()
     }
     
     func getHardwareLockState() async throws -> LockState {
         let hardwareLockState: LockState = .unlocked
-        print("Hardware Lock State: \(hardwareLockState)")
+        //print("Hardware Lock State: \(hardwareLockState)")
         return hardwareLockState
     }
     
     func getSoftwareLockState() async throws -> LockState {
-        await print("Current lock state: \(self.chargerDataStore.softwareLockState)")
+        //await print("Current lock state: \(self.chargerDataStore.softwareLockState)")
         return await self.chargerDataStore.softwareLockState
     }
     
     func setSoftwareLock(to: LockState) async throws -> LockState {
         await self.chargerDataStore.setSoftwareLockState(to: to)
-        await print("Setting lock state to: \(self.chargerDataStore.softwareLockState)")
+        //await print("Setting lock state to: \(self.chargerDataStore.softwareLockState)")
         return await self.chargerDataStore.softwareLockState
     }
 }
@@ -99,7 +99,7 @@ struct MockChargerPowerMeter: PowerMeter {
             currentL2: Measurement(value: 8.1, unit: UnitElectricCurrent.amperes),
             currentL3: Measurement(value: 6.9, unit: UnitElectricCurrent.amperes)
         )
-        print("Current: \(current)")
+        //print("Current: \(current)")
         return current
     }
     
@@ -109,7 +109,7 @@ struct MockChargerPowerMeter: PowerMeter {
             voltageL2: Measurement(value: 236.4, unit: UnitElectricPotentialDifference.volts),
             voltageL3: Measurement(value: 231.1, unit: UnitElectricPotentialDifference.volts)
             )
-        print("Voltage: \(voltage)")
+        //print("Voltage: \(voltage)")
         return voltage
     }
     
@@ -120,14 +120,14 @@ struct MockChargerPowerMeter: PowerMeter {
             powerL3: Measurement(value: 5300.0, unit: UnitPower.watts),
             powerTotal: Measurement(value: 15300.0, unit: UnitPower.watts)
         )
-        print("Power: \(power)")
+        //print("Power: \(power)")
         return power
     }
     
     func getElectricEnergy() async throws -> Measurement<UnitEnergy> {
         let newEnergy = await self.chargerDataStore.energy.value + 0.5
         await self.chargerDataStore.setEnergy(Measurement(value: newEnergy, unit: UnitEnergy.kilowattHours))
-        await print("Energy drawn since installation: \(self.chargerDataStore.energy)")
+        //await print("Energy drawn since installation: \(self.chargerDataStore.energy)")
         return await self.chargerDataStore.energy
     }
 }

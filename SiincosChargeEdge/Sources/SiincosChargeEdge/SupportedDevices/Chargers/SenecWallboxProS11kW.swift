@@ -71,7 +71,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         let watchdogTimeoutActual = try await self.setModbusWatchdogTimeout(to: watchDogTimeOutSetpoint)
 
         // Failsafe Mode: 8A max. current
-        let failsafeCurrentSetpoint = Measurement(value: Double(8.0), unit: UnitElectricCurrent.amperes)
+        let failsafeCurrentSetpoint = Measurement(value: AppConstants.failsafeCurrentA, unit: UnitElectricCurrent.amperes)
         let failsafeCurrentActual = try await self.setCommFailureMaxCurrent(to: failsafeCurrentSetpoint)
 
         guard powerSavingModeActual == powerSavingModeSetpoint, watchdogTimeoutActual == watchDogTimeOutSetpoint, failsafeCurrentActual == failsafeCurrentSetpoint else {
@@ -167,7 +167,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         guard var responseCurrentSetpointValue = responseCurrentSetpoint.value(at: 0) else {
             throw SystemError.dataMissing
         }
-        responseCurrentSetpointValue /= 10 // Required per modbus documentation
+        responseCurrentSetpointValue /= 10 // division by 10 is required per modbus documentation
         return Measurement(value: Double(responseCurrentSetpointValue), unit: UnitElectricCurrent.amperes)
     }
 
@@ -185,7 +185,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
         // ensure to not exceed the hardware current constraints
         let newSetpoint = max(min(setpoint, hardwareLimits.maximal), hardwareLimits.minimal)
         // Factory required per modbus documentation
-        let newSetpointInt = UInt16(newSetpoint.value * 10)
+        let newSetpointInt = UInt16(newSetpoint.converted(to: .amperes).value * 10) // multiplication by 10 is required per modbus documentation
         let _ = try await self.modbusDevice.writeMultipleRegisters(address: 261, values: [newSetpointInt], unitId: self.unitId)
         let newSetpointProcessedByCharger = try await self.getCurrentLimit()
         return newSetpointProcessedByCharger

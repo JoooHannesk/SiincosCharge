@@ -5,6 +5,7 @@
 //  Created by Johannes Kinzig on 26.02.26.
 //
 
+import Foundation
 import Logging
 
 /// App Constants
@@ -13,7 +14,7 @@ import Logging
 enum AppConstants {
 
     /// App Version
-    static let version = "0.0.1"
+    static let version = "0.0.2"
 
     /// Configuration file location
     static let configFileLocation = "/opt/SiincosChargeEdge/Assets/config.json"
@@ -32,6 +33,22 @@ enum AppConstants {
 
     /// Absolute maximum allowed current per EV charger
     ///
-    /// - Note: The system’s maximum allowable current is defined as the product of the absolute maximum per-charger current and the maximum number of configured chargers. This ensures that the load balancer cannot be configured to exceed defined current limits.
+    /// - Note: The system’s maximum allowable current is defined as the product of the absolute maximum per-charger current
+    /// and the maximum number of configured chargers. This ensures that the load balancer cannot be configured to exceed
+    /// defined current limits.
     static let maxChargerCurrentA: UInt8 = 32
+
+    /// Failsafe EV charger current
+    ///
+    /// - Note: In case of a communication-loss between the controller and the chargers (or a single charger), the chargers require a
+    /// failsafe current information. This is defined here and updated in the chargers cyclically.
+    static let failsafeCurrentA: Double = 8
+
+    /// Main run loop interval
+    ///
+    /// The main run loop executes at the interval defined here.
+    ///
+    /// - Note: An interval of 3 seconds offers a good balance between bus traffic, communication speed, and backend data transfer. The next run loop is scheduled 3 seconds after the previous one finishes executing. Therefore, one full cycle equals the execution time plus this interval.
+    static let mainRunLoopCycle: TimeInterval = 3.0
 }
+

@@ -9,7 +9,7 @@ import Testing
 import Foundation
 @testable import SiincosChargeEdge
 
-@Suite("ChargingSystemTests", .serialized)
+@Suite("SystemConfigTests", .serialized)
 class SystemConfigTests {
 
     /// Create a `SystemConfig` with valid defaults, allowing individual parameters to be overridden per test case

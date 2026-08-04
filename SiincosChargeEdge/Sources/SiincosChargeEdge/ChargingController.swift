@@ -28,8 +28,8 @@ actor ChargingController {
     /// start the run loop; call ``start()`` for that.
     /// - Parameter systemConfig: system configuration to use, optional; if left blanc the config loaded from file will be used
     init(systemConfig: SystemConfig? = nil) async {
-        print(LogMessages.welcomMsg)
-        self.logger.info("\(LogMessages.welcomMsg)")
+        print(LogMessages.welcomeMsg)
+        self.logger.info("\(LogMessages.welcomeMsg)")
 
         self.systemConfig = systemConfig ?? Self.loadSystemConfig()
         self.backend = ThingsBoardBackend(chargingController: self)
@@ -60,7 +60,7 @@ actor ChargingController {
     /// Start the main run loop
     private func startRunLoop() {
         self.runLoopTask?.cancel()
-        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: 3.0) { [weak self] in
+        self.runLoopTask = SimpleLoopTimer.getSimpleLoopTimerWith(interval: AppConstants.mainRunLoopCycle) { [weak self] in
             guard let self else { return }
             await self.enqueue { await self.runLoop() }.value
         }
@@ -150,7 +150,7 @@ actor ChargingController {
         // Update charging session with meter reading
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: runningChargingSession.cpId) else { return }
         runningChargingSession.update(with: meterReading)
-        try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        try await self.handleChargingSession(action: .update, session: runningChargingSession)
 
         // Check for ev unplugged event
         if try await self.chargingSystem?.getEvState(chargingPointId: runningChargingSession.cpId) == .unplugged {
@@ -203,7 +203,7 @@ actor ChargingController {
 
         // Check for `startTime`
         if let startTime = session.startTime, startTime < Date() {
-            try await self.handelChargingSession(action: .remove, session: session)
+            try await self.handleChargingSession(action: .remove, session: session)
             try await self.startChargingSession(session)
         }
 
@@ -216,7 +216,7 @@ actor ChargingController {
     private func executeChargingSessionFinished(_ session: ChargingSession) async throws {
         try await self.setChargingPoint(session.cpId, to: .disabled, with: session.chargingCurrentSetpoint)
         self.backend?.writeChargingSessionReceipt(for: session)
-        try await self.handelChargingSession(action: .remove, session: session)
+        try await self.handleChargingSession(action: .remove, session: session)
     }
 
 
@@ -372,7 +372,7 @@ actor ChargingController {
         var newSession = session
         guard let meterReading = try await self.chargingSystem?.getMeterReading(chargingPointId: session.cpId) else { return nil }
         newSession.startCharging(systemId: self.systemConfig.systemId, startTime: Date(), meterReading: meterReading)
-        let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+        let chargingSession = try await self.handleChargingSession(action: .add, session: newSession)
         self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
@@ -388,7 +388,7 @@ actor ChargingController {
         var newSession = session
         if let start = newSession.startTime, let end = newSession.endTime, start > Date(), end > Date(), end > start {
             newSession.scheduleCharging(systemId: self.systemConfig.systemId, startTime: start, endTime: end)
-            let chargingSession = try await self.handelChargingSession(action: .add, session: newSession)
+            let chargingSession = try await self.handleChargingSession(action: .add, session: newSession)
             self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
             return chargingSession
         }
@@ -408,7 +408,7 @@ actor ChargingController {
             return nil
         }
         runningChargingSession.finishCharging(endTime: Date(), meterReading: meterReading)
-        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        let chargingSession = try await self.handleChargingSession(action: .update, session: runningChargingSession)
         self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
@@ -423,7 +423,7 @@ actor ChargingController {
             return nil
         }
         runningChargingSession.pauseCharging()
-        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        let chargingSession = try await self.handleChargingSession(action: .update, session: runningChargingSession)
         self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
@@ -438,7 +438,7 @@ actor ChargingController {
             return nil
         }
         runningChargingSession.resumeCharging()
-        let chargingSession = try await self.handelChargingSession(action: .update, session: runningChargingSession)
+        let chargingSession = try await self.handleChargingSession(action: .update, session: runningChargingSession)
         self.logger.info("\(LogMessages.chargingSessionRequest)\(chargingSession, default: "")")
         return chargingSession
     }
@@ -477,7 +477,7 @@ actor ChargingController {
     /// - Note: The charging session that is returned is requested from the charging system after it was processed (added, updated or removed). If a charging session was
     /// removed `nil` is going top be returned.
     @discardableResult
-    private func handelChargingSession(action: ChargingSessionHandlingActions, session: ChargingSession) async throws -> ChargingSession? {
+    private func handleChargingSession(action: ChargingSessionHandlingActions, session: ChargingSession) async throws -> ChargingSession? {
         switch action {
         case .add:
             await self.chargingSystem?.chargingPointContainer.addChargingSession(session)
