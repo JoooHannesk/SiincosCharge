@@ -87,8 +87,8 @@ actor ChargingController {
     ///
     /// Charging controller's main run loop
     private func runLoop() async {
-        await self.updateChargingPointStatus()
         do {
+            try await self.updateChargingPointStatus()
             try await self.updateChargingSystemInformation()
             try await self.chargingSystem?.updateLoadBalancedCurrent()
             try await self.executeChargingSessions()
@@ -262,7 +262,7 @@ actor ChargingController {
                 requestedSession = try await self.handleChargingRequestFinished(request: session)
             }
             try await self.executeChargingSessions()
-            await self.updateChargingPointStatus()
+            try await self.updateChargingPointStatus()
         } catch {
             self.handleError(err: error)
         }
@@ -514,17 +514,13 @@ actor ChargingController {
     ///
     /// Update charging system status information in backend by
     /// collecting all charging point status information.
-    private func updateChargingPointStatus() async {
-        do {
-            if let cpsStatus = try await self.chargingSystem?.systemStatus {
-                self.backend?.updateChargingPointStatus(with: cpsStatus)
-            }
-            if let chargingPointIds = await self.chargingSystem?.chargingPointContainer.chargingPoints.keys,
-               let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions.values {
-                self.backend?.updateChargingSessions(chargingPointIds: chargingPointIds, chargingSessions: chargingSessions)
-            }
-        } catch {
-            self.handleError(err: error)
+    private func updateChargingPointStatus() async throws {
+        if let cpsStatus = try await self.chargingSystem?.systemStatus {
+            self.backend?.updateChargingPointStatus(with: cpsStatus)
+        }
+        if let chargingPointIds = await self.chargingSystem?.chargingPointContainer.chargingPoints.keys,
+           let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions.values {
+            self.backend?.updateChargingSessions(chargingPointIds: chargingPointIds, chargingSessions: chargingSessions)
         }
     }
 
@@ -584,10 +580,10 @@ actor ChargingController {
             do {
                 try await self.terminateChargingSessions()
                 try await self.executeChargingSessions()
+                try await self.updateChargingPointStatus()
             } catch {
                 await self.handleError(err: error)
             }
-            await self.updateChargingPointStatus()
         }.value
         self.shutdownNow()
     }
