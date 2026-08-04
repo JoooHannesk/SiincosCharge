@@ -221,6 +221,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
 /// Charging Point Status Data Model
 struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
     let cpId: UInt8
+    let chargerTemperature: Measurement<UnitTemperature>
     let chargingState: ChargerState
     let evState: EVState
     let chargingPermission: Status
@@ -233,14 +234,15 @@ struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
     var description: String {
         return """
             Charging Point ID: \(self.cpId)
-            Charging State: \(chargingState)
-            EV State: \(evState)
-            Charging: \(chargingPermission)
-            Charging Current (Setpoint - A): \(chargingCurrentSetpoint)
-            Meter Reading (kWh): \(meterReading)
-            Charging Current (Real - A): \(chargingCurrent)
-            Charging Power (Real - kW): \(chargingPower)
-            Grid Voltage (Real – V/AC): \(gridVoltage)
+            Charger Temperature: \(self.chargerTemperature)
+            Charging State: \(self.chargingState)
+            EV State: \(self.evState)
+            Charging: \(self.chargingPermission)
+            Charging Current (Setpoint - A): \(self.chargingCurrentSetpoint)
+            Meter Reading (kWh): \(self.meterReading)
+            Charging Current (Real - A): \(self.chargingCurrent)
+            Charging Power (Real - kW): \(self.chargingPower)
+            Grid Voltage (Real – V/AC): \(self.gridVoltage)
             """
     }
 }

@@ -60,6 +60,7 @@ extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConver
 
     enum CodingKeys: String, CodingKey {
         case cpId
+        case chargerTemperatureC
         case chargingState
         case evState
         case chargingPermission
@@ -75,10 +76,11 @@ extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConver
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(cpId, forKey: .cpId)
+        try container.encode(chargerTemperature.converted(to: UnitTemperature.celsius).value, forKey: .chargerTemperatureC)
         try container.encode(chargingState.rawValue, forKey: .chargingState)
         try container.encode(evState.rawValue, forKey: .evState)
         try container.encode(chargingPermission.rawValue, forKey: .chargingPermission)
-        try container.encode(chargingCurrentSetpoint.value, forKey: .chargingCurrentSetpointA)
+        try container.encode(chargingCurrentSetpoint.converted(to: .amperes).value, forKey: .chargingCurrentSetpointA)
         try container.encode(meterReading.converted(to: .kilowattHours).value, forKey: .meterReadingkWh)
         try container.encode(chargingCurrent.currentL1?.converted(to: .amperes).value, forKey: .chargingCurrentL1A)
         try container.encode(chargingCurrent.currentL2?.converted(to: .amperes).value, forKey: .chargingCurrentL2A)
@@ -98,6 +100,7 @@ extension ChargingPointStatus: JsonStringConvertible, SerializedJsonStringConver
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.cpId = try container.decode(UInt8.self, forKey: .cpId)
+        self.chargerTemperature = Measurement(value: try container.decode(Double.self, forKey: .chargerTemperatureC), unit: UnitTemperature.celsius)
         self.chargingState = ChargerState(rawValue: try container.decode(String.self, forKey: .chargingState)) ?? .unknown
         self.evState = EVState(rawValue: try container.decode(String.self, forKey: .evState)) ?? .unknown
         self.chargingPermission = Status(rawValue: try container.decode(UInt8.self, forKey: .chargingPermission)) ?? .unknown

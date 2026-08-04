@@ -66,6 +66,15 @@ actor ChargingPoint {
         return self.evCharger.unitId
     }
 
+    /// Charger Temperature
+    ///
+    /// Get the internal device temperature
+    var chargerTemperature: Measurement<UnitTemperature> {
+        get async throws {
+            try await self.evCharger.getInternalTemperature()
+        }
+    }
+
     /// Charging State
     ///
     /// Charger charging state: `.charging`, `.notCharging`, `.unknown` or `.error`
@@ -154,6 +163,7 @@ actor ChargingPoint {
         get async throws {
             ChargingPointStatus(
                 cpId: self.cpId,
+                chargerTemperature: try await self.chargerTemperature,
                 chargingState: try await self.chargingState,
                 evState: try await self.evState,
                 chargingPermission: self.chargingPermission,
