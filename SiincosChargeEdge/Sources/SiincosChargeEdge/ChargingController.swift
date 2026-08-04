@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ModbusSerial
 
 
 actor ChargingController {
@@ -93,7 +94,7 @@ actor ChargingController {
             try await self.chargingSystem?.updateLoadBalancedCurrent()
             try await self.executeChargingSessions()
         } catch {
-            self.handleError(err: error)
+            await self.handleError(err: error)
         }
     }
 
@@ -264,7 +265,7 @@ actor ChargingController {
             try await self.executeChargingSessions()
             try await self.updateChargingPointStatus()
         } catch {
-            self.handleError(err: error)
+            await self.handleError(err: error)
         }
         return requestedSession
     }
@@ -554,13 +555,10 @@ actor ChargingController {
     /// - converting it to the project specific ``SystemError``
     /// - set local member
     /// - log it
-    private func handleError(err: Error) {
-        self.sysError = err as? SystemError
-        if let sysError = self.sysError {
-            self.logger.error("\(String(describing: sysError.localizedDescription))", metadata: ["error": "\(sysError)"])
-        } else {
-            self.logger.error("\(err.localizedDescription)", metadata: ["error": "\(err)"])
-        }
+    private func handleError(err: Error) async {
+        self.sysError = SystemError(mapping: err)
+        self.logger.error("\(err.localizedDescription)", metadata: ["error": "\(err)"])
+        try? await self.updateChargingSystemInformation()
     }
 
 
