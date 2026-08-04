@@ -86,13 +86,18 @@ actor ChargingController {
 
     /// Run Loop
     ///
-    /// Charging controller's main run loop
+    /// Charging controller's main run loop.
+    ///
+    /// - Note: ``sysError`` reflects the health of the last completed iteration: it is set
+    /// via ``handleError(err:)`` when an iteration throws and cleared once a full iteration
+    /// completes without throwing (= system has recovered).
     private func runLoop() async {
         await self.updateChargingSystemInformation()
         do {
             try await self.updateChargingPointStatus()
             try await self.chargingSystem?.updateLoadBalancedCurrent()
             try await self.executeChargingSessions()
+            self.sysError = nil
         } catch {
             await self.handleError(err: error)
         }
