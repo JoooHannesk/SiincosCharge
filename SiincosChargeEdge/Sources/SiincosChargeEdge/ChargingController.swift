@@ -88,9 +88,9 @@ actor ChargingController {
     ///
     /// Charging controller's main run loop
     private func runLoop() async {
+        await self.updateChargingSystemInformation()
         do {
             try await self.updateChargingPointStatus()
-            try await self.updateChargingSystemInformation()
             try await self.chargingSystem?.updateLoadBalancedCurrent()
             try await self.executeChargingSessions()
         } catch {
@@ -535,13 +535,19 @@ actor ChargingController {
     /// - max. installation line current (amperes)
     /// - load balanced max. current
     /// - system error
-    private func updateChargingSystemInformation() async throws {
+    private func updateChargingSystemInformation() async {
+        var chargingPointsCharging: UInt8 = 0
+        do {
+            chargingPointsCharging = try await self.chargingSystem?.chargingPointsCharging ?? 0
+        } catch {
+            await self.handleError(err: error)
+        }
         let chargingSystemInformation = ChargingSystemInformation(
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
-            chargingPointsCharging: try await self.chargingSystem?.chargingPointsCharging ?? 0,
+            chargingPointsCharging: chargingPointsCharging,
             lineMaxCurrent: self.systemConfig.lineMaxCurrent,
             loadBalancedMaxCurrent: await self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
             sysError: self.sysError
@@ -558,7 +564,6 @@ actor ChargingController {
     private func handleError(err: Error) async {
         self.sysError = SystemError(mapping: err)
         self.logger.error("\(err.localizedDescription)", metadata: ["error": "\(err)"])
-        try? await self.updateChargingSystemInformation()
     }
 
 
