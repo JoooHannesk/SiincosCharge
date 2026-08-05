@@ -114,11 +114,15 @@ struct MockChargerPowerMeter: PowerMeter {
     }
     
     func getElectricPower() async throws -> ElectricPower3PhaseGrid {
+        let powerL1 = Double.random(in: 800...4200)
+        let powerL2 = Double.random(in: 800...4200)
+        let powerL3 = Double.random(in: 800...4200)
+        let powerTotal = powerL1 + powerL2 + powerL3
         let power = ElectricPower3PhaseGrid(
-            powerL1: Measurement(value: 5200.0, unit: UnitPower.watts),
-            powerL2: Measurement(value: 4800.0, unit: UnitPower.watts),
-            powerL3: Measurement(value: 5300.0, unit: UnitPower.watts),
-            powerTotal: Measurement(value: 15300.0, unit: UnitPower.watts)
+            powerL1: Measurement(value: powerL1, unit: UnitPower.watts),
+            powerL2: Measurement(value: powerL2, unit: UnitPower.watts),
+            powerL3: Measurement(value: powerL3, unit: UnitPower.watts),
+            powerTotal: Measurement(value: powerTotal, unit: UnitPower.watts)
         )
         //print("Power: \(power)")
         return power
