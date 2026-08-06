@@ -1,14 +1,18 @@
 # SiincosCharge
 
-An open-source, privacy-first EV charging management system designed for multi-location deployment and decentralized control. Take back your data and manage all your charging points across different locations through elegant dashboards – without relying on third-party cloud providers or restrictive corporate ecosystems.
+An open-source, privacy-first EV charging infrastructure management system designed for multi-location deployment and decentralized control. Take back your data and manage all your charging points across different locations through elegant dashboards – without being locked into proprietary cloud providers or restrictive corporate ecosystems.
 
 ![Siincos Charge Dashboard with 3 charging points, one is currently charging](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosCharge3CpDashboard2notChargingFullscreen.png)
 
 ## 🚀 The Vision
-
-Modern EV charging infrastructure mainly operates on closed corporate cloud backends that lock away your data and charge premium monthly fees for advanced features and API access.
+Many modern EV charging solutions rely on proprietary cloud backends that limit data ownership, customization and integration possibilities.
 
 **SiincosCharge bridges this gap.** It provides a production-ready, cloud-enabled open-source core that runs on lightweight edge devices (like a Raspberry Pi), offering multi-site management and data sovereignty. By utilizing **ThingsBoard CE** as its decentralized backend foundation, SiincosCharge delivers an enterprise-grade IoT architecture directly into your hands – without corporate vendor lock-in.
+
+## 🧩 What SiincosCharge is (and is not)
+| 🟣 SiincosCharge focus | ⚪ Outside the scope |
+|---|---|
+| An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | Not a smart charging optimizer. It does not provide PV surplus charging, vehicle charging strategies or energy management algorithms. Instead, it provides an operational infrastructure layer to connect, monitor and operate charging points reliably. |
 
 ---
 
@@ -18,7 +22,7 @@ Modern EV charging infrastructure mainly operates on closed corporate cloud back
 Manage multiple charging points across various physical locations (e.g., your home, your office, your business location, your vacation rental) in a single unified interface. Monitor real-time power consumption, set load limits, and aggregate historical charging data effortlessly.
 
 ### 👥 2. Charger Sharing
-Want to share your charger with friends, neighbors or employees? Authorize users directly within your ThingsBoard CE tenant. SiincosCharge tracks precise energy consumption, aggregates detailed statistics, and automatically generates a receipt for each charging session.
+Want to share your charger with friends, neighbors or employees? Authorize users directly within your ThingsBoard CE tenant. SiincosCharge tracks precise energy consumption, aggregates detailed statistics, and automatically generates detailed charging session reports.
 
 ### 🛡️ 3. Data Sovereignty (Private Cloud)
 Your charging data belongs to you. SiincosCharge is natively cloud-enabled but designed to run on *your* infrastructure. By hosting your own open-source backend based on ThingsBoard CE, you get full remote access and a seamless user experience – without sharing telemetry or user data with third-party vendors.
@@ -38,7 +42,7 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 
 *   **SiincosCharge Edge (This Repo):** The lightweight open-source firmware running locally on your edge device (e.g., Raspberry Pi). It communicates directly with your EV chargers and power meters via Modbus (TCP/RTU) and securely pushes telemetry data to your private backend.
 *   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains all the necessary configuration assets, links to documentation, device profiles and pre-built IoT dashboards to get your private cloud instance up and running effortlessly.
-*   **Native App (Optional, coming soon):** Our native iOS app (Android coming soon) that hooks directly into your private instance, adding improved usability for mobile devices including advanced reporting and statistics.
+*   **SiincosCharge App (Optional, coming soon):** Our native iOS and Android app (both coming soon) that hook directly into your private cloud instance, adding improved usability for mobile devices including advanced reporting and statistics.
 
 ---
 
