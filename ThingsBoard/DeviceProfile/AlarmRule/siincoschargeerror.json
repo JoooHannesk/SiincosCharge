@@ -1,0 +1,204 @@
+{
+  "type": "ALARM",
+  "name": "SiincosChargeError",
+  "debugSettings": {
+    "failuresEnabled": true,
+    "allEnabled": false,
+    "allEnabledUntil": 1785854615833
+  },
+  "configurationVersion": 0,
+  "configuration": {
+    "type": "ALARM",
+    "arguments": {
+      "sysError": {
+        "refEntityKey": {
+          "key": "sysError",
+          "type": "ATTRIBUTE",
+          "scope": "CLIENT_SCOPE"
+        },
+        "defaultValue": ""
+      }
+    },
+    "createRules": {
+      "MAJOR": {
+        "condition": {
+          "type": "DURATION",
+          "expression": {
+            "type": "SIMPLE",
+            "filters": [
+              {
+                "argument": "sysError",
+                "valueType": "STRING",
+                "operation": "OR",
+                "predicates": [
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "configFileNotFound",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "configurationIntegrityError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "boundaryViolation",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "dataMissing",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "chargersMissing",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "powerMetersMissing",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "deviceConfigurationError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "unitIdMismatch",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "unsupportedDevice",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "mqttCommunicationError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "mqttConnectError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "modbusRTUCommunicationError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  },
+                  {
+                    "type": "STRING",
+                    "operation": "EQUAL",
+                    "value": {
+                      "staticValue": "unknownError",
+                      "dynamicValueArgument": null
+                    },
+                    "ignoreCase": false
+                  }
+                ]
+              }
+            ],
+            "operation": "AND"
+          },
+          "schedule": null,
+          "unit": "MINUTES",
+          "value": {
+            "staticValue": 5,
+            "dynamicValueArgument": null
+          }
+        },
+        "alarmDetails": "Alarm Code: ${sysError}",
+        "dashboardId": null
+      }
+    },
+    "clearRule": {
+      "condition": {
+        "type": "SIMPLE",
+        "expression": {
+          "type": "SIMPLE",
+          "filters": [
+            {
+              "argument": "sysError",
+              "valueType": "STRING",
+              "operation": "AND",
+              "predicates": [
+                {
+                  "type": "STRING",
+                  "operation": "EQUAL",
+                  "value": {
+                    "staticValue": "",
+                    "dynamicValueArgument": null
+                  },
+                  "ignoreCase": false
+                }
+              ]
+            }
+          ],
+          "operation": "AND"
+        },
+        "schedule": null
+      },
+      "alarmDetails": null,
+      "dashboardId": null
+    },
+    "propagate": false,
+    "propagateToOwner": false,
+    "propagateToTenant": false,
+    "propagateRelationTypes": null,
+    "output": null
+  },
+  "additionalInfo": null
+}
