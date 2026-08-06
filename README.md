@@ -2,6 +2,8 @@
 
 An open-source, privacy-first EV charging management system designed for multi-location deployment and decentralized control. Take back your data and manage all your charging points across different locations through elegant dashboards – without relying on third-party cloud providers or restrictive corporate ecosystems.
 
+![Siincos Charge Dashboard with 3 charging points, one is currently charging](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosCharge3CpDashboard2notChargingFullscreen.png)
+
 ## 🚀 The Vision
 
 Modern EV charging infrastructure mainly operates on closed corporate cloud backends that lock away your data and charge premium monthly fees for advanced features and API access.
