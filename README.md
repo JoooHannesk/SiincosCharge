@@ -44,6 +44,7 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 *   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains all the necessary configuration assets, links to documentation, device profiles and pre-built IoT dashboards to get your private cloud instance up and running effortlessly.
 *   **SiincosCharge App (Optional, coming soon):** Our native iOS and Android app (both coming soon) that hook directly into your private cloud instance, adding improved usability for mobile devices including advanced reporting and statistics.
 
+![Siincos Charge System Architecture](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/System-Architecture.jpg)
 ---
 
 ## 📋 Requirements & Supported Hardware
