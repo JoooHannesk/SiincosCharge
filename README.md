@@ -61,11 +61,11 @@ We love contributions! Whether you want to add a Modbus profile for a new model,
 
 ## ⚖️ License
 
-This project is licensed under the **Apache License 2.0** / **MIT License**. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved.
+This project is licensed under the **Apache License 2.0**. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved.
 
 ---
 
 This README was reviewed for readability, spelling and grammar using AI-assisted tools.
 
 ---
-*Developed and maintained with ☕ by [Johannes Kinzig](https://johanneskinzig.com) / [JoooHannesk](https://github.com/JoooHannesk).*
+*Developed and maintained with 💜 by [Johannes Kinzig](https://johanneskinzig.com) / [JoooHannesk](https://github.com/JoooHannesk).*
