@@ -14,7 +14,7 @@ import Foundation
 extension ChargingSystemInformation: JsonStringConvertible {
 
     enum CodingKeys: String, CodingKey {
-        case appVersion, chargerModel, meterModel, chargingPoints, chargingPointsCharging, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
+        case systemId, appVersion, chargerModel, meterModel, chargingPoints, chargingPointsCharging, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
     }
 
     /// Encodes `ChargingSystemInformation` to a flat JSON structure.
@@ -23,6 +23,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
     /// - Throws: An error if any value fails to encode.
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(systemId, forKey: .systemId)
         try container.encode(appVersion, forKey: .appVersion)
         try container.encode(chargerModel, forKey: .chargerModel)
         try container.encode(meterModel, forKey: .meterModel)
@@ -39,6 +40,7 @@ extension ChargingSystemInformation: JsonStringConvertible {
     /// - Throws: An error if any value fails to decode or is missing.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.systemId = try container.decode(String.self, forKey: .systemId)
         self.appVersion = try container.decode(String.self, forKey: .appVersion)
         self.chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
         self.meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)

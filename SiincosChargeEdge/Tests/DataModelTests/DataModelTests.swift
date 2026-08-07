@@ -18,7 +18,8 @@ struct DataModelTests {
 
     @Test("Test-JSON-Encoding-For-ChargingSystemInformation-Data-Model")
     func testChargingSystemInformationJsonEncoding() throws {
-        let csysInfo = ChargingSystemInformation(appVersion: "0.0.4",
+        let csysInfo = ChargingSystemInformation(systemId: "Test-System",
+                                                 appVersion: "0.0.4",
                                                  chargerModel: .senecWallboxProS11kW,
                                                  meterModel: .janitzaSmartMeterB2331210J,
                                                  chargingPoints: 3,
@@ -36,7 +37,8 @@ struct DataModelTests {
 
     @Test("Test-JSON-Encoding-For-ChargingSystemInformation-Data-Model-With-Error-Context")
     func testChargingSystemInformationJsonEncodingWithErrorContext() throws {
-        let csysInfo = ChargingSystemInformation(appVersion: "0.0.4",
+        let csysInfo = ChargingSystemInformation(systemId: "Test-System-2",
+                                                 appVersion: "0.0.4",
                                                  chargerModel: .senecWallboxProS11kW,
                                                  meterModel: .janitzaSmartMeterB2331210J,
                                                  chargingPoints: 3,

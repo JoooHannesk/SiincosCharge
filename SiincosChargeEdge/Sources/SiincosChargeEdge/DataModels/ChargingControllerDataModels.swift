@@ -195,6 +195,7 @@ enum ChargingSessionStatus: String, Codable {
 
 /// Charging System Information Data Model
 struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
+    let systemId: String
     let appVersion: String
     let chargerModel: SupportedCharger
     let meterModel: SupportedPowerMeter
@@ -206,6 +207,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
 
     var description: String {
         return """
+            System ID: \(systemId)
             App Version: \(appVersion)
             Charger Model: \(chargerModel.rawValue)
             Power Meter Model: \(meterModel.rawValue)

@@ -548,6 +548,7 @@ actor ChargingController {
             await self.handleError(err: error)
         }
         let chargingSystemInformation = ChargingSystemInformation(
+            systemId: self.systemConfig.systemId,
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
