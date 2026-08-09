@@ -11,7 +11,7 @@ Many modern EV charging solutions rely on proprietary cloud backends that limit 
 
 ---
 
-## Core Motivation
+## Core Features
 
 ### 🏢 1. Multi-Location Management
 Manage multiple charging points across various physical locations (e.g., your home, your office, your business location, your vacation rental) in a single unified interface. Monitor real-time power consumption, set load limits, and aggregate historical charging data effortlessly.
@@ -34,7 +34,7 @@ Just a single configuration file. SiincosCharge abstracts hardware complexity. S
 
 ---
 
-## Project Scope Statement
+## Project Scope Summary
 | 🟣 SiincosCharge focus | ⚪ Outside the scope |
 |---|---|
 | An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | It does not provide PV surplus charging or advanced vehicle charging strategies. |
