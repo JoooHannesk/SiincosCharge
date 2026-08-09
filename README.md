@@ -9,7 +9,7 @@ Many modern EV charging solutions rely on proprietary cloud backends that limit 
 
 **SiincosCharge bridges this gap.** It provides a production-ready, cloud-enabled open-source core that runs on lightweight edge devices (like a Raspberry Pi), offering multi-site management and data sovereignty. By utilizing **ThingsBoard CE** as its decentralized backend foundation, SiincosCharge delivers an enterprise-grade IoT architecture directly into your hands – without corporate vendor lock-in.
 
----
+
 
 ## 🥾 Core Motivation
 
@@ -32,7 +32,7 @@ Your charging data belongs to you. SiincosCharge is natively cloud-enabled but d
 ### ⚙️ 6. Simple Configuration
 Just a single configuration file. SiincosCharge abstracts hardware complexity. Simply configure your edge device (e.g., Raspberry Pi) by following our guide, connect a supported wallbox, and you are ready to go. (In some cases the EV-charger or Power Meter may require some minor configuration, but this will be described in our documentation.)
 
----
+
 
 ## 🔩 Architecture
 
@@ -43,7 +43,7 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 *   **SiincosCharge App (Optional, coming soon):** Our native iOS and Android app (both coming soon) that hook directly into your private cloud instance, adding improved usability for mobile devices including advanced reporting and statistics.
 
 ![Siincos Charge System Architecture](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/System-Architecture.jpg)
----
+
 
 ## 📋 Requirements & Supported Hardware
 
@@ -51,14 +51,14 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
     *   *Note on Serial Connectivity:* Your hardware must feature **at least one** RS485 transceiver. While using a standard USB-to-RS485 dongle is completely fine, please note that concurrently connecting a ModbusRTU charger and a dedicated ModbusRTU power meter requires two separate RS485 transceivers.
 *   **Supported Chargers & Power Meters:** Any compatible EV charger or power meter communicating via ModbusRTU (ModbusTCP coming soon). Check our documentation for the full list of compatible devices.
 
----
+
 
 ## 🧩 Summary
 | 🟣 SiincosCharge focus | ⚪ Outside the scope |
 |---|---|
 | An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | It does not provide PV surplus charging or advanced vehicle charging strategies. |
 
----
+
 
 ## 🤝 Contributing
 
