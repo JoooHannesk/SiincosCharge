@@ -9,9 +9,9 @@ Many modern EV charging solutions rely on proprietary cloud backends that limit 
 
 **SiincosCharge bridges this gap.** It provides a production-ready, cloud-enabled open-source core that runs on lightweight edge devices (like a Raspberry Pi), offering multi-site management and data sovereignty. By utilizing **ThingsBoard CE** as its decentralized backend foundation, SiincosCharge delivers an enterprise-grade IoT architecture directly into your hands – without corporate vendor lock-in.
 
+---
 
-
-## 🥾 Core Motivation
+## Core Motivation
 
 ### 🏢 1. Multi-Location Management
 Manage multiple charging points across various physical locations (e.g., your home, your office, your business location, your vacation rental) in a single unified interface. Monitor real-time power consumption, set load limits, and aggregate historical charging data effortlessly.
@@ -32,9 +32,16 @@ Your charging data belongs to you. SiincosCharge is natively cloud-enabled but d
 ### ⚙️ 6. Simple Configuration
 Just a single configuration file. SiincosCharge abstracts hardware complexity. Simply configure your edge device (e.g., Raspberry Pi) by following our guide, connect a supported wallbox, and you are ready to go. (In some cases the EV-charger or Power Meter may require some minor configuration, but this will be described in our documentation.)
 
+---
 
+## Project Scope Statement
+| 🟣 SiincosCharge focus | ⚪ Outside the scope |
+|---|---|
+| An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | It does not provide PV surplus charging or advanced vehicle charging strategies. |
 
-## 🔩 Architecture
+---
+
+## Architecture
 
 SiincosCharge is split into a lightweight edge component, a robust backend ecosystem, and a modern mobile client to ensure maximum security and scalability:
 
@@ -43,28 +50,21 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 *   **SiincosCharge App (Optional, coming soon):** Our native iOS and Android app (both coming soon) that hook directly into your private cloud instance, adding improved usability for mobile devices including advanced reporting and statistics.
 
 ![Siincos Charge System Architecture](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/System-Architecture.jpg)
+---
 
-
-## 📋 Requirements & Supported Hardware
+## Requirements & Supported Hardware
 
 *   **Edge Hardware:** reComputer R1124-10, Raspberry Pi 4 / 5, or any compatible Linux-based IoT gateway. 
     *   *Note on Serial Connectivity:* Your hardware must feature **at least one** RS485 transceiver. While using a standard USB-to-RS485 dongle is completely fine, please note that concurrently connecting a ModbusRTU charger and a dedicated ModbusRTU power meter requires two separate RS485 transceivers.
 *   **Supported Chargers & Power Meters:** Any compatible EV charger or power meter communicating via ModbusRTU (ModbusTCP coming soon). Check our documentation for the full list of compatible devices.
 
+---
 
-
-## 🧩 Summary
-| 🟣 SiincosCharge focus | ⚪ Outside the scope |
-|---|---|
-| An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | It does not provide PV surplus charging or advanced vehicle charging strategies. |
-
-
-
-## 🤝 Contributing
+## Contributing
 
 We love contributions! Whether you want to add a Modbus profile for a new model, fix a bug, or improve the documentation – feel free to open an issue or submit a pull request. 
 
-## ⚖️ License
+## License
 
 This project is licensed under the **Apache License 2.0**. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved.
 
