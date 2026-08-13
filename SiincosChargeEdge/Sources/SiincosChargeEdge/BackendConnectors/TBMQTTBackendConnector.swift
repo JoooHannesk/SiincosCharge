@@ -15,10 +15,13 @@ import Foundation
 ///
 /// Topics required to communicate with ThingsBoard MQTT Server
 enum TBMQTTTopics: String {
-    case announceDevice = "v1/gateway/connect"
-    case telemetryTopic = "v1/gateway/telemetry"
-    case rpcTopic = "v1/gateway/rpc/request/+"
-    case attributeTopic = "v1/gateway/attributes"
+    case gwAnnounceDevice = "v1/gateway/connect"
+    case gwTelemetryTopic = "v1/gateway/telemetry"
+    case gwRPCTopic = "v1/gateway/rpc/request/+"
+    case gwAttributeTopic = "v1/gateway/attributes"
+
+    case dvcAttributeTopic = "v1/devices/me/attributes"
+
 }
 
 /// ThingsBoard Identifiers
@@ -62,7 +65,7 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
             onSuccess: {
                 self.logger.info("\(LogMessages.mqttConnectionSuccess)")
                 self.announceChargingPoints()
-                self.subscribe(to: [.rpcTopic])
+                self.subscribe(to: [.gwRPCTopic])
             },
             onError: { error in
                 self.logger.error("\(LogMessages.mqttConnectionFailed)", metadata: ["error": "\(error.localizedDescription)"])
@@ -94,9 +97,9 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     ///
     /// Update Charging System Information in ThingsBoard
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
-//        if let msg = sysInfo.asJson {
-//            self.publish(message: msg, to: .attributeTopic)
-//        }
+        if let msg = sysInfo.asJson {
+            self.publish(message: msg, to: .gwAttributeTopic)
+        }
     }
 
     /// Update Charging Sessions
@@ -134,8 +137,7 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
                 for cp in chargingPoints {
                     let cpName = await "\(systemId)-CP\(cp.cpId)"
                     let announceCpMsg = #"{"device": "\#(cpName)", "type": "\#(TBIdentifiers.deviceProfileName.rawValue)"}"#
-                    self.publish(message: announceCpMsg, to: .announceDevice)
-                    print("Announcing CP: \(announceCpMsg), \(TBMQTTTopics.announceDevice)")
+                    self.publish(message: announceCpMsg, to: .gwAnnounceDevice)
                 }
             }
         }
