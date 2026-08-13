@@ -15,16 +15,24 @@ import Foundation
 ///
 /// Topics required to communicate with ThingsBoard MQTT Server
 enum TBMQTTTopics: String {
-    case telemetryTopic = "v1/devices/me/telemetry"
-    case rpcTopic = "v1/devices/me/rpc/request/+"
-    case attributeTopic = "v1/devices/me/attributes"
+    case announceDevice = "v1/gateway/connect"
+    case telemetryTopic = "v1/gateway/telemetry"
+    case rpcTopic = "v1/gateway/rpc/request/+"
+    case attributeTopic = "v1/gateway/attributes"
+}
+
+/// ThingsBoard Identifiers
+///
+/// Identifiers to control ThingsBoard specific behavior
+enum TBIdentifiers: String {
+    case deviceProfileName = "SiincosChargeEdge"
 }
 
 enum SupportedRPC: String, Codable {
     case requestChargingSession
 }
 
-class ThingsBoardBackend: BackendController {
+class ThingsBoardBackend: BackendController, @unchecked Sendable {
 
     var client: TinyTBDeviceClient?
     let eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
@@ -53,6 +61,7 @@ class ThingsBoardBackend: BackendController {
         self.client?.connect(
             onSuccess: {
                 self.logger.info("\(LogMessages.mqttConnectionSuccess)")
+                self.announceChargingPoints()
                 self.subscribe(to: [.rpcTopic])
             },
             onError: { error in
@@ -74,20 +83,20 @@ class ThingsBoardBackend: BackendController {
     ///
     /// Update Charging Point Status in ThingsBoard
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
-        for cpStatus in cpsStatus {
-            if let msg = cpStatus.asSerializedJson {
-                self.publish(message: msg, to: .telemetryTopic)
-            }
-        }
+//        for cpStatus in cpsStatus {
+//            if let msg = cpStatus.asSerializedJson {
+//                self.publish(message: msg, to: .telemetryTopic)
+//            }
+//        }
     }
 
     /// Update Charging System Information
     ///
     /// Update Charging System Information in ThingsBoard
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
-        if let msg = sysInfo.asJson {
-            self.publish(message: msg, to: .attributeTopic)
-        }
+//        if let msg = sysInfo.asJson {
+//            self.publish(message: msg, to: .attributeTopic)
+//        }
     }
 
     /// Update Charging Sessions
@@ -96,15 +105,15 @@ class ThingsBoardBackend: BackendController {
     /// - Parameter chargingPointIds: Collection containing all registered charging point IDs
     /// - Parameter chargingSessions: Collection containing all charging sessions
     func updateChargingSessions(chargingPointIds: some Collection<UInt8>, chargingSessions: some Collection<ChargingSession>) {
-        for cpId in chargingPointIds {
-            var sessionMessage = ""
-            if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
-                sessionMessage = #"{"cp\#(cpId)_session": \#(session.asJson, default: "")}"#
-            } else {
-                sessionMessage = #"{"cp\#(cpId)_session": ""}"#
-            }
-            self.publish(message: sessionMessage, to: .attributeTopic)
-        }
+//        for cpId in chargingPointIds {
+//            var sessionMessage = ""
+//            if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
+//                sessionMessage = #"{"cp\#(cpId)_session": \#(session.asJson, default: "")}"#
+//            } else {
+//                sessionMessage = #"{"cp\#(cpId)_session": ""}"#
+//            }
+//            self.publish(message: sessionMessage, to: .attributeTopic)
+//        }
     }
 
     /// Write a charging session receipt
@@ -114,8 +123,22 @@ class ThingsBoardBackend: BackendController {
     ///
     /// - Parameter session: The charging session to write the receipt for
     func writeChargingSessionReceipt(for session: ChargingSession) {
-        let sessionReceiptMessage = #"{"cp\#(session.cpId)_sessionReceipt": \#(session.asJson, default: "")}"#
-        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
+//        let sessionReceiptMessage = #"{"cp\#(session.cpId)_sessionReceipt": \#(session.asJson, default: "")}"#
+//        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
+    }
+
+    func announceChargingPoints() {
+        Task { [chargingController] in
+            let systemId = chargingController.systemConfig.systemId
+            if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
+                for cp in chargingPoints {
+                    let cpName = await "\(systemId)-CP\(cp.cpId)"
+                    let announceCpMsg = #"{"device": "\#(cpName)", "type": "\#(TBIdentifiers.deviceProfileName.rawValue)"}"#
+                    self.publish(message: announceCpMsg, to: .announceDevice)
+                    print("Announcing CP: \(announceCpMsg), \(TBMQTTTopics.announceDevice)")
+                }
+            }
+        }
     }
 
     // MARK: - Backend specific Methods
