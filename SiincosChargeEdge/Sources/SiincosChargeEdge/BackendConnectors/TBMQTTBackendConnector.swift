@@ -102,9 +102,7 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
             Task { [chargingController] in
                 if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
                     for cp in chargingPoints {
-                        let cpName = await self.getChargingPointName(cpId: cp.cpId)
-                        let dvcMsg = #"{"\#(cpName)": \#(msg)}"#
-                        self.publish(message: dvcMsg, to: .gwAttributeTopic)
+                        await self.publish(message: msg, to: cp.cpId, with: .gwAttributeTopic)
                     }
                 }
             }
@@ -163,9 +161,28 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
 
     // MARK: - Helper Methods
 
-    /// Get charging point name
+    /// Publishes a message to a specific ThingsBoard device managed by this gateway.
     ///
-    /// Define the charging point name for correct mapping on the ThingsBoard platform
+    /// This convenience method wraps the device-specific message (attribute or telemetry) in the
+    /// appropriate JSON format and publishes it to the specified topic. The message is automatically mapped to the correct
+    /// ThingsBoard device using the charging point ID.
+    ///
+    /// - Parameters:
+    ///   - message: The JSON string containing the data to publish
+    ///   - device: The charging point ID (used to identify the target device)
+    ///   - topic: The ThingsBoard MQTT topic to publish to
+    private func publish(message: String, to device: UInt8, with topic: TBMQTTTopics) {
+        let cpName = self.getChargingPointName(cpId: device)
+        let dvcMsg = #"{"\#(cpName)": \#(message)}"#
+        self.publish(message: dvcMsg, to: topic)
+    }
+
+    /// Returns the canonical ThingsBoard name for a charging point.
+    ///
+    /// Formats the name as `{systemId}-CP{cpId}`, which is used as the device key
+    /// when publishing telemetry so ThingsBoard maps attributes or telemetry to the correct device.
+    /// - Parameter cpId: The charging point identifier.
+    /// - Returns: A string in the format `{systemId}-CP{cpId}`.
     private func getChargingPointName(cpId: UInt8) -> String {
         let systemId = chargingController.systemConfig.systemId
         let cpName = "\(systemId)-CP\(cpId)"
