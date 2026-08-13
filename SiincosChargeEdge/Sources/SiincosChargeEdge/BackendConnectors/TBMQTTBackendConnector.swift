@@ -98,7 +98,16 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     /// Update Charging System Information in ThingsBoard
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
         if let msg = sysInfo.asJson {
-            self.publish(message: msg, to: .gwAttributeTopic)
+            self.publish(message: msg, to: .dvcAttributeTopic)
+            Task { [chargingController] in
+                if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
+                    for cp in chargingPoints {
+                        let cpName = await self.getChargingPointName(cpId: cp.cpId)
+                        let dvcMsg = #"{"\#(cpName)": \#(msg)}"#
+                        self.publish(message: dvcMsg, to: .gwAttributeTopic)
+                    }
+                }
+            }
         }
     }
 
@@ -130,17 +139,37 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
 //        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
     }
 
-    func announceChargingPoints() {
+    /// Asynchronously announces all available charging points to the ThingsBoard gateway.
+    ///
+    /// This method iterates through all charging points currently managed by the `chargingController`.
+    /// For each charging point, it:
+    /// 1. Resolves the device name (e.g., "CP_1").
+    /// 2. Constructs a JSON announcement message specifying the device name and its profile type.
+    /// 3. Publishes the message to the gateway's device announcement topic (`gw/connect`).
+    ///
+    /// This registration step is required by the ThingsBoard Gateway to ensure that data
+    /// sent for these specific devices is correctly mapped and processed in the backend.
+    private func announceChargingPoints() {
         Task { [chargingController] in
-            let systemId = chargingController.systemConfig.systemId
             if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
                 for cp in chargingPoints {
-                    let cpName = await "\(systemId)-CP\(cp.cpId)"
+                    let cpName = await self.getChargingPointName(cpId: cp.cpId)
                     let announceCpMsg = #"{"device": "\#(cpName)", "type": "\#(TBIdentifiers.deviceProfileName.rawValue)"}"#
                     self.publish(message: announceCpMsg, to: .gwAnnounceDevice)
                 }
             }
         }
+    }
+
+    // MARK: - Helper Methods
+
+    /// Get charging point name
+    ///
+    /// Define the charging point name for correct mapping on the ThingsBoard platform
+    private func getChargingPointName(cpId: UInt8) -> String {
+        let systemId = chargingController.systemConfig.systemId
+        let cpName = "\(systemId)-CP\(cpId)"
+        return cpName
     }
 
     // MARK: - Backend specific Methods
