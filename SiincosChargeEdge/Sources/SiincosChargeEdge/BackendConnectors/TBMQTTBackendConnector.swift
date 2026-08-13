@@ -31,6 +31,12 @@ enum TBIdentifiers: String {
     case deviceProfileName = "SiincosChargeEdge"
 }
 
+/// ThingsBoard message format selector
+enum TBMessageFormat {
+    case attribute
+    case telemetry
+}
+
 enum SupportedRPC: String, Codable {
     case requestChargingSession
 }
@@ -86,11 +92,11 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     ///
     /// Update Charging Point Status in ThingsBoard
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
-//        for cpStatus in cpsStatus {
-//            if let msg = cpStatus.asSerializedJson {
-//                self.publish(message: msg, to: .telemetryTopic)
-//            }
-//        }
+        for cpStatus in cpsStatus {
+            if let msg = cpStatus.asJson {
+                self.publish(message: msg, to: cpStatus.cpId, with: .gwTelemetryTopic, as: .telemetry)
+            }
+        }
     }
 
     /// Update Charging System Information
@@ -102,7 +108,7 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
             Task { [chargingController] in
                 if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
                     for cp in chargingPoints {
-                        await self.publish(message: msg, to: cp.cpId, with: .gwAttributeTopic)
+                        await self.publish(message: msg, to: cp.cpId, with: .gwAttributeTopic, as: .attribute)
                     }
                 }
             }
@@ -171,9 +177,15 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     ///   - message: The JSON string containing the data to publish
     ///   - device: The charging point ID (used to identify the target device)
     ///   - topic: The ThingsBoard MQTT topic to publish to
-    private func publish(message: String, to device: UInt8, with topic: TBMQTTTopics) {
+    private func publish(message: String, to device: UInt8, with topic: TBMQTTTopics, as msgFormat: TBMessageFormat) {
         let cpName = self.getChargingPointName(cpId: device)
-        let dvcMsg = #"{"\#(cpName)": \#(message)}"#
+        var dvcMsg: String = ""
+        switch msgFormat {
+        case .attribute:
+            dvcMsg = #"{"\#(cpName)": \#(message)}"#
+        case .telemetry:
+            dvcMsg = #"{"\#(cpName)": [\#(message)]}"#
+        }
         self.publish(message: dvcMsg, to: topic)
     }
 
