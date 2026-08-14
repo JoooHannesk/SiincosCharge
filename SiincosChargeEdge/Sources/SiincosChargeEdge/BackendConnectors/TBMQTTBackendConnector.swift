@@ -122,15 +122,15 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     /// - Parameter chargingPointIds: Collection containing all registered charging point IDs
     /// - Parameter chargingSessions: Collection containing all charging sessions
     func updateChargingSessions(chargingPointIds: some Collection<UInt8>, chargingSessions: some Collection<ChargingSession>) {
-//        for cpId in chargingPointIds {
-//            var sessionMessage = ""
-//            if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
-//                sessionMessage = #"{"cp\#(cpId)_session": \#(session.asJson, default: "")}"#
-//            } else {
-//                sessionMessage = #"{"cp\#(cpId)_session": ""}"#
-//            }
-//            self.publish(message: sessionMessage, to: .attributeTopic)
-//        }
+        for cpId in chargingPointIds {
+            var sessionMessage = ""
+            if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
+                sessionMessage = #"{"chargingSession": \#(session.asJson, default: "")}"#
+            } else {
+                sessionMessage = #"{"chargingSession": ""}"#
+            }
+            self.publish(message: sessionMessage, to: cpId, with: .gwAttributeTopic, as: .attribute)
+        }
     }
 
     /// Write a charging session receipt
@@ -233,10 +233,20 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
                 self.logger.warning("\(LogMessages.dataConversionFailed)")
                 return
             }
-            let method = (msgDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
+
+            let device = msgDict["device"] as? String
+
+            // Gateway RPC wraps method and params inside a nested `data` object
+            guard let dataDict = msgDict["data"] as? [String: Any] else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
+// TODO: take cpid from device name and not from payload
+            let method = (dataDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
             switch method {
             case .requestChargingSession:
-                if let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: msgDict) {
+                if let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: dataDict) {
+                    self.logger.debug("RPC \(SupportedRPC.requestChargingSession.rawValue) received for device \(device ?? "unknown")")
                     Task { [chargingController] in
                         await chargingController.requestChargingSession(chargingSession)
                     }
