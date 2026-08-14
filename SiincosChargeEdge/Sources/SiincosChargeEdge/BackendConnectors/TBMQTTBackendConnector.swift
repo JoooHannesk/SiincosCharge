@@ -21,7 +21,8 @@ enum TBMQTTTopics: String {
     case gwAttributeTopic = "v1/gateway/attributes"
 
     case dvcAttributeTopic = "v1/devices/me/attributes"
-
+    case dvcTelemetryTopic = "v1/devices/me/telemetry"
+    case dvcRPCTopic = "v1/devices/me/rpc/request/+"
 }
 
 /// ThingsBoard Identifiers
@@ -197,7 +198,7 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     /// - Returns: A string in the format `{systemId}-CP{cpId}`.
     private func getChargingPointName(cpId: UInt8) -> String {
         let systemId = chargingController.systemConfig.systemId
-        let cpName = "\(systemId)-CP\(cpId)"
+        let cpName = "\(systemId)-CP-\(cpId)"
         return cpName
     }
 
