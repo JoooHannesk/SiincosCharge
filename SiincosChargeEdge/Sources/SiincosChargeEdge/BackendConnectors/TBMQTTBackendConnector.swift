@@ -234,22 +234,31 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
                 return
             }
 
-            let device = msgDict["device"] as? String
+            // Parse cpId from device name (<systemId>-CP-<cpId>) as the authoritative source
+            guard let device = msgDict["device"] as? String,
+                  let cpSuffix = device.components(separatedBy: "-CP-").last,
+                  let cpId = UInt8(cpSuffix) else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
 
             // Gateway RPC wraps method and params inside a nested `data` object
             guard let dataDict = msgDict["data"] as? [String: Any] else {
                 self.logger.warning("\(LogMessages.dataConversionFailed)")
                 return
             }
-// TODO: take cpid from device name and not from payload
+
             let method = (dataDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
             switch method {
             case .requestChargingSession:
-                if let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: dataDict) {
-                    self.logger.debug("RPC \(SupportedRPC.requestChargingSession.rawValue) received for device \(device ?? "unknown")")
-                    Task { [chargingController] in
-                        await chargingController.requestChargingSession(chargingSession)
-                    }
+                guard var paramsDict = dataDict["params"] as? [String: Any] else {
+                    self.logger.warning("\(LogMessages.dataConversionFailed)")
+                    return
+                }
+                paramsDict["cpId"] = cpId
+                let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: paramsDict)
+                Task { [chargingController] in
+                    await chargingController.requestChargingSession(chargingSession)
                 }
             default:
                 break
@@ -272,20 +281,16 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
             })
     }
 
-    /// Decode RPC message payload
+    /// Decode RPC `params` message payload
     ///
-    /// Decode the `params` field of an RPC message into the inferred `Codable` type.
-    /// - Parameter msgDict: RPC message as dictionary, containing a `params` field with the payload
-    /// - Returns: Decoded payload object, or `nil` if the message contains no `params` field
+    /// Decode the `params` field of a ThingsBoard RPC message into the inferred `Codable` type.
+    /// - Parameter msgDict: RPC message as dictionary, containing the `params` key's value (the payload)
+    /// - Returns: Decoded payload object
     /// - Throws: An error if serialization or decoding of the payload fails
-    private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T? {
-        if let paramsData = msgDict["params"] as? [String: Any] {
-            let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
+    private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T {
+            let paramsJson = try JSONSerialization.data(withJSONObject: msgDict)
             let payloadObject = try JSONDecoder.customTelemetryCompatibleDecoder.decode(T.self, from: paramsJson)
             return payloadObject
-        } else {
-            return nil
-        }
     }
 
     /// Create MQTT Client
