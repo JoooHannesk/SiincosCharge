@@ -40,7 +40,8 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
 
     /// User
     ///
-    /// User who invoked the charging session
+    /// User that invoked the charging session. Treated as the session
+    /// owner throughout a whole session lifecycle.
     let userName: String
 
     /// Charging Session Status
