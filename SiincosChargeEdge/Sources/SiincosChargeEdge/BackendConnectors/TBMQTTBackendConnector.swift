@@ -140,8 +140,8 @@ class ThingsBoardBackend: BackendController, @unchecked Sendable {
     ///
     /// - Parameter session: The charging session to write the receipt for
     func writeChargingSessionReceipt(for session: ChargingSession) {
-//        let sessionReceiptMessage = #"{"cp\#(session.cpId)_sessionReceipt": \#(session.asJson, default: "")}"#
-//        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
+        let sessionReceiptMessage = #"{"sessionReceipt": \#(session.asJson, default: "")}"#
+        self.publish(message: sessionReceiptMessage, to: session.cpId, with: .gwTelemetryTopic, as: .telemetry)
     }
 
     /// Asynchronously announces all available charging points to the ThingsBoard gateway.
