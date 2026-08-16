@@ -1,5 +1,5 @@
 # Remote Procedure Calls and required message payload
-The following sections describe the message payload to request new charging sessions or to perform actions on the once which are active.
+The following sections describe the client RPC message payload to request new charging sessions or to perform actions on active charging sessions.
 
 ## Payload data
 The payload for the RPCs mainly originate from ``ChargingSession`` which is designed to hold a whole session lifecycle.
@@ -10,6 +10,8 @@ The payload for the RPCs mainly originate from ``ChargingSession`` which is desi
 - ``ChargingSession/chargingCurrentSetpoint``: The desired charging current for the charging session. Once a charging session is initiated, the current setpoint cannot be modified. The current setpoint is set when initiating a charging session and is fixed throughout this session.
 
 ## Start a charging session
+To initiate a charging session, it is required to have a vehicle connected to the charger.
+
 Start a charging session now. The charging session is finished by requesting a charging session termination (refer to <doc:RemoteProcedureCalls/Terminate-a-charging-session>) or by unplugging the vehicle. A state change from ``EVState/pluggedIn`` to ``EVState/unplugged`` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
 ```json
 {
@@ -20,11 +22,20 @@ Start a charging session now. The charging session is finished by requesting a c
 ```
 
 ## Start a timed charging session
+To initiate a charging session, it is required to have a vehicle connected to the charger.
+
+Start a charging session now and terminate the charging session at `endTime` o'clock automatically.
 ```json
-    // TODO: document
+    {
+        "userName": "user@mockserver.com",
+        "endTime": 1785150075000,
+        "status": "running",
+        "chargingCurrentSetpointA": 10
+    }
 ```
 
 ## Pause a charging session
+Pause a running charging session.
 ```json
 {
     "userName": "user@mockserver.com",
@@ -34,6 +45,10 @@ Start a charging session now. The charging session is finished by requesting a c
 ```
 
 ## Terminate a charging session
+A charging session will be ended either by unplugging the vehicle from the charger or by manually requesting through the following RPC.
+
+A state change from ``EVState/pluggedIn`` to ``EVState/unplugged`` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
+
 ```json
 {
     "userName": "user@mockserver.com",
@@ -43,6 +58,7 @@ Start a charging session now. The charging session is finished by requesting a c
 ```
 
 ## Schedule a charging session
+Initiate a charging session in the future. Start charging at `startTime` o'clock and end charging at `endTime` o'clock. As soon as charging is started, the `status` will be switched from `.scheduled` to `.running`
 ```json
 {
     "userName": "user@mockserver.com",
