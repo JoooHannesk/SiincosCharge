@@ -15,16 +15,34 @@ import Foundation
 ///
 /// Topics required to communicate with ThingsBoard MQTT Server
 enum TBMQTTTopics: String {
-    case telemetryTopic = "v1/devices/me/telemetry"
-    case rpcTopic = "v1/devices/me/rpc/request/+"
-    case attributeTopic = "v1/devices/me/attributes"
+    case gwAnnounceDevice = "v1/gateway/connect"
+    case gwTelemetryTopic = "v1/gateway/telemetry"
+    case gwRPCTopic = "v1/gateway/rpc/request/+"
+    case gwAttributeTopic = "v1/gateway/attributes"
+
+    case dvcAttributeTopic = "v1/devices/me/attributes"
+    case dvcTelemetryTopic = "v1/devices/me/telemetry"
+    case dvcRPCTopic = "v1/devices/me/rpc/request/+"
+}
+
+/// ThingsBoard Identifiers
+///
+/// Identifiers to control ThingsBoard specific behavior
+enum TBIdentifiers: String {
+    case deviceProfileName = "SiincosChargeEdge"
+}
+
+/// ThingsBoard message format selector
+enum TBMessageFormat {
+    case attribute
+    case telemetry
 }
 
 enum SupportedRPC: String, Codable {
     case requestChargingSession
 }
 
-class ThingsBoardBackend: BackendController {
+class ThingsBoardBackend: BackendController, @unchecked Sendable {
 
     var client: TinyTBDeviceClient?
     let eventLoopGroup: EventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
@@ -53,7 +71,8 @@ class ThingsBoardBackend: BackendController {
         self.client?.connect(
             onSuccess: {
                 self.logger.info("\(LogMessages.mqttConnectionSuccess)")
-                self.subscribe(to: [.rpcTopic])
+                self.announceChargingPoints()
+                self.subscribe(to: [.gwRPCTopic])
             },
             onError: { error in
                 self.logger.error("\(LogMessages.mqttConnectionFailed)", metadata: ["error": "\(error.localizedDescription)"])
@@ -75,8 +94,8 @@ class ThingsBoardBackend: BackendController {
     /// Update Charging Point Status in ThingsBoard
     func updateChargingPointStatus(with cpsStatus: Set<ChargingPointStatus>) {
         for cpStatus in cpsStatus {
-            if let msg = cpStatus.asSerializedJson {
-                self.publish(message: msg, to: .telemetryTopic)
+            if let msg = cpStatus.asJson {
+                self.publish(message: msg, to: cpStatus.cpId, with: .gwTelemetryTopic, as: .telemetry)
             }
         }
     }
@@ -86,7 +105,14 @@ class ThingsBoardBackend: BackendController {
     /// Update Charging System Information in ThingsBoard
     func updateChargingSystemInformation(with sysInfo: ChargingSystemInformation) {
         if let msg = sysInfo.asJson {
-            self.publish(message: msg, to: .attributeTopic)
+            self.publish(message: msg, to: .dvcAttributeTopic)
+            Task { [chargingController] in
+                if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
+                    for cp in chargingPoints {
+                        await self.publish(message: msg, to: cp.cpId, with: .gwAttributeTopic, as: .attribute)
+                    }
+                }
+            }
         }
     }
 
@@ -99,11 +125,11 @@ class ThingsBoardBackend: BackendController {
         for cpId in chargingPointIds {
             var sessionMessage = ""
             if let session = chargingSessions.first(where: { $0.cpId == cpId }) {
-                sessionMessage = #"{"cp\#(cpId)_session": \#(session.asJson, default: "")}"#
+                sessionMessage = #"{"chargingSession": \#(session.asJson, default: "")}"#
             } else {
-                sessionMessage = #"{"cp\#(cpId)_session": ""}"#
+                sessionMessage = #"{"chargingSession": ""}"#
             }
-            self.publish(message: sessionMessage, to: .attributeTopic)
+            self.publish(message: sessionMessage, to: cpId, with: .gwAttributeTopic, as: .attribute)
         }
     }
 
@@ -114,8 +140,66 @@ class ThingsBoardBackend: BackendController {
     ///
     /// - Parameter session: The charging session to write the receipt for
     func writeChargingSessionReceipt(for session: ChargingSession) {
-        let sessionReceiptMessage = #"{"cp\#(session.cpId)_sessionReceipt": \#(session.asJson, default: "")}"#
-        self.publish(message: sessionReceiptMessage, to: .telemetryTopic)
+        let sessionReceiptMessage = #"{"sessionReceipt": \#(session.asJson, default: "")}"#
+        self.publish(message: sessionReceiptMessage, to: session.cpId, with: .gwTelemetryTopic, as: .telemetry)
+    }
+
+    /// Asynchronously announces all available charging points to the ThingsBoard gateway.
+    ///
+    /// This method iterates through all charging points currently managed by the `chargingController`.
+    /// For each charging point, it:
+    /// 1. Resolves the device name (e.g., "CP_1").
+    /// 2. Constructs a JSON announcement message specifying the device name and its profile type.
+    /// 3. Publishes the message to the gateway's device announcement topic (`gw/connect`).
+    ///
+    /// This registration step is required by the ThingsBoard Gateway to ensure that data
+    /// sent for these specific devices is correctly mapped and processed in the backend.
+    private func announceChargingPoints() {
+        Task { [chargingController] in
+            if let chargingPoints = await chargingController.chargingSystem?.chargingPointContainer.chargingPoints.values {
+                for cp in chargingPoints {
+                    let cpName = await self.getChargingPointName(cpId: cp.cpId)
+                    let announceCpMsg = #"{"device": "\#(cpName)", "type": "\#(TBIdentifiers.deviceProfileName.rawValue)"}"#
+                    self.publish(message: announceCpMsg, to: .gwAnnounceDevice)
+                }
+            }
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    /// Publishes a message to a specific ThingsBoard device managed by this gateway.
+    ///
+    /// This convenience method wraps the device-specific message (attribute or telemetry) in the
+    /// appropriate JSON format and publishes it to the specified topic. The message is automatically mapped to the correct
+    /// ThingsBoard device using the charging point ID.
+    ///
+    /// - Parameters:
+    ///   - message: The JSON string containing the data to publish
+    ///   - device: The charging point ID (used to identify the target device)
+    ///   - topic: The ThingsBoard MQTT topic to publish to
+    private func publish(message: String, to device: UInt8, with topic: TBMQTTTopics, as msgFormat: TBMessageFormat) {
+        let cpName = self.getChargingPointName(cpId: device)
+        var dvcMsg: String = ""
+        switch msgFormat {
+        case .attribute:
+            dvcMsg = #"{"\#(cpName)": \#(message)}"#
+        case .telemetry:
+            dvcMsg = #"{"\#(cpName)": [\#(message)]}"#
+        }
+        self.publish(message: dvcMsg, to: topic)
+    }
+
+    /// Returns the canonical ThingsBoard name for a charging point.
+    ///
+    /// Formats the name as `{systemId}-CP{cpId}`, which is used as the device key
+    /// when publishing telemetry so ThingsBoard maps attributes or telemetry to the correct device.
+    /// - Parameter cpId: The charging point identifier.
+    /// - Returns: A string in the format `{systemId}-CP{cpId}`.
+    private func getChargingPointName(cpId: UInt8) -> String {
+        let systemId = chargingController.systemConfig.systemId
+        let cpName = "\(systemId)-CP-\(cpId)"
+        return cpName
     }
 
     // MARK: - Backend specific Methods
@@ -149,13 +233,32 @@ class ThingsBoardBackend: BackendController {
                 self.logger.warning("\(LogMessages.dataConversionFailed)")
                 return
             }
-            let method = (msgDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
+
+            // Parse cpId from device name (<systemId>-CP-<cpId>) as the authoritative source
+            guard let device = msgDict["device"] as? String,
+                  let cpSuffix = device.components(separatedBy: "-CP-").last,
+                  let cpId = UInt8(cpSuffix) else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
+
+            // Gateway RPC wraps method and params inside a nested `data` object
+            guard let dataDict = msgDict["data"] as? [String: Any] else {
+                self.logger.warning("\(LogMessages.dataConversionFailed)")
+                return
+            }
+
+            let method = (dataDict["method"] as? String).flatMap(SupportedRPC.init(rawValue:))
             switch method {
             case .requestChargingSession:
-                if let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: msgDict) {
-                    Task { [chargingController] in
-                        await chargingController.requestChargingSession(chargingSession)
-                    }
+                guard var paramsDict = dataDict["params"] as? [String: Any] else {
+                    self.logger.warning("\(LogMessages.dataConversionFailed)")
+                    return
+                }
+                paramsDict["cpId"] = cpId
+                let chargingSession: ChargingSession = try self.decodeMessagePayload(msgDict: paramsDict)
+                Task { [chargingController] in
+                    await chargingController.requestChargingSession(chargingSession)
                 }
             default:
                 break
@@ -178,20 +281,16 @@ class ThingsBoardBackend: BackendController {
             })
     }
 
-    /// Decode RPC message payload
+    /// Decode RPC `params` message payload
     ///
-    /// Decode the `params` field of an RPC message into the inferred `Codable` type.
-    /// - Parameter msgDict: RPC message as dictionary, containing a `params` field with the payload
-    /// - Returns: Decoded payload object, or `nil` if the message contains no `params` field
+    /// Decode the `params` field of a ThingsBoard RPC message into the inferred `Codable` type.
+    /// - Parameter msgDict: RPC message as dictionary, containing the `params` key's value (the payload)
+    /// - Returns: Decoded payload object
     /// - Throws: An error if serialization or decoding of the payload fails
-    private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T? {
-        if let paramsData = msgDict["params"] as? [String: Any] {
-            let paramsJson = try JSONSerialization.data(withJSONObject: paramsData)
+    private func decodeMessagePayload<T: Codable>(msgDict: [String: Any]) throws -> T {
+            let paramsJson = try JSONSerialization.data(withJSONObject: msgDict)
             let payloadObject = try JSONDecoder.customTelemetryCompatibleDecoder.decode(T.self, from: paramsJson)
             return payloadObject
-        } else {
-            return nil
-        }
     }
 
     /// Create MQTT Client
