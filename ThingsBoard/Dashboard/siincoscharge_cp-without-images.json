@@ -3453,7 +3453,7 @@
               }
             },
             "valueFont": {
-              "size": 12,
+              "size": 10,
               "sizeUnit": "px",
               "family": "Roboto",
               "weight": "500",
@@ -3659,14 +3659,14 @@
                 "sizeY": 7,
                 "preserveAspectRatio": false,
                 "resizable": true,
-                "row": 7,
+                "row": 5,
                 "col": 27
               },
               "0ee97f63-4862-ea7c-730f-2ddac171c372": {
                 "sizeX": 6,
                 "sizeY": 4,
                 "resizable": true,
-                "row": 10,
+                "row": 8,
                 "col": 2
               },
               "727ee75f-0bea-920a-22a8-c5b04104276b": {
@@ -3686,19 +3686,19 @@
                 "sizeY": 7,
                 "preserveAspectRatio": false,
                 "resizable": true,
-                "row": 7,
+                "row": 5,
                 "col": 14
               },
               "3836d779-1d19-205f-cf43-9495f8b53fd5": {
                 "sizeX": 6,
                 "sizeY": 2,
-                "row": 4,
+                "row": 1,
                 "col": 30
               },
               "44612ef0-c03c-7e40-e69f-61fcb94a64c2": {
                 "sizeX": 36,
                 "sizeY": 12,
-                "row": 15,
+                "row": 13,
                 "col": 1
               },
               "6bf8a82d-c9fe-ad6b-0cb3-3ea0b85789ba": {
@@ -3706,16 +3706,16 @@
                 "sizeY": 2,
                 "preserveAspectRatio": false,
                 "resizable": true,
-                "row": 4,
+                "row": 1,
                 "col": 14
               },
               "4a9b67f3-7f18-3b32-04f1-8dc1fbaff2d2": {
-                "sizeX": 37,
+                "sizeX": 9,
                 "sizeY": 2,
                 "preserveAspectRatio": false,
                 "resizable": true,
-                "row": 0,
-                "col": 0
+                "row": 1,
+                "col": 1
               }
             },
             "gridSettings": {
