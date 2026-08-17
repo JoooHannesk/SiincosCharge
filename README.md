@@ -2,7 +2,7 @@
 
 An open-source, privacy-first EV charging infrastructure management system designed for multi-location deployment and decentralized control. Take back your data and manage all your charging points across different locations through elegant dashboards – without being locked into proprietary cloud providers or restrictive corporate ecosystems.
 
-![Siincos Charge Dashboard showing a charging point. The vehicle is plugged in but is currently not charging. The actual power drawn from the grid shows 0.0 kW while the power consumption for the session shows 10.65 kWh. This indicates that the EV has stopped charging.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/siincos-charge-web-ui-fullscreen.png)
+![Siincos Charge Dashboard showing a charging point. The vehicle is plugged in but is currently not charging. The actual power drawn from the grid shows 0.0 kW while the power consumption for the session shows 10.65 kWh. This indicates that the EV has stopped charging.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/siincos-charge-web-ui-fullscreen.png "Siincos Charge Dashboard showing a charging point with a vehicle connected. The vehicle is currently not charging.")
 
 ## The Vision
 Many modern EV charging solutions rely on proprietary cloud backends that limit data ownership, customization and integration possibilities.
