@@ -3356,7 +3356,7 @@
                   "decimals": null,
                   "funcBody": null,
                   "usePostProcessing": true,
-                  "postFuncBody": "if (value === null || value === undefined || value === \"\") {\n    return \"Charger available\";\n}\n\nvar evStatus;\ntry {\n    evStatus = JSON.parse(value).status;\n} catch (e) {\n    return \"Charger available\";\n}\n\nif (typeof evStatus === 'undefined') {\n    return \"Charger available\";\n}\n\nswitch (evStatus) {\n    case \"running\":\n        return \"Charging\";\n    case \"paused\":\n        return \"Charging paused\";\n    case \"finished\":\n        return \"Charging finished\";\n    case \"scheduled\":\n        return \"Charging scheduled\";\n    default:\n        // fallback: capitalize whatever unknown status comes in\n        return evStatus.charAt(0).toUpperCase() + evStatus.slice(1);\n}"
+                  "postFuncBody": "if (value === null || value === undefined || value === \"\") {\n    return \"Charger available\";\n}\n\nvar evStatus;\ntry {\n    evStatus = JSON.parse(value).status;\n} catch (e) {\n    return \"Charger available\";\n}\n\nif (typeof evStatus === 'undefined') {\n    return \"Charger available\";\n}\n\nswitch (evStatus) {\n    case \"running\":\n        return \"Charger active\";\n    case \"paused\":\n        return \"Charging paused\";\n    case \"finished\":\n        return \"Charging finished\";\n    case \"scheduled\":\n        return \"Charging scheduled\";\n    default:\n        // fallback: capitalize whatever unknown status comes in\n        return evStatus.charAt(0).toUpperCase() + evStatus.slice(1);\n}"
                 }
               ],
               "alarmFilterConfig": {
