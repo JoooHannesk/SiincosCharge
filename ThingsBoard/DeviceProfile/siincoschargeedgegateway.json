@@ -1,0 +1,45 @@
+{
+  "name": "SiincosChargeEdgeGateway",
+  "description": "",
+  "image": null,
+  "type": "DEFAULT",
+  "transportType": "MQTT",
+  "provisionType": "DISABLED",
+  "defaultRuleChainId": {
+    "entityType": "RULE_CHAIN",
+    "id": "d91056c0-f0bb-11ec-ab20-d719cd60a1bb"
+  },
+  "defaultDashboardId": null,
+  "defaultQueueName": null,
+  "provisionDeviceKey": null,
+  "firmwareId": null,
+  "softwareId": null,
+  "defaultEdgeRuleChainId": null,
+  "default": false,
+  "profileData": {
+    "configuration": {
+      "type": "DEFAULT"
+    },
+    "transportConfiguration": {
+      "type": "MQTT",
+      "deviceTelemetryTopic": "v1/devices/me/telemetry",
+      "deviceAttributesTopic": "v1/devices/me/attributes",
+      "deviceAttributesSubscribeTopic": "v1/devices/me/attributes",
+      "transportPayloadTypeConfiguration": {
+        "transportPayloadType": "JSON"
+      },
+      "sparkplug": false,
+      "sparkplugAttributesMetricNames": [
+        "Properties/*",
+        "Device Control/*",
+        "Node Control/*"
+      ],
+      "sendAckOnValidationException": false
+    },
+    "provisionConfiguration": {
+      "type": "DISABLED",
+      "provisionDeviceSecret": null
+    },
+    "alarms": null
+  }
+}
