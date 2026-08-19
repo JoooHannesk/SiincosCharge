@@ -94,7 +94,7 @@
             "neonGlowBrightness": 0,
             "dashThickness": 0,
             "roundedLineCap": true,
-            "gaugeColor": "#eeeeee",
+            "gaugeColor": "#A1ADB18C",
             "barColor": {
               "type": "gradient",
               "color": "#9C27B0",
@@ -475,7 +475,7 @@
             "neonGlowBrightness": 0,
             "dashThickness": 0,
             "roundedLineCap": true,
-            "gaugeColor": "#EEEEEE7F",
+            "gaugeColor": "#A1ADB18C",
             "barColor": {
               "type": "gradient",
               "color": "#9C27B0",
@@ -3416,7 +3416,7 @@
               }
             },
             "showIcon": true,
-            "iconSize": 14,
+            "iconSize": 10,
             "iconSizeUnit": "px",
             "icon": "electric_car",
             "iconColor": {
@@ -3453,12 +3453,12 @@
               }
             },
             "valueFont": {
-              "size": 10,
+              "size": 7,
               "sizeUnit": "px",
               "family": "Roboto",
-              "weight": "500",
+              "weight": "600",
               "style": "normal",
-              "lineHeight": "24px"
+              "lineHeight": "22px"
             },
             "valueColor": {
               "type": "constant",
@@ -3645,6 +3645,229 @@
         "row": 1,
         "col": 0,
         "id": "4a9b67f3-7f18-3b32-04f1-8dc1fbaff2d2"
+      },
+      "d4093e11-751b-ffa9-1344-f1b40b8d750f": {
+        "typeFullFqn": "system.label_value_card",
+        "type": "latest",
+        "sizeX": 4.5,
+        "sizeY": 1,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "",
+              "entityAliasId": "0c888a58-4c34-e574-78c8-06ce7b2a52bb",
+              "dataKeys": [
+                {
+                  "name": "chargingSession",
+                  "type": "attribute",
+                  "label": "chargingSession",
+                  "color": "#673AB7",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "if (value === null || value === undefined || value === \"\") {\n    return \"Charger available\";\n}\n\nvar evStatus;\ntry {\n    evStatus = JSON.parse(value).status;\n} catch (e) {\n    return \"Charger available\";\n}\n\nif (typeof evStatus === 'undefined') {\n    return \"Charger available\";\n}\n\nswitch (evStatus) {\n    case \"running\":\n        return \"Charger active\";\n    case \"paused\":\n        return \"Charging paused\";\n    case \"finished\":\n        return \"Charging finished\";\n    case \"scheduled\":\n        return \"Charging scheduled\";\n    default:\n        // fallback: capitalize whatever unknown status comes in\n        return evStatus.charAt(0).toUpperCase() + evStatus.slice(1);\n}"
+                }
+              ],
+              "alarmFilterConfig": {
+                "statusList": [
+                  "ACTIVE"
+                ]
+              }
+            }
+          ],
+          "showTitle": false,
+          "backgroundColor": "rgba(0,0,0,0)",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0",
+          "settings": {
+            "autoScale": true,
+            "showLabel": false,
+            "label": "Charger",
+            "labelFont": {
+              "family": "Roboto",
+              "size": 10,
+              "sizeUnit": "px",
+              "style": "normal",
+              "weight": "400",
+              "lineHeight": "24px"
+            },
+            "labelColor": {
+              "type": "constant",
+              "color": "rgb(102, 128, 136)",
+              "colorFunction": "var temperature = value;\nif (typeof temperature !== undefined) {\n  var percent = (temperature + 60)/120 * 100;\n  return tinycolor.mix('blue', 'red', percent).toHexString();\n}\nreturn 'blue';",
+              "gradient": {
+                "advancedMode": false,
+                "gradient": [
+                  "rgba(0, 255, 0, 1)",
+                  "rgba(255, 0, 0, 1)"
+                ],
+                "gradientAdvanced": [
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(0, 255, 0, 1)"
+                  },
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(255, 0, 0, 1)"
+                  }
+                ],
+                "minValue": 0,
+                "maxValue": 100
+              },
+              "rangeList": {
+                "advancedMode": false,
+                "range": [],
+                "rangeAdvanced": []
+              }
+            },
+            "showIcon": true,
+            "iconSize": 10,
+            "iconSizeUnit": "px",
+            "icon": "electric_car",
+            "iconColor": {
+              "type": "constant",
+              "color": "#673AB7",
+              "colorFunction": "var temperature = value;\nif (typeof temperature !== undefined) {\n  var percent = (temperature + 60)/120 * 100;\n  return tinycolor.mix('blue', 'red', percent).toHexString();\n}\nreturn 'blue';",
+              "gradient": {
+                "advancedMode": false,
+                "gradient": [
+                  "rgba(0, 255, 0, 1)",
+                  "rgba(255, 0, 0, 1)"
+                ],
+                "gradientAdvanced": [
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(0, 255, 0, 1)"
+                  },
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(255, 0, 0, 1)"
+                  }
+                ],
+                "minValue": 0,
+                "maxValue": 100
+              },
+              "rangeList": {
+                "advancedMode": false,
+                "range": [],
+                "rangeAdvanced": []
+              }
+            },
+            "valueFont": {
+              "size": 10,
+              "sizeUnit": "px",
+              "family": "Roboto",
+              "weight": "600",
+              "style": "normal",
+              "lineHeight": "22px"
+            },
+            "valueColor": {
+              "type": "constant",
+              "color": "rgb(67, 91, 99)",
+              "colorFunction": "var temperature = value;\nif (typeof temperature !== undefined) {\n  var percent = (temperature + 60)/120 * 100;\n  return tinycolor.mix('blue', 'red', percent).toHexString();\n}\nreturn 'blue';",
+              "gradient": {
+                "advancedMode": false,
+                "gradient": [
+                  "rgba(0, 255, 0, 1)",
+                  "rgba(255, 0, 0, 1)"
+                ],
+                "gradientAdvanced": [
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(0, 255, 0, 1)"
+                  },
+                  {
+                    "source": {
+                      "type": "constant"
+                    },
+                    "color": "rgba(255, 0, 0, 1)"
+                  }
+                ],
+                "minValue": 0,
+                "maxValue": 100
+              },
+              "rangeList": {
+                "advancedMode": false,
+                "range": [],
+                "rangeAdvanced": []
+              }
+            },
+            "background": {
+              "type": "color",
+              "color": "rgba(0,0,0,0)",
+              "overlay": {
+                "enabled": false,
+                "color": "rgba(255,255,255,0.72)",
+                "blur": 3
+              }
+            },
+            "padding": "0"
+          },
+          "title": "Label & value card",
+          "dropShadow": false,
+          "enableFullscreen": false,
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "units": null,
+          "decimals": 0,
+          "widgetStyle": {},
+          "actions": {},
+          "configMode": "advanced",
+          "margin": "0",
+          "borderRadius": "0px",
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": "",
+          "showTitleIcon": false,
+          "titleTooltip": "",
+          "titleFont": {
+            "size": 12,
+            "sizeUnit": "px",
+            "family": null,
+            "weight": null,
+            "style": null,
+            "lineHeight": "1.6"
+          },
+          "titleIcon": "",
+          "iconColor": "rgba(0, 0, 0, 0.87)",
+          "iconSize": "14px",
+          "timewindowStyle": {
+            "showIcon": true,
+            "iconSize": "14px",
+            "icon": "query_builder",
+            "iconPosition": "left",
+            "font": {
+              "size": 12,
+              "sizeUnit": "px",
+              "family": null,
+              "weight": null,
+              "style": null,
+              "lineHeight": "1"
+            },
+            "color": null
+          },
+          "resizable": true,
+          "preserveAspectRatio": false
+        },
+        "row": 0,
+        "col": 0,
+        "id": "d4093e11-751b-ffa9-1344-f1b40b8d750f"
       }
     },
     "states": {
@@ -3791,20 +4014,20 @@
                     "row": 83,
                     "col": 0
                   },
-                  "6bf8a82d-c9fe-ad6b-0cb3-3ea0b85789ba": {
-                    "sizeX": 45,
-                    "sizeY": 7,
-                    "preserveAspectRatio": false,
-                    "resizable": true,
-                    "row": 44,
-                    "col": 0
-                  },
                   "733e8f0e-e066-28ec-3c40-cab814f50441": {
                     "sizeX": 45,
                     "sizeY": 7,
                     "preserveAspectRatio": false,
                     "resizable": true,
                     "row": 1,
+                    "col": 0
+                  },
+                  "d4093e11-751b-ffa9-1344-f1b40b8d750f": {
+                    "sizeX": 45,
+                    "sizeY": 7,
+                    "preserveAspectRatio": false,
+                    "resizable": true,
+                    "row": 44,
                     "col": 0
                   }
                 }
@@ -3848,6 +4071,14 @@
                 "sizeY": 7,
                 "row": 15,
                 "col": 13
+              },
+              "4a9b67f3-7f18-3b32-04f1-8dc1fbaff2d2": {
+                "sizeX": 5,
+                "sizeY": 1,
+                "preserveAspectRatio": false,
+                "resizable": true,
+                "row": 0,
+                "col": 0
               }
             },
             "gridSettings": {
@@ -3888,8 +4119,8 @@
       "selectedTab": 0,
       "realtime": {
         "realtimeType": 0,
-        "interval": 120000,
-        "timewindowMs": 43200000
+        "interval": 60000,
+        "timewindowMs": 28800000
       },
       "aggregation": {
         "type": "AVG"
