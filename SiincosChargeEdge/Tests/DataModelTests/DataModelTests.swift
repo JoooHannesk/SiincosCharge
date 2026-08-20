@@ -7,6 +7,7 @@
 
 import Testing
 import Foundation
+import SiincosChargeDataModels
 @testable import SiincosChargeEdge
 
 

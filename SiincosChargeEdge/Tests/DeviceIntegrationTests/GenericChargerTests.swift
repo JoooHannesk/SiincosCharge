@@ -8,6 +8,7 @@
 import Testing
 import Foundation
 import ModbusSerial
+import SiincosChargeDataModels
 @testable import SiincosChargeEdge
 
 

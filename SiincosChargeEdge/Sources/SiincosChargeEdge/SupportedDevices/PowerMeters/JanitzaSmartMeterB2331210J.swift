@@ -7,6 +7,7 @@
 
 import Foundation
 import ModbusSerial
+import SiincosChargeDataModels
 
 
 /// Janitza Smart Meter B23 312-10J

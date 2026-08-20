@@ -10,6 +10,7 @@ let package = Package(
         .custom("Linux", versionString: "6.12.34")
     ],
     dependencies: [
+        .package(url: "https://github.com/JoooHannesk/SiincosChargeDataModels.git", from: "0.0.1"), // Apache-2.0 license
         .package(url: "https://github.com/3a4oT/modbus-swift.git", from: "1.0.0"), // Apache-2.0 license
         .package(url: "https://github.com/JoooHannesk/TinyTBDeviceClient.git", from: "0.0.2"), // Apache-2.0 license
     ],
@@ -23,6 +24,8 @@ let package = Package(
                 .product(name: "ModbusSerial", package: "modbus-swift"),
                 // MQTT Client for ThingsBoard
                 .product(name: "TinyTBDeviceClient", package: "TinyTBDeviceClient"),
+                // Siincos Charge Data Models
+                .product(name: "SiincosChargeDataModels", package: "SiincosChargeDataModels")
             ],
 
         ),

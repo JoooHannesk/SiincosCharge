@@ -14,7 +14,7 @@ import Logging
 enum AppConstants {
 
     /// App Version
-    static let version = "0.0.5"
+    static let version = "0.0.6"
 
     /// Configuration file location
     static let configFileLocation = "/opt/SiincosChargeEdge/Assets/config.json"

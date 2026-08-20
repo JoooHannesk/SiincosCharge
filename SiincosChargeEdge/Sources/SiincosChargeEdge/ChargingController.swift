@@ -7,6 +7,7 @@
 
 import Foundation
 import ModbusSerial
+import SiincosChargeDataModels
 
 
 actor ChargingController {

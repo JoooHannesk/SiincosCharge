@@ -1,5 +1,5 @@
 {
-  "originHash" : "1ad7640f4a7b7e29d24e249abeda0046d1ebb6cc3efa586b417eaf7f7619412d",
+  "originHash" : "dc2528150f2e7bf6a326742b5bf8315de1fb8d77097ca6ee16f65ca631205954",
   "pins" : [
     {
       "identity" : "modbus-swift",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "91d357875eabd63c55eee40fc6b85bc1f00839ed",
         "version" : "2.13.0"
+      }
+    },
+    {
+      "identity" : "siincoschargedatamodels",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoooHannesk/SiincosChargeDataModels.git",
+      "state" : {
+        "revision" : "15b72b1e0ce2f86f18706eac1e885856296b88a3",
+        "version" : "0.0.7"
       }
     },
     {

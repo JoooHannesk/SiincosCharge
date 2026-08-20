@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SiincosChargeDataModels
 
 /// Charging Session Data Model
 ///
@@ -222,7 +223,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
 }
 
 /// Charging Point Status Data Model
-struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable {
+struct ChargingPointStatus: Hashable, CustomStringConvertible, Codable, Sendable {
     let cpId: UInt8
     let chargerTemperature: Measurement<UnitTemperature>
     let chargingState: ChargerState
