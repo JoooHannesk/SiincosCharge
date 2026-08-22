@@ -33,6 +33,8 @@ Set network settings according to your needs, e.g.
 Run `sudo raspi-config` to perform the following tasks.
 * (8) Update this tool
 * (6) Advance Options --> (A1) Expand filesystem (reboot **immediately** after the process has finished)
+* (6) Advance Options --> (A12) Disable WLAN power saving
+  * Exit `raspi-config` tool and type `sudo iwconfig` to ensure that power saving is disabled. This is indicated by showing *Power Management:off* under the specific wlan interface (commonly: *wlan0*).
 * (5) Localization Options --> (L1) Locale: `en_GB.UTF-8` should be set as default locale for system environment (system-wide not user-wide)
 * (5) Localization Options --> (L2) Timezone: should be set to your local timezone
 * (3) Interface Options --> (I6) Disable *login shell via serial* to enable *serial interface*
