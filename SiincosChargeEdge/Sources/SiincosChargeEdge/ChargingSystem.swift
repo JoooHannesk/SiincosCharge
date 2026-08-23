@@ -81,7 +81,7 @@ actor ChargingSystem {
     /// Get EV plugged in state.
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: ``EVState``
+    /// - Returns: `EVState`
     func getEvState(chargingPointId: UInt8) async throws -> EVState {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
@@ -95,7 +95,7 @@ actor ChargingSystem {
     /// Get EV charging state
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: ``ChargerState``
+    /// - Returns: `ChargerState`
     func getChargingState(chargingPointId: UInt8) async throws -> ChargerState {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
@@ -107,7 +107,7 @@ actor ChargingSystem {
     /// Get Charging Permission
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Charging permission for given charging point ``Status``
+    /// - Returns: Charging permission for given charging point `Status`
     func getChargingPermission(chargingPointId: UInt8) async throws -> Status {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
@@ -172,7 +172,7 @@ actor ChargingSystem {
     /// Get realtime EV charging current for provided charging point id
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Realtime charging current for given charging point ``ElectricCurrent3PhaseGrid``
+    /// - Returns: Realtime charging current for given charging point `ElectricCurrent3PhaseGrid`
     func getChargingCurrent(chargingPointId: UInt8) async throws -> ElectricCurrent3PhaseGrid {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
@@ -200,7 +200,7 @@ actor ChargingSystem {
     /// Get realtime EV charging power for provided charging point id
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Realtime charging power for given charging point ``ElectricPower3PhaseGrid``
+    /// - Returns: Realtime charging power for given charging point `ElectricPower3PhaseGrid`
     func getChargingPower(chargingPointId: UInt8) async throws -> ElectricPower3PhaseGrid {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing
@@ -214,7 +214,7 @@ actor ChargingSystem {
     /// Get realtime grid voltage for provided charging point id
     ///
     /// - Parameter chargingPointId: ChargingPoint Id
-    /// - Returns: Realtime voltage for given charging point ``ElectricVoltage3PhaseGrid``
+    /// - Returns: Realtime voltage for given charging point `ElectricVoltage3PhaseGrid`
     func getGridVoltage(chargingPointId: UInt8) async throws -> ElectricVoltage3PhaseGrid {
         guard let chargingPoint = await self.chargingPointContainer.getChargingPoint(by: chargingPointId) else {
             throw SystemError.chargersMissing

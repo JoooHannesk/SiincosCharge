@@ -12,7 +12,7 @@ The payload for the RPCs mainly originate from ``ChargingSession`` which is desi
 ## Start a charging session
 To initiate a charging session, it is required to have a vehicle connected to the charger.
 
-Start a charging session now. The charging session is finished by requesting a charging session termination (refer to <doc:RemoteProcedureCalls/Terminate-a-charging-session>) or by unplugging the vehicle. A state change from ``EVState/pluggedIn`` to ``EVState/unplugged`` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
+Start a charging session now. The charging session is finished by requesting a charging session termination (refer to <doc:RemoteProcedureCalls/Terminate-a-charging-session>) or by unplugging the vehicle. A state change from `EVState.pluggedIn` to `EVState.unplugged` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
 ```json
 {
     "userName": "user@mockserver.com",
@@ -47,7 +47,7 @@ Pause a running charging session.
 ## Terminate a charging session
 A charging session will be ended either by unplugging the vehicle from the charger or by manually requesting through the following RPC.
 
-A state change from ``EVState/pluggedIn`` to ``EVState/unplugged`` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
+A state change from `EVState.pluggedIn` to `EVState.unplugged` while the charging session is active leads to an automatically terminated charging session. A charging session receipt will be generated and pushed to the cloud (as telemetry message).
 
 ```json
 {

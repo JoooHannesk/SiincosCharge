@@ -100,7 +100,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Retrieve the charger state from device and translate it to
     /// harmonized charging state
     ///
-    /// - Returns: ``ChargerState``
+    /// - Returns: `ChargerState`
     /// - Note: Refers to register address 5 in corresponding modbus mapping
     func getChargerState() async throws -> ChargerState {
         let specificChargerState = try await self.getSpecificChargerState()
@@ -114,7 +114,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Retrieve the EV plugged state from device and translate it to
     /// harmonized states
     ///
-    /// - Returns: ``EVState``
+    /// - Returns: `EVState`
     /// - Note: Refers to register address 5 in corresponding modbus mapping
     func getEVPluggedState() async throws -> EVState {
         let specificChargerState = try await self.getSpecificChargerState()
@@ -197,7 +197,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// Some chargers have a phyiscal hardware lock which is required to be unlocked manually before a charging session can be started. This
     /// function returns the actual hardware lock state.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Returns: lock state as type `LockState`
     /// - Note: Refers to register address 13 in corresponding modbus mapping.
     func getHardwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readInputRegisters(address: 13, count: 1, unitId: self.unitId)
@@ -213,7 +213,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// function returns the actual lock state. Refer to ``SenecWallboxProS11kW/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
-    /// - Returns: lock state as type ``SiincosChargeEdge/LockState``
+    /// - Returns: lock state as type `LockState`
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
     func getSoftwareLockState() async throws -> LockState {
         let lockState = try await self.modbusDevice.readHoldingRegisters(address: 259, count: 1, unitId: self.unitId)
@@ -229,7 +229,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     /// function locks or unlocks the software lock.
     ///
     /// - Parameter state: Lock state to set
-    /// - Returns: lock state as type ``LockState``, processed by the charger
+    /// - Returns: lock state as type `LockState`, processed by the charger
     /// - Note: Refers to register address 259 in corresponding modbus mapping.
     func setSoftwareLock(to state: LockState) async throws -> LockState {
         let lockState = UInt16(state.rawValue)
@@ -244,7 +244,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     ///
     /// The charger will only enter powersaving mode (if enabled) in case no EV is plugged in.
     ///
-    /// - Returns: Power saving status as ``Status``
+    /// - Returns: Power saving status as `Status`
     /// - Note: Referred to as *Standby Mode* in modbus mapping manual (register address 258)
     func getPowerSavingState() async throws -> Status {
         let status = try await self.modbusDevice.readHoldingRegisters(address: 258, count: 1, unitId: self.unitId)
@@ -268,7 +268,7 @@ struct SenecWallboxProS11kW: EVCharger, ModbusRTUDevice {
     ///
     /// The charger will only enter powersaving mode (if enabled) in case no EV is plugged in.
     ///
-    /// - Parameter to: Power saving status as ``Status``
+    /// - Parameter to: Power saving status as `Status`
     /// - Note: Referred to as *Standby Mode* in modbus mapping manual (register address 258)
     func setPowerSavingState(to: Status) async throws -> Status {
         let powerSavingState: UInt16

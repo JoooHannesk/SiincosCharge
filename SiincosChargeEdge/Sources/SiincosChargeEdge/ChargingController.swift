@@ -233,7 +233,7 @@ actor ChargingController {
     ///
     /// In case a charging session is requested, it is registered or updated as a charging session if:
     /// - no other charging session is registered or running for the given charging point
-    /// - the EV is plugged in, recognized by the charger and the charger is in state ``EVState/pluggedIn``.
+    /// - the EV is plugged in, recognized by the charger and the charger is in state `EVState.pluggedIn`.
     /// - a session is paused, resumed or stopped (finished) only if the requesting member is the owner of the currently registered session
     /// In any other cases, the charging session request is ignored.
     ///

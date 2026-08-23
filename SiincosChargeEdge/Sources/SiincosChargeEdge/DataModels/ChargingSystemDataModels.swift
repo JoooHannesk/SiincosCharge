@@ -61,13 +61,13 @@ protocol EVCharger: Sendable {
     ///
     /// Retrieve the charger state from device
     ///
-    /// - Returns: ``ChargerState``
+    /// - Returns: `ChargerState`
     func getChargerState() async throws -> ChargerState
 
     /// Get EV Plugged State
     ///
     /// Retrieve the current EV Plugged State
-    /// - Returns: ``EVState``
+    /// - Returns: `EVState`
     func getEVPluggedState() async throws -> EVState
 
     /// Get Internal Temperature
@@ -111,7 +111,7 @@ protocol EVCharger: Sendable {
     /// Some chargers have a phyiscal hardware lock which is required to be unlocked manually before a charging session can be started. This
     /// function returns the actual hardware lock state.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Returns: lock state as type `LockState`
     /// - Note: In case a charger has no physical hardware lock, this function returns .unavailable
     func getHardwareLockState() async throws -> LockState
 
@@ -121,7 +121,7 @@ protocol EVCharger: Sendable {
     /// function returns the actual lock state. Refer to ``EVCharger/setSoftwareLock(to:)`` for unlocking the
     /// software lock.
     ///
-    /// - Returns: lock state as type ``LockState``
+    /// - Returns: lock state as type `LockState`
     func getSoftwareLockState() async throws -> LockState
 
     /// Set Software Lock State
@@ -129,7 +129,7 @@ protocol EVCharger: Sendable {
     /// Chargers need to have a software lock which is required to be unlocked before a charging session can be started. This
     /// function unlocks the software lock.
     ///
-    /// - Returns: lock state as type ``LockState``, processed by the charger.
+    /// - Returns: lock state as type `LockState`, processed by the charger.
     func setSoftwareLock(to: LockState) async throws -> LockState
 }
 
