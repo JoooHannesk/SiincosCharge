@@ -181,20 +181,6 @@ struct ChargingSession: Hashable, CustomStringConvertible, Codable {
     }
 }
 
-/// Charging Session Status
-///
-/// These cases describe the charging session status:
-/// - running: a charging session is running, the ev charger is unlocked and the ev is ready to request power
-/// - finished: a charging session is finished, mainly used in charging session receipts
-/// - paused: a charging session is paused (by the charging session owner) and waits for being resumed
-/// - scheduled: a charging session is scheduled for the future and is waiting to start (when scheduled datetime is reached)
-enum ChargingSessionStatus: String, Codable {
-    case running
-    case finished
-    case paused
-    case scheduled
-}
-
 /// Charging System Information Data Model
 struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let systemId: String
