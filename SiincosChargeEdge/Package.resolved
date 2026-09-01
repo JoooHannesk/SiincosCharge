@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoooHannesk/SiincosChargeDataModels.git",
       "state" : {
-        "revision" : "c09a9e05bb8e8bcc73917bb0f46de3cc4ace703a",
-        "version" : "0.0.9"
+        "revision" : "09da797f12650a7eecf213b8faab4c0173854716",
+        "version" : "0.0.11"
       }
     },
     {

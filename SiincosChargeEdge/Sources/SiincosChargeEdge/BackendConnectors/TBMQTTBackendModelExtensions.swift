@@ -189,7 +189,6 @@ extension ChargingSession: JsonStringConvertible, SerializedJsonStringConvertibl
         userName = try container.decode(String.self, forKey: .userName)
         status = try container.decode(ChargingSessionStatus.self, forKey: .status)
         self.chargingCurrentSetpoint = Measurement(value: try container.decode(Double.self, forKey: .chargingCurrentSetpointA), unit: .amperes)
-
     }
 
 

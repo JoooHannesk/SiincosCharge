@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SiincosChargeDataModels
 
 protocol JsonStringConvertible: Codable {
     var asJson: String? { get }
