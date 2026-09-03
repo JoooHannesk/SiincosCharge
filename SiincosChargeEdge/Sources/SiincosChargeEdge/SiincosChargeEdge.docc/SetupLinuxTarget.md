@@ -54,7 +54,7 @@ dtoverlay=reComputer-R100x,uart2
 ```
 
 ## Build and install
-Proceed with the <doc:Build-Install> section. Once complete, return here to continue configuring the edge device.
+Proceed with the <doc:BuildInstall> section. Once complete, return here to continue configuring the edge device.
 
 ## Post configuration steps
 The post configuration steps are not needed but I recommend them to enhance system stability.
