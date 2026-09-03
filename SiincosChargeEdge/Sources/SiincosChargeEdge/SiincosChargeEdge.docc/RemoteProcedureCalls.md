@@ -8,6 +8,7 @@ The payload for the RPCs mainly originate from ``ChargingSession`` which is desi
 - ``ChargingSession/endTime``:  When scheduling a charging session, this field takes the desired ending time, provided as Unix time format.
 - ``ChargingSession/status``: The charging session action, either: `running`, `paused`, `finished`, `scheduled`
 - ``ChargingSession/chargingCurrentSetpoint``: The desired charging current for the charging session. Once a charging session is initiated, the current setpoint cannot be modified. The current setpoint is set when initiating a charging session and is fixed throughout this session.
+- RPC name to request a new or edit an existing charging session is: `requestChargingSession`
 
 ## Start a charging session
 To initiate a charging session, it is required to have a vehicle connected to the charger.
@@ -58,7 +59,7 @@ A state change from `EVState.pluggedIn` to `EVState.unplugged` while the chargin
 ```
 
 ## Schedule a charging session
-Initiate a charging session in the future. Start charging at `startTime` o'clock and end charging at `endTime` o'clock. As soon as charging is started, the `status` will be switched from `.scheduled` to `.running`
+Initiate a charging session in the future. Start charging at `startTime` o'clock and end charging at `endTime` o'clock. The argument for `endTime` is optional. As soon as charging is started, the `status` will be switched from `.scheduled` to `.running`
 ```json
 {
     "userName": "user@mockserver.com",
