@@ -59,7 +59,7 @@ A state change from `EVState.pluggedIn` to `EVState.unplugged` while the chargin
 ```
 
 ## Schedule a charging session
-Initiate a charging session in the future. Start charging at `startTime` o'clock and end charging at `endTime` o'clock. The argument for `endTime` is optional. As soon as charging is started, the `status` will be switched from `.scheduled` to `.running`
+Initiate a charging session in the future. Start charging at `startTime` o'clock and end charging at `endTime` o'clock. As soon as charging is started, the `status` will be switched from `.scheduled` to `.running`
 ```json
 {
     "userName": "user@mockserver.com",
