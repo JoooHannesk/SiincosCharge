@@ -3868,6 +3868,525 @@
         "row": 0,
         "col": 0,
         "id": "d4093e11-751b-ffa9-1344-f1b40b8d750f"
+      },
+      "5202a27c-5e2d-8dae-8b07-dc20eafb49d8": {
+        "typeFullFqn": "system.action_button",
+        "type": "latest",
+        "sizeX": 3,
+        "sizeY": 1,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "deviceId": "70af5bb0-7949-11f1-8c55-d99071db473d",
+              "entityAliasId": "0c888a58-4c34-e574-78c8-06ce7b2a52bb",
+              "dataKeys": [],
+              "alarmFilterConfig": {
+                "statusList": [
+                  "ACTIVE"
+                ]
+              }
+            }
+          ],
+          "showTitle": false,
+          "backgroundColor": "#FFFFFF01",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0px",
+          "settings": {
+            "activatedState": {
+              "action": "DO_NOTHING",
+              "defaultValue": false,
+              "getAttribute": {
+                "key": "state",
+                "scope": null
+              },
+              "getTimeSeries": {
+                "key": "state"
+              },
+              "getAlarmStatus": {
+                "severityList": null,
+                "typeList": null
+              },
+              "dataToValue": {
+                "type": "NONE",
+                "compareToValue": true,
+                "dataToValueFunction": "/* Should return boolean value */\nreturn data;"
+              }
+            },
+            "disabledState": {
+              "action": "DO_NOTHING",
+              "defaultValue": false,
+              "getAttribute": {
+                "key": "state",
+                "scope": null
+              },
+              "getTimeSeries": {
+                "key": "state"
+              },
+              "getAlarmStatus": {
+                "severityList": null,
+                "typeList": null
+              },
+              "dataToValue": {
+                "type": "NONE",
+                "compareToValue": true,
+                "dataToValueFunction": "/* Should return boolean value */\nreturn data;"
+              }
+            },
+            "appearance": {
+              "type": "outlined",
+              "showLabel": true,
+              "label": "Reports",
+              "showIcon": true,
+              "icon": "mdi:file-chart",
+              "iconSize": 24,
+              "iconSizeUnit": "px",
+              "mainColor": "#673AB7",
+              "backgroundColor": "#FFFFFFC0",
+              "autoScale": true,
+              "customStyle": {
+                "enabled": null,
+                "hovered": null,
+                "pressed": null,
+                "activated": null,
+                "disabled": null
+              }
+            }
+          },
+          "title": "Action button",
+          "showTitleIcon": false,
+          "iconColor": "rgba(0, 0, 0, 0.87)",
+          "iconSize": "24px",
+          "titleTooltip": "",
+          "dropShadow": false,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "showLegend": false,
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": "",
+          "borderRadius": "4px",
+          "configMode": "advanced",
+          "actions": {
+            "click": [
+              {
+                "name": "onClick",
+                "icon": "mdi:office-building-cog",
+                "useShowWidgetActionFunction": null,
+                "showWidgetActionFunction": "return true;",
+                "type": "openDashboardState",
+                "targetDashboardStateId": "reports",
+                "setEntityId": true,
+                "stateEntityParamName": null,
+                "openRightLayout": false,
+                "openInSeparateDialog": false,
+                "openInPopover": false,
+                "id": "89ef6d1f-079c-f139-6f7e-c495991ada4a"
+              }
+            ]
+          }
+        },
+        "row": 0,
+        "col": 0,
+        "id": "5202a27c-5e2d-8dae-8b07-dc20eafb49d8"
+      },
+      "39ead242-02fd-ae86-e736-6dcb28a3cb57": {
+        "typeFullFqn": "system.cards.timeseries_table",
+        "type": "timeseries",
+        "sizeX": 8,
+        "sizeY": 6.5,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "",
+              "entityAliasId": "0c888a58-4c34-e574-78c8-06ce7b2a52bb",
+              "filterId": null,
+              "dataKeys": [
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Session ID",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).sessionId;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "CPID",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).cpId;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "User",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).userName;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Start Time",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).startTime;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nlet current_datetime = new Date(dataPoint);\nlet formatted_date = current_datetime.getFullYear() + \"-\" + (current_datetime.getMonth() + 1) + \"-\" + current_datetime.getDate() + \" \" + current_datetime.getHours() + \":\" + current_datetime.getMinutes() + \":\" + current_datetime.getSeconds()\nreturn formatted_date;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "End Time",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).endTime;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nlet current_datetime = new Date(dataPoint);\nlet formatted_date = current_datetime.getFullYear() + \"-\" + (current_datetime.getMonth() + 1) + \"-\" + current_datetime.getDate() + \" \" + current_datetime.getHours() + \":\" + current_datetime.getMinutes() + \":\" + current_datetime.getSeconds()\nreturn formatted_date;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Meter Reading Start (kWh)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).meterReadingStartkWh;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Meter Reading End (kWh)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).meterReadingEndkWh;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Total Charging Time (Minutes)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).totalChargingDuration/60;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn parseFloat(dataPoint).toFixed(2);\n"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Total Energy Consumed (kWh)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).totalEnergyConsumedkWh;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn parseFloat(dataPoint).toFixed(4)"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Current Setpoint (A)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).chargingCurrentSetpointA;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                }
+              ],
+              "alarmFilterConfig": {
+                "statusList": [
+                  "ACTIVE"
+                ]
+              },
+              "latestDataKeys": []
+            }
+          ],
+          "showTitle": true,
+          "backgroundColor": "#FFFFFFB1",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "10px",
+          "settings": {
+            "enableSearch": true,
+            "enableSelectColumnDisplay": true,
+            "enableStickyHeader": true,
+            "enableStickyAction": true,
+            "showCellActionsMenu": true,
+            "reserveSpaceForHiddenAction": "true",
+            "showTimestamp": true,
+            "dateFormat": {
+              "format": "yyyy-MM-dd HH:mm:ss"
+            },
+            "displayPagination": true,
+            "useEntityLabel": false,
+            "defaultPageSize": 10,
+            "pageStepCount": 3,
+            "pageStepIncrement": 10,
+            "hideEmptyLines": false,
+            "disableStickyHeader": false,
+            "useRowStyleFunction": false,
+            "rowStyleFunction": "",
+            "sortOrder": {
+              "property": "createdTime",
+              "direction": "DESC"
+            }
+          },
+          "title": "Charging Sessions (Full Log)",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400,
+            "padding": "5px 10px 5px 10px"
+          },
+          "useDashboardTimewindow": false,
+          "showLegend": false,
+          "widgetStyle": {},
+          "actions": {},
+          "showTitleIcon": false,
+          "iconColor": "rgba(0, 0, 0, 0.87)",
+          "iconSize": "24px",
+          "configMode": "advanced",
+          "titleFont": null,
+          "titleColor": "#000000",
+          "titleIcon": null,
+          "timewindow": {
+            "selectedTab": 1,
+            "history": {
+              "historyType": 0,
+              "timewindowMs": 2592000000
+            },
+            "aggregation": {
+              "type": "NONE",
+              "limit": 13146
+            }
+          },
+          "displayTimewindow": true,
+          "titleTooltip": "",
+          "margin": "10px",
+          "borderRadius": "10px",
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "39ead242-02fd-ae86-e736-6dcb28a3cb57"
+      },
+      "dfdfa872-a3a9-4f8f-9a25-a7b6a75a88d3": {
+        "typeFullFqn": "system.cards.timeseries_table",
+        "type": "timeseries",
+        "sizeX": 8,
+        "sizeY": 6.5,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": "",
+              "entityAliasId": "0c888a58-4c34-e574-78c8-06ce7b2a52bb",
+              "filterId": null,
+              "dataKeys": [
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Session ID",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).sessionId;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "CPID",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).cpId;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "User",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).userName;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Total Charging Time (Minutes)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).totalChargingDuration/60;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn parseFloat(dataPoint).toFixed(2);\n"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Total Energy Consumed (kWh)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).totalEnergyConsumedkWh;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn parseFloat(dataPoint).toFixed(4)"
+                },
+                {
+                  "name": "sessionReceipt",
+                  "type": "timeseries",
+                  "label": "Current Setpoint (A)",
+                  "color": "#80CBC3",
+                  "settings": {},
+                  "aggregationType": null,
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": true,
+                  "postFuncBody": "var dataPoint;\ntry {\n    dataPoint = JSON.parse(value).chargingCurrentSetpointA;\n} catch (e) {\n    dataPoint = \"\";\n}\n\nif (typeof dataPoint === 'undefined' || dataPoint === null) {\n    return \"\";\n}\n\nreturn dataPoint;"
+                }
+              ],
+              "alarmFilterConfig": {
+                "statusList": [
+                  "ACTIVE"
+                ]
+              },
+              "latestDataKeys": []
+            }
+          ],
+          "showTitle": true,
+          "backgroundColor": "#FFFFFFB1",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "10px",
+          "settings": {
+            "enableSearch": true,
+            "enableSelectColumnDisplay": true,
+            "enableStickyHeader": true,
+            "enableStickyAction": true,
+            "showCellActionsMenu": true,
+            "reserveSpaceForHiddenAction": "true",
+            "showTimestamp": true,
+            "dateFormat": {
+              "format": "yyyy-MM-dd HH:mm:ss"
+            },
+            "displayPagination": true,
+            "useEntityLabel": false,
+            "defaultPageSize": 10,
+            "pageStepCount": 3,
+            "pageStepIncrement": 10,
+            "hideEmptyLines": false,
+            "disableStickyHeader": false,
+            "useRowStyleFunction": false,
+            "rowStyleFunction": "",
+            "sortOrder": {
+              "property": "createdTime",
+              "direction": "DESC"
+            }
+          },
+          "title": "Charging Sessions",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400,
+            "padding": "5px 10px 5px 10px"
+          },
+          "useDashboardTimewindow": false,
+          "showLegend": false,
+          "widgetStyle": {},
+          "actions": {},
+          "showTitleIcon": false,
+          "iconColor": "rgba(0, 0, 0, 0.87)",
+          "iconSize": "24px",
+          "configMode": "advanced",
+          "titleFont": null,
+          "titleColor": "#000000",
+          "titleIcon": null,
+          "timewindow": {
+            "selectedTab": 1,
+            "history": {
+              "historyType": 0,
+              "timewindowMs": 2592000000
+            },
+            "aggregation": {
+              "type": "NONE",
+              "limit": 13146
+            }
+          },
+          "displayTimewindow": true,
+          "titleTooltip": "",
+          "margin": "10px",
+          "borderRadius": "10px",
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "dfdfa872-a3a9-4f8f-9a25-a7b6a75a88d3"
       }
     },
     "states": {
@@ -3913,10 +4432,10 @@
                 "col": 14
               },
               "3836d779-1d19-205f-cf43-9495f8b53fd5": {
-                "sizeX": 6,
+                "sizeX": 4,
                 "sizeY": 2,
                 "row": 1,
-                "col": 30
+                "col": 28
               },
               "44612ef0-c03c-7e40-e69f-61fcb94a64c2": {
                 "sizeX": 36,
@@ -3939,6 +4458,12 @@
                 "resizable": true,
                 "row": 1,
                 "col": 1
+              },
+              "5202a27c-5e2d-8dae-8b07-dc20eafb49d8": {
+                "sizeX": 4,
+                "sizeY": 2,
+                "row": 1,
+                "col": 33
               }
             },
             "gridSettings": {
@@ -4043,34 +4568,34 @@
           "main": {
             "widgets": {
               "44612ef0-c03c-7e40-e69f-61fcb94a64c2": {
-                "sizeX": 25,
-                "sizeY": 7,
+                "sizeX": 22,
+                "sizeY": 6,
                 "row": 1,
-                "col": 0
+                "col": 1
               },
               "49718cc9-cc00-8bb5-d20d-f3b168f38525": {
-                "sizeX": 12,
-                "sizeY": 7,
+                "sizeX": 11,
+                "sizeY": 5,
                 "row": 8,
-                "col": 0
+                "col": 1
               },
               "d931918f-6b83-f9e1-5acf-e27d33a0942e": {
-                "sizeX": 12,
-                "sizeY": 7,
+                "sizeX": 11,
+                "sizeY": 5,
                 "row": 8,
-                "col": 13
+                "col": 12
               },
               "7b07ed92-9585-c84c-172f-66ee379e10d4": {
-                "sizeX": 12,
-                "sizeY": 7,
-                "row": 15,
-                "col": 0
+                "sizeX": 11,
+                "sizeY": 5,
+                "row": 14,
+                "col": 1
               },
               "42206653-4828-4a44-6de5-f6f55abb30a4": {
-                "sizeX": 12,
-                "sizeY": 7,
-                "row": 15,
-                "col": 13
+                "sizeX": 11,
+                "sizeY": 5,
+                "row": 14,
+                "col": 12
               },
               "4a9b67f3-7f18-3b32-04f1-8dc1fbaff2d2": {
                 "sizeX": 5,
@@ -4095,6 +4620,51 @@
               "mobileAutoFillHeight": false,
               "mobileRowHeight": 70,
               "backgroundImageUrl": "tb-image;/api/images/tenant/SiincosChargeDashboard-Background-2.jpg"
+            }
+          }
+        }
+      },
+      "reports": {
+        "name": "Reports",
+        "root": false,
+        "layouts": {
+          "main": {
+            "widgets": {
+              "4a9b67f3-7f18-3b32-04f1-8dc1fbaff2d2": {
+                "sizeX": 6,
+                "sizeY": 1,
+                "preserveAspectRatio": false,
+                "resizable": true,
+                "row": 0,
+                "col": 0
+              },
+              "39ead242-02fd-ae86-e736-6dcb28a3cb57": {
+                "sizeX": 24,
+                "sizeY": 11,
+                "row": 17,
+                "col": 0
+              },
+              "dfdfa872-a3a9-4f8f-9a25-a7b6a75a88d3": {
+                "sizeX": 24,
+                "sizeY": 15,
+                "row": 1,
+                "col": 0
+              }
+            },
+            "gridSettings": {
+              "layoutType": "default",
+              "backgroundColor": "#eeeeee",
+              "columns": 96,
+              "margin": 10,
+              "outerMargin": true,
+              "backgroundSizeMode": "100%",
+              "minColumns": 24,
+              "viewFormat": "grid",
+              "autoFillHeight": false,
+              "rowHeight": 70,
+              "backgroundImageUrl": "tb-image;/api/images/tenant/SiincosChargeDashboard-Background-2.jpg",
+              "mobileAutoFillHeight": false,
+              "mobileRowHeight": 70
             }
           }
         }
