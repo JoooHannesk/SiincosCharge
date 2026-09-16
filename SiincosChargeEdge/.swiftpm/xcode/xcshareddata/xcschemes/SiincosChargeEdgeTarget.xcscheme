@@ -11,7 +11,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "export PROJECT_HOME=~/git/SiincosCharge/SiincosChargeEdge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;export TARGET_PROJECT_HOME=/opt/SiincosChargeEdgeDev&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME $PROJECT_HOME $TARGET_PROJECT_HOME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME $TARGET_PROJECT_HOME&#10;"
+               scriptText = "export PROJECT_HOME=~/Developer/SiincosCharge/SiincosChargeEdge&#10;export TARGET_SSH_USERNAME=evchargermanager&#10;export TARGET_HOSTNAME=siincoschargeedge&#10;export TARGET_PROJECT_HOME=/opt/SiincosChargeEdgeDev&#10;&#10;echo &quot;Location: $PROJECT_HOME&quot;&#10;cd $PROJECT_HOME&#10;./syncToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME $PROJECT_HOME $TARGET_PROJECT_HOME&#10;./connectToTarget.sh $TARGET_SSH_USERNAME $TARGET_HOSTNAME $TARGET_PROJECT_HOME&#10;"
                shellToInvoke = "/bin/zsh">
             </ActionContent>
          </ExecutionAction>
