@@ -1,0 +1,1025 @@
+{
+  "@context" : "https://spdx.org/rdf/3.0.1/spdx-context.jsonld",
+  "@graph" : [
+    {
+      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "from" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6",
+      "relationshipType" : "hasDeclaredLicense",
+      "spdxId" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6-hasDeclaredLicense-urn:spdx:Apache-2.0",
+      "to" : [
+        "urn:spdx:Apache-2.0"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "simplelicensing_licenseExpression" : "Apache-2.0",
+      "spdxId" : "urn:spdx:Apache-2.0",
+      "type" : "simplelicensing_LicenseExpression"
+    },
+    {
+      "@id" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "created" : "2026-09-25T17:43:25Z",
+      "createdBy" : [
+        "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6"
+      ],
+      "specVersion" : "6.4.0-dev",
+      "type" : "CreationInfo"
+    },
+    {
+      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "name" : "swift-package-manager",
+      "spdxId" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6",
+      "type" : "Agent"
+    },
+    {
+      "@id" : "_:creationInfo",
+      "created" : "2026-09-25T17:43:25Z",
+      "createdBy" : [
+        "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6"
+      ],
+      "specVersion" : "3.0.1",
+      "type" : "CreationInfo"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "profileConformance" : [
+        "core",
+        "software"
+      ],
+      "rootElement" : [
+        "urn:spdx:siincoschargeedge"
+      ],
+      "spdxId" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f",
+      "type" : "software_Sbom"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f",
+      "relationshipType" : "describes",
+      "spdxId" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f-describes-urn:spdx:siincoschargeedge",
+      "to" : [
+        "urn:spdx:siincoschargeedge"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "profileConformance" : [
+        "core",
+        "software"
+      ],
+      "rootElement" : [
+        "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f"
+      ],
+      "spdxId" : "urn:uuid:cae8b0ab-13ff-4695-8661-0dd9ddda9992",
+      "type" : "SpdxDocument"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: modbus-swift>",
+      "externalUrl" : "pkg:swift/github.com/3a4oT/modbus-swift@1.0.2",
+      "name" : "modbus-swift",
+      "software_internalVersion" : "1.0.2",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:modbus-swift",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/3a4oT/modbus-swift:ModbusSerial@1.0.2",
+      "name" : "ModbusSerial",
+      "software_internalVersion" : "1.0.2",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:modbus-swift:ModbusSerial",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: mqtt-nio>",
+      "externalUrl" : "pkg:swift/github.com/swift-server-community/mqtt-nio@2.13.0",
+      "name" : "mqtt-nio",
+      "software_internalVersion" : "2.13.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:mqtt-nio",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/swift-server-community/mqtt-nio:MQTTNIO@2.13.0",
+      "name" : "MQTTNIO",
+      "software_internalVersion" : "2.13.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:mqtt-nio:MQTTNIO",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: siincoschargedatamodels>",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargedatamodels@0.0.11",
+      "name" : "siincoschargedatamodels",
+      "software_internalVersion" : "0.0.11",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:siincoschargedatamodels",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargedatamodels:SiincosChargeDataModels@0.0.11",
+      "name" : "SiincosChargeDataModels",
+      "software_internalVersion" : "0.0.11",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:siincoschargedatamodels:SiincosChargeDataModels",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: siincoschargeedge>",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "name" : "siincoschargeedge",
+      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_primaryPurpose" : "application",
+      "spdxId" : "urn:spdx:siincoschargeedge",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdge@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "name" : "SiincosChargeEdge",
+      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_primaryPurpose" : "application",
+      "spdxId" : "urn:spdx:siincoschargeedge:SiincosChargeEdge",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdgeTests@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "name" : "SiincosChargeEdgeTests",
+      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-async-algorithms>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-async-algorithms@1.1.3",
+      "name" : "swift-async-algorithms",
+      "software_internalVersion" : "1.1.3",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-async-algorithms",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-async-algorithms:AsyncAlgorithms@1.1.3",
+      "name" : "AsyncAlgorithms",
+      "software_internalVersion" : "1.1.3",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-async-algorithms:AsyncAlgorithms",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-atomics>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-atomics@1.3.0",
+      "name" : "swift-atomics",
+      "software_internalVersion" : "1.3.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-atomics",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-atomics:Atomics@1.3.0",
+      "name" : "Atomics",
+      "software_internalVersion" : "1.3.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-atomics:Atomics",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-collections>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-collections@1.4.1",
+      "name" : "swift-collections",
+      "software_internalVersion" : "1.4.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-collections",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-collections:DequeModule@1.4.1",
+      "name" : "DequeModule",
+      "software_internalVersion" : "1.4.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-collections:DequeModule",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-collections:OrderedCollections@1.4.1",
+      "name" : "OrderedCollections",
+      "software_internalVersion" : "1.4.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-collections:OrderedCollections",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-log>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-log@1.10.1",
+      "name" : "swift-log",
+      "software_internalVersion" : "1.10.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-log",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-log:Logging@1.10.1",
+      "name" : "Logging",
+      "software_internalVersion" : "1.10.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-log:Logging",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-nio>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio@2.96.0",
+      "name" : "swift-nio",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-nio-ssl>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio-ssl@2.36.1",
+      "name" : "swift-nio-ssl",
+      "software_internalVersion" : "2.36.1",
+      "software_primaryPurpose" : "application",
+      "spdxId" : "urn:spdx:swift-nio-ssl",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio-ssl:NIOSSL@2.36.1",
+      "name" : "NIOSSL",
+      "software_internalVersion" : "2.36.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio-ssl:NIOSSL",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-nio-transport-services>",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio-transport-services@1.28.0",
+      "name" : "swift-nio-transport-services",
+      "software_internalVersion" : "1.28.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio-transport-services",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio-transport-services:NIOTransportServices@1.28.0",
+      "name" : "NIOTransportServices",
+      "software_internalVersion" : "1.28.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio-transport-services:NIOTransportServices",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIO@2.96.0",
+      "name" : "NIO",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIO",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOConcurrencyHelpers@2.96.0",
+      "name" : "NIOConcurrencyHelpers",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOConcurrencyHelpers",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOCore@2.96.0",
+      "name" : "NIOCore",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOCore",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOFoundationCompat@2.96.0",
+      "name" : "NIOFoundationCompat",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOFoundationCompat",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOHTTP1@2.96.0",
+      "name" : "NIOHTTP1",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOHTTP1",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOTLS@2.96.0",
+      "name" : "NIOTLS",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOTLS",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/apple/swift-nio:NIOWebSocket@2.96.0",
+      "name" : "NIOWebSocket",
+      "software_internalVersion" : "2.96.0",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-nio:NIOWebSocket",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: swift-service-lifecycle>",
+      "externalUrl" : "pkg:swift/github.com/swift-server/swift-service-lifecycle@2.10.1",
+      "name" : "swift-service-lifecycle",
+      "software_internalVersion" : "2.10.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-service-lifecycle",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/swift-server/swift-service-lifecycle:ServiceLifecycle@2.10.1",
+      "name" : "ServiceLifecycle",
+      "software_internalVersion" : "2.10.1",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:swift-service-lifecycle:ServiceLifecycle",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "description" : "<ResolvedPackage: tinytbdeviceclient>",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/tinytbdeviceclient@0.0.6",
+      "name" : "tinytbdeviceclient",
+      "software_internalVersion" : "0.0.6",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:tinytbdeviceclient",
+      "summary" : "swift-package",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/tinytbdeviceclient:TinyTBDeviceClient@0.0.6",
+      "name" : "TinyTBDeviceClient",
+      "software_internalVersion" : "0.0.6",
+      "software_primaryPurpose" : "library",
+      "spdxId" : "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient",
+      "summary" : "swift-product",
+      "type" : "software_Package"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:modbus-swift",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:modbus-swift-dependsOn",
+      "to" : [
+        "urn:spdx:modbus-swift:ModbusSerial",
+        "urn:spdx:swift-log",
+        "urn:spdx:swift-service-lifecycle"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:modbus-swift:ModbusSerial",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:modbus-swift:ModbusSerial-dependsOn",
+      "to" : [
+        "urn:spdx:swift-log:Logging",
+        "urn:spdx:swift-service-lifecycle:ServiceLifecycle"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:mqtt-nio",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:mqtt-nio-dependsOn",
+      "to" : [
+        "urn:spdx:mqtt-nio:MQTTNIO",
+        "urn:spdx:swift-atomics",
+        "urn:spdx:swift-log",
+        "urn:spdx:swift-nio",
+        "urn:spdx:swift-nio-ssl",
+        "urn:spdx:swift-nio-transport-services"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:mqtt-nio:MQTTNIO",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:mqtt-nio:MQTTNIO-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-log:Logging",
+        "urn:spdx:swift-nio-ssl:NIOSSL",
+        "urn:spdx:swift-nio-transport-services:NIOTransportServices",
+        "urn:spdx:swift-nio:NIO",
+        "urn:spdx:swift-nio:NIOConcurrencyHelpers",
+        "urn:spdx:swift-nio:NIOHTTP1",
+        "urn:spdx:swift-nio:NIOWebSocket"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:siincoschargedatamodels",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:siincoschargedatamodels-dependsOn",
+      "to" : [
+        "urn:spdx:siincoschargedatamodels:SiincosChargeDataModels"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:siincoschargeedge",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:siincoschargeedge-dependsOn",
+      "to" : [
+        "urn:spdx:modbus-swift",
+        "urn:spdx:mqtt-nio",
+        "urn:spdx:siincoschargedatamodels",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdge",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests",
+        "urn:spdx:swift-async-algorithms",
+        "urn:spdx:swift-nio",
+        "urn:spdx:swift-nio-ssl",
+        "urn:spdx:swift-nio-transport-services",
+        "urn:spdx:swift-service-lifecycle",
+        "urn:spdx:tinytbdeviceclient"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:siincoschargeedge",
+      "relationshipType" : "hasTest",
+      "spdxId" : "urn:spdx:siincoschargeedge-hasTest",
+      "to" : [
+        "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:siincoschargeedge:SiincosChargeEdge",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:siincoschargeedge:SiincosChargeEdge-dependsOn",
+      "to" : [
+        "urn:spdx:modbus-swift:ModbusSerial",
+        "urn:spdx:siincoschargedatamodels:SiincosChargeDataModels",
+        "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-async-algorithms",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-async-algorithms-dependsOn",
+      "to" : [
+        "urn:spdx:swift-async-algorithms:AsyncAlgorithms",
+        "urn:spdx:swift-collections"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-async-algorithms:AsyncAlgorithms",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-async-algorithms:AsyncAlgorithms-dependsOn",
+      "to" : [
+        "urn:spdx:swift-collections:DequeModule",
+        "urn:spdx:swift-collections:OrderedCollections"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-atomics",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-atomics-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-collections",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-collections-dependsOn",
+      "to" : [
+        "urn:spdx:swift-collections:DequeModule",
+        "urn:spdx:swift-collections:OrderedCollections"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-log",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-log-dependsOn",
+      "to" : [
+        "urn:spdx:swift-log:Logging"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics",
+        "urn:spdx:swift-collections",
+        "urn:spdx:swift-nio:NIO",
+        "urn:spdx:swift-nio:NIOConcurrencyHelpers",
+        "urn:spdx:swift-nio:NIOCore",
+        "urn:spdx:swift-nio:NIOFoundationCompat",
+        "urn:spdx:swift-nio:NIOHTTP1",
+        "urn:spdx:swift-nio:NIOTLS",
+        "urn:spdx:swift-nio:NIOWebSocket"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio-ssl",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio-ssl-dependsOn",
+      "to" : [
+        "urn:spdx:swift-nio",
+        "urn:spdx:swift-nio-ssl:NIOSSL"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio-ssl:NIOSSL",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio-ssl:NIOSSL-dependsOn",
+      "to" : [
+        "urn:spdx:swift-nio:NIO",
+        "urn:spdx:swift-nio:NIOConcurrencyHelpers",
+        "urn:spdx:swift-nio:NIOCore",
+        "urn:spdx:swift-nio:NIOTLS"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio-transport-services",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio-transport-services-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics",
+        "urn:spdx:swift-nio",
+        "urn:spdx:swift-nio-transport-services:NIOTransportServices"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio-transport-services:NIOTransportServices",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio-transport-services:NIOTransportServices-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-nio:NIO",
+        "urn:spdx:swift-nio:NIOCore",
+        "urn:spdx:swift-nio:NIOFoundationCompat",
+        "urn:spdx:swift-nio:NIOTLS"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIO",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIO-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIOCore",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIOCore-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIOFoundationCompat",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIOFoundationCompat-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIOHTTP1",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIOHTTP1-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIOTLS",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIOTLS-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-nio:NIOWebSocket",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-nio:NIOWebSocket-dependsOn",
+      "to" : [
+        "urn:spdx:swift-atomics:Atomics",
+        "urn:spdx:swift-collections:DequeModule"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-service-lifecycle",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-service-lifecycle-dependsOn",
+      "to" : [
+        "urn:spdx:swift-async-algorithms",
+        "urn:spdx:swift-log",
+        "urn:spdx:swift-service-lifecycle:ServiceLifecycle"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:swift-service-lifecycle:ServiceLifecycle",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:swift-service-lifecycle:ServiceLifecycle-dependsOn",
+      "to" : [
+        "urn:spdx:swift-async-algorithms:AsyncAlgorithms",
+        "urn:spdx:swift-log:Logging"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:tinytbdeviceclient",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:tinytbdeviceclient-dependsOn",
+      "to" : [
+        "urn:spdx:mqtt-nio",
+        "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient",
+      "relationshipType" : "dependsOn",
+      "spdxId" : "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient-dependsOn",
+      "to" : [
+        "urn:spdx:mqtt-nio:MQTTNIO"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:09da797f12650a7eecf213b8faab4c0173854716",
+      "identifierLocator" : [
+        "https://github.com/JoooHannesk/SiincosChargeDataModels.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:2595851044b2cd498c45709172598de183e54a48",
+      "identifierLocator" : [
+        "https://github.com/JoooHannesk/TinyTBDeviceClient.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:6675bc0ff86e61436e615df6fc5174e043e57924",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-collections.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:67787bb645a5e67d2edcdfbe48a216cc549222d5",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-nio-transport-services.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:7130151da9f7e4c20291995a8b18f6452713d465",
+      "identifierLocator" : [
+        "https://github.com/3a4oT/modbus-swift.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:89888196dd79c61c50bca9a103d8114f32e1e598",
+      "identifierLocator" : [
+        "https://github.com/swift-server/swift-service-lifecycle.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:91d357875eabd63c55eee40fc6b85bc1f00839ed",
+      "identifierLocator" : [
+        "https://github.com/swift-server-community/mqtt-nio.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "identifierLocator" : [
+        "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-async-algorithms.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:b31565862a8f39866af50bc6676160d8dda7de35",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-nio.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:b601256eab081c0f92f059e12818ac1d4f178ff7",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-atomics.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:bbd81b6725ae874c69e9b8c8804d462356b55523",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-log.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:df9c3406028e3297246e6e7081977a167318b692",
+      "identifierLocator" : [
+        "https://github.com/apple/swift-nio-ssl.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:09da797f12650a7eecf213b8faab4c0173854716",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:09da797f12650a7eecf213b8faab4c0173854716-generates",
+      "to" : [
+        "urn:spdx:siincoschargedatamodels",
+        "urn:spdx:siincoschargedatamodels:SiincosChargeDataModels"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:2595851044b2cd498c45709172598de183e54a48",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:2595851044b2cd498c45709172598de183e54a48-generates",
+      "to" : [
+        "urn:spdx:tinytbdeviceclient",
+        "urn:spdx:tinytbdeviceclient:TinyTBDeviceClient"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:6675bc0ff86e61436e615df6fc5174e043e57924",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:6675bc0ff86e61436e615df6fc5174e043e57924-generates",
+      "to" : [
+        "urn:spdx:swift-collections",
+        "urn:spdx:swift-collections:DequeModule",
+        "urn:spdx:swift-collections:OrderedCollections"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:67787bb645a5e67d2edcdfbe48a216cc549222d5",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:67787bb645a5e67d2edcdfbe48a216cc549222d5-generates",
+      "to" : [
+        "urn:spdx:swift-nio-transport-services",
+        "urn:spdx:swift-nio-transport-services:NIOTransportServices"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:7130151da9f7e4c20291995a8b18f6452713d465",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:7130151da9f7e4c20291995a8b18f6452713d465-generates",
+      "to" : [
+        "urn:spdx:modbus-swift",
+        "urn:spdx:modbus-swift:ModbusSerial"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:89888196dd79c61c50bca9a103d8114f32e1e598",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:89888196dd79c61c50bca9a103d8114f32e1e598-generates",
+      "to" : [
+        "urn:spdx:swift-service-lifecycle",
+        "urn:spdx:swift-service-lifecycle:ServiceLifecycle"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:91d357875eabd63c55eee40fc6b85bc1f00839ed",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:91d357875eabd63c55eee40fc6b85bc1f00839ed-generates",
+      "to" : [
+        "urn:spdx:mqtt-nio",
+        "urn:spdx:mqtt-nio:MQTTNIO"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71-generates",
+      "to" : [
+        "urn:spdx:siincoschargeedge",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdge",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272-generates",
+      "to" : [
+        "urn:spdx:swift-async-algorithms",
+        "urn:spdx:swift-async-algorithms:AsyncAlgorithms"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:b31565862a8f39866af50bc6676160d8dda7de35",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:b31565862a8f39866af50bc6676160d8dda7de35-generates",
+      "to" : [
+        "urn:spdx:swift-nio",
+        "urn:spdx:swift-nio:NIO",
+        "urn:spdx:swift-nio:NIOConcurrencyHelpers",
+        "urn:spdx:swift-nio:NIOCore",
+        "urn:spdx:swift-nio:NIOFoundationCompat",
+        "urn:spdx:swift-nio:NIOHTTP1",
+        "urn:spdx:swift-nio:NIOTLS",
+        "urn:spdx:swift-nio:NIOWebSocket"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:b601256eab081c0f92f059e12818ac1d4f178ff7",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:b601256eab081c0f92f059e12818ac1d4f178ff7-generates",
+      "to" : [
+        "urn:spdx:swift-atomics",
+        "urn:spdx:swift-atomics:Atomics"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:bbd81b6725ae874c69e9b8c8804d462356b55523",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:bbd81b6725ae874c69e9b8c8804d462356b55523-generates",
+      "to" : [
+        "urn:spdx:swift-log",
+        "urn:spdx:swift-log:Logging"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:df9c3406028e3297246e6e7081977a167318b692",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:df9c3406028e3297246e6e7081977a167318b692-generates",
+      "to" : [
+        "urn:spdx:swift-nio-ssl",
+        "urn:spdx:swift-nio-ssl:NIOSSL"
+      ],
+      "type" : "Relationship"
+    }
+  ]
+}
