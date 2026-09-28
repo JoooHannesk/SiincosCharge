@@ -52,15 +52,16 @@ On the target (Raspberry, reComputer, etc.), run the following steps:
 
 9. Run (as debug) to check everything works. At this point this should already be the case. Run `swift run SiincosChargeEdge` to execute the binary. Here you start *SiincosChargeEdge* for the first time and you should see the device appear as *online* in ThingsBoard. If you have connected physical devices to the RS485 bus, you will see its data appearing in ThingsBoard under the device's telemetry tab.
 
-10. Build a standalone binary: `swift build -c release --product SiincosChargeEdge`. This is the *release* executable which is going to be *installed*.
+10. Build the binary (depends on Swift runtime libraries installed on the target): `swift build -c release --product SiincosChargeEdge`. This is the *release* executable which is going to be *installed*. Executing this binary requires the Swift runtime libraries installed on the target system. If you plan to copy the binary as a standalone binary to a system (e.g. raspberry) where no Swift runtime libraries are present, consider building it as follows:
+11. Build the standalone binary (Swift runtime libraries don't need to be present on the target): `swift build -c release --static-swift-stdlib --product SiincosChargeEdge` (this will produce a larger binary but all runtime libraries are statically linked).
 
-11. Check the binary path and copy it to its destination using the following little script (`swift build -c release --show-bin-path` is not building again, instead it is just showing where the binary is residing):
+12. Check the binary path and copy it to its destination using the following little script (`swift build -c release --show-bin-path` is not building again, instead it is just showing where the binary is residing):
 ```bash
 BIN_PATH=$(swift build -c release --show-bin-path)
 cp ${BIN_PATH}/SiincosChargeEdge /opt/SiincosChargeEdge
 ```
 
-12. You should be able to run the installed binary manually: `cd /opt/SiincosChargeEdge/ && ./SiincosChargeEdge`. Now, your terminal should look like this and the binary keeps running (is not killing itself):
+13. You should be able to run the installed binary manually: `cd /opt/SiincosChargeEdge/ && ./SiincosChargeEdge`. Now, your terminal should look like this and the binary keeps running (is not killing itself):
 
 ![SiincosChargeEdge executable is running](SiincosChargeEdgeExecutableRunning.png)
 
