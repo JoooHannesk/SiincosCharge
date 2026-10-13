@@ -1,0 +1,100 @@
+#!/bin/sh
+# Fake gpioget for debugging SiincosChargeEdge on macOS.
+# Mimics the libgpiod v2 CLI (and the basic v1 form) but reads line
+# states from plain files instead of /dev/gpiochipN.
+#
+# State lives in $FAKE_GPIO_DIR (default: .fake-gpio next to this script):
+#   <dir>/<chip>/<offset>   contains 0, 1, or "busy" (simulate a held line)
+#   <dir>/names             optional "NAME CHIP OFFSET" lines for name lookup
+# Use the companion `fakegpio` script to create and change these files.
+#
+# Supported:
+#   v2: gpioget [-c CHIP] [--numeric] [--unquoted] [-l] LINE...
+#       (LINE is an offset with -c, or a line name without -c)
+#   v1: gpioget CHIP OFFSET...          (prints numeric values)
+# Ignored for compatibility: -a, -b BIAS, -C NAME, -p PERIOD, -s
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DIR="${FAKE_GPIO_DIR:-$SCRIPT_DIR/.fake-gpio}"
+PROG="gpioget"
+
+die() { echo "$PROG: $*" >&2; exit 1; }
+
+usage() {
+    echo "Usage: $PROG [-c CHIP] [--numeric] [--unquoted] [-l] LINE..."
+    echo "       $PROG CHIP OFFSET...   (v1 syntax)"
+    echo "Fake implementation; state in $DIR"
+}
+
+chip=""; numeric=0; unquoted=0; active_low=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -c|--chip)        [ $# -ge 2 ] || die "option '$1' requires an argument"
+                          chip="$2"; shift 2 ;;
+        --chip=*)         chip="${1#--chip=}"; shift ;;
+        --numeric)        numeric=1; shift ;;
+        --unquoted)       unquoted=1; shift ;;
+        -l|--active-low)  active_low=1; shift ;;
+        -a|--as-is|-s|--strict) shift ;;
+        -b|--bias|-C|--consumer|-p|--hold-period) shift 2 ;;
+        --bias=*|--consumer=*|--hold-period=*) shift ;;
+        -h|--help)        usage; exit 0 ;;
+        -v|--version)     echo "$PROG (fake) v2.x compatible"; exit 0 ;;
+        --)               shift; break ;;
+        -*)               die "unrecognized option '$1'" ;;
+        *)                break ;;
+    esac
+done
+
+[ $# -gt 0 ] || die "at least one GPIO line must be specified"
+
+# v1 syntax: first positional argument is a chip name and no -c given
+if [ -z "$chip" ] && echo "$1" | grep -q '^gpiochip[0-9]*$' && [ $# -ge 2 ]; then
+    chip="$1"; shift
+    numeric=1
+fi
+
+# Resolve one line argument to "CHIP OFFSET"
+resolve() {
+    if [ -n "$chip" ]; then
+        echo "$1" | grep -q '^[0-9][0-9]*$' || die "cannot find line '$1'"
+        echo "$chip $1"; return
+    fi
+    if [ -f "$DIR/names" ]; then
+        hit=$(awk -v n="$1" '$1 == n { print $2, $3; exit }' "$DIR/names")
+        [ -n "$hit" ] && { echo "$hit"; return; }
+    fi
+    # Default naming on the Pi: GPIOn lives on gpiochip0 at offset n
+    case "$1" in
+        GPIO[0-9]*) n="${1#GPIO}"
+                    echo "$n" | grep -q '^[0-9][0-9]*$' && { echo "gpiochip0 $n"; return; } ;;
+    esac
+    die "cannot find line '$1'"
+}
+
+out=""
+for line in "$@"; do
+    set -- $(resolve "$line") || exit 1
+    c="$1"; o="$2"
+    [ -d "$DIR/$c" ] || die "cannot find GPIO chip '$c'"
+    f="$DIR/$c/$o"
+    [ -f "$f" ] || die "cannot find line '$line'"
+    v=$(tr -d ' \t\r\n' < "$f")
+    case "$v" in
+        0|1)  ;;
+        busy) die "unable to request lines on chip '/dev/$c': Device or resource busy" ;;
+        *)    die "invalid state '$v' in $f (expected 0, 1 or busy)" ;;
+    esac
+    [ "$active_low" -eq 1 ] && v=$((1 - v))
+
+    if [ "$numeric" -eq 1 ]; then
+        item="$v"
+    else
+        [ "$v" -eq 1 ] && word="active" || word="inactive"
+        if [ "$unquoted" -eq 1 ]; then item="$line=$word"; else item="\"$line\"=$word"; fi
+    fi
+    out="${out:+$out }$item"
+done
+
+echo "$out"

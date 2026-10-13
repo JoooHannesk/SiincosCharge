@@ -1,0 +1,85 @@
+#!/bin/sh
+# Companion tool for the fake gpioget: create and change fake line states.
+# Values are CONTACT states (1 = contact closed/active, 0 = open). Like the
+# reComputer's DI protection circuit, an active contact pulls the line LOW,
+# so `fakegpio set 18 1` makes gpioget read 0. Disable with FAKE_GPIO_INVERT=0.
+#
+#   fakegpio init [OFFSET...]          create lines (default: 18 19), contact open
+#   fakegpio set OFFSET 0|1            set a contact
+#   fakegpio toggle OFFSET             flip a contact
+#   fakegpio bounce OFFSET 0|1 [N] [MS] flip N times (default 6) every MS ms
+#                                      (default 20), then settle on the value
+#   fakegpio busy OFFSET               make gpioget fail as if the line is held
+#   fakegpio show                      print all lines (contact and raw line level)
+#   fakegpio reset                     delete all fake state
+#
+# Chip defaults to gpiochip0; override with FAKE_GPIO_CHIP=gpiochip1.
+# State lives in .fake-gpio next to this script; override with FAKE_GPIO_DIR.
+HELP_END=18
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DIR="${FAKE_GPIO_DIR:-$SCRIPT_DIR/.fake-gpio}"
+CHIP="${FAKE_GPIO_CHIP:-gpiochip0}"
+INVERT="${FAKE_GPIO_INVERT:-1}"
+CD="$DIR/$CHIP"
+
+die() { echo "fakegpio: $*" >&2; exit 1; }
+need_line() { [ -f "$CD/$1" ] || die "line $1 does not exist on $CHIP (run: fakegpio init $1)"; }
+write() { printf '%s\n' "$2" > "$CD/$1.tmp" && mv "$CD/$1.tmp" "$CD/$1"; }  # atomic
+# Contact state <-> raw line level (the conversion is its own inverse)
+level() { if [ "$INVERT" = 1 ]; then echo $((1 - $1)); else echo "$1"; fi; }
+read_level() { tr -d ' \t\r\n' < "$CD/$1"; }
+report() { echo "$CHIP/$1: contact=$2 (line reads $(level "$2"))"; }
+check01() { case "$1" in 0|1) ;; *) die "value must be 0 or 1" ;; esac; }
+
+cmd="$1"; [ $# -gt 0 ] && shift
+case "$cmd" in
+    init)
+        mkdir -p "$CD"
+        [ $# -gt 0 ] || set -- 18 19
+        for o in "$@"; do [ -f "$CD/$o" ] || write "$o" "$(level 0)"; done
+        echo "initialized $CHIP lines: $*, contact open (state dir: $DIR)" ;;
+    set)
+        [ $# -eq 2 ] || die "usage: fakegpio set OFFSET 0|1"
+        need_line "$1"; check01 "$2"
+        write "$1" "$(level "$2")"; report "$1" "$2" ;;
+    toggle)
+        [ $# -eq 1 ] || die "usage: fakegpio toggle OFFSET"
+        need_line "$1"
+        raw=$(read_level "$1")
+        case "$raw" in 0|1) ;; *) die "line $1 is '$raw'; use set first" ;; esac
+        contact=$((1 - $(level "$raw")))
+        write "$1" "$(level "$contact")"; report "$1" "$contact" ;;
+    bounce)
+        [ $# -ge 2 ] || die "usage: fakegpio bounce OFFSET 0|1 [COUNT] [MS]"
+        need_line "$1"; check01 "$2"
+        o="$1"; final="$2"; count="${3:-6}"; ms="${4:-20}"
+        delay=$(awk -v m="$ms" 'BEGIN { printf "%.3f", m / 1000 }')
+        c=$((1 - final)); i=0
+        while [ "$i" -lt "$count" ]; do
+            c=$((1 - c)); write "$o" "$(level "$c")"; sleep "$delay"; i=$((i + 1))
+        done
+        write "$o" "$(level "$final")"
+        echo "$CHIP/$o bounced $count times, settled at contact=$final (line reads $(level "$final"))" ;;
+    busy)
+        [ $# -eq 1 ] || die "usage: fakegpio busy OFFSET"
+        need_line "$1"; write "$1" busy; echo "$CHIP/$1 = busy" ;;
+    show)
+        [ -d "$DIR" ] || die "no fake state yet (run: fakegpio init)"
+        for c in "$DIR"/gpiochip*; do
+            [ -d "$c" ] || continue
+            for f in "$c"/*; do
+                [ -f "$f" ] || continue
+                raw=$(tr -d ' \t\r\n' < "$f")
+                name="$(basename "$c")/$(basename "$f")"
+                case "$raw" in
+                    0|1) echo "$name: contact=$(level "$raw") (line reads $raw)" ;;
+                    *)   echo "$name: $raw" ;;
+                esac
+            done
+        done ;;
+    reset)
+        rm -rf "$DIR"; echo "removed $DIR" ;;
+    *)
+        sed -n "2,${HELP_END}p" "$0" | sed 's/^# \{0,1\}//' | grep -v '^HELP_END'; [ -z "$cmd" ] || exit 1 ;;
+esac
