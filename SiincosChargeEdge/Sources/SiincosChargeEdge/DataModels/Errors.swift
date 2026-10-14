@@ -23,6 +23,8 @@ enum SystemError: String, RawRepresentable, Codable, Error {
     case mqttCommunicationError
     case mqttConnectError
     case modbusRTUCommunicationError
+    case ioErrorToolFailed
+    case ioErrorUnexpectedToolResponse
     case unknownError
 }
 
