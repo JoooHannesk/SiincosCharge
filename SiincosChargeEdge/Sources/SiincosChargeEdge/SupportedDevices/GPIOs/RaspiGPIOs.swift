@@ -21,12 +21,12 @@ enum GpioChip: String, RawRepresentable {
 ///
 /// Refer to <doc:DevelopmentDocumentation#Simulating-digital-inputs-on-the-GPIOs>
 /// for more details and usage on systems where native GPIOs are not available.
-struct RaspiGPIOReader {
+struct RaspiGPIOHandler: GpioHandler {
     let binExecPath: String
     let arguments: [String]
     private let logger = ComponentSupplier.mainLogger
 
-    /// Initializing pin reading.
+    /// Init pin reading.
     ///
     /// - Parameters:
     ///   - gpiochip: which gpiochip to use, defaults: `gpiochip8`
@@ -49,7 +49,7 @@ struct RaspiGPIOReader {
     /// making `gpioget` to report a low pin as active (1) and vice-versa.
     ///
     /// - Returns: the pin state as ``GpioState/high`` or ``GpioState/low``.
-    func read() throws -> GpioState {
+    func getPinState() throws -> PinState {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: binExecPath)
         proc.arguments = arguments
