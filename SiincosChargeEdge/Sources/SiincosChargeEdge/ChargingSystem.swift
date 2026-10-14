@@ -225,7 +225,7 @@ actor ChargingSystem {
 
     /// Update max. Current setpoint
     ///
-    /// Determine which charging points are currently in `.charging` state and distribute the
+    /// Determine how many charging points are currently in `.charging` state and distribute the
     /// max. available current ``ChargingSystem/systemTotalMaxCurrent`` among all charging stations equally.
     /// - Parameter forceSetpoint: Skip load-balancing-charging-current calculation and force this setpoint globally.
     @discardableResult

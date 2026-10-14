@@ -27,10 +27,16 @@ Set `FAKE_GPIO_INVERT=0` to disable the inversion.
 ### Setup
 
 ```bash
-chmod +x gpioget fakegpio
-./fakegpio init          # creates lines 18 and 19, contact open
+# Set executable flag
+chmod +x <repo-root>/Simulation/gpioget/gpioget
+chmod +x <repo-root>/Simulation/gpioget/fakegpio
+
+# Create symlink ONLY on systems WITHOUT native support for `gpioget`
+sudo ln -sf <repo-root>/Simulation/gpioget/gpioget /usr/local/bin/gpioget
+sudo ln -sf <repo-root>/Simulation/gpioget/gpioget /usr/local/bin/fakegpio
+
+fakegpio init 18 19         # creates lines 18 and 19
 ```
-TODO: probably add symlink to /usr/bin/gpioget on macOS? Check first.
 
 ### `gpioget` (fake)
 
@@ -44,8 +50,7 @@ gpioget --unquoted GPIO18             # lookup by line name
 gpioget gpiochip0 18 19               # v1 syntax, numeric output
 ```
 
-Errors behave like the real tool: a message on stderr and exit code 1 (unknown
-line, unknown chip, or a line marked `busy`).
+Errors behave like the real tool: a message on stderr and exit code 1 (unknown line, unknown chip, or a line marked `busy`).
 
 ### `fakegpio`
 
@@ -60,6 +65,21 @@ fakegpio reset                        # delete all fake state
 ```
 
 Use `FAKE_GPIO_CHIP=gpiochip1` to work on a chip other than `gpiochip0`.
+
+Example usage to work with pins 18 and 19 (map to DI1 and DI2 on the reComputer):
+
+```bash
+# Creates pins 18 and 19
+fakegpio init 18 19
+    
+# toggle simulated pin
+fakegpio toggle 18
+fakegpio toggle 19
+
+# set/reset simulated pin
+fakegpio set 18 1
+fakegpio set 19 0
+```
 
 ### Limitations
 
