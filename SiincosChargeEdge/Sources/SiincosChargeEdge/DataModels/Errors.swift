@@ -54,6 +54,10 @@ extension SystemError: LocalizedError {
             return "Error connecting to the MQTT Server! Aborting!"
         case .modbusRTUCommunicationError:
             return "Error communicating with a device via Modbus RTU!"
+        case .ioErrorToolFailed:
+            return "GPIO tool call failed!"
+        case .ioErrorUnexpectedToolResponse:
+            return "Tool call received unexpected response!"
         case .unknownError:
             return "An unknown error occurred!"
         }

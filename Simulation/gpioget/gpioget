@@ -14,7 +14,16 @@
 #   v1: gpioget CHIP OFFSET...          (prints numeric values)
 # Ignored for compatibility: -a, -b BIAS, -C NAME, -p PERIOD, -s
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Resolve symlinks so state lives next to the real script, not the link
+self="$0"
+while [ -L "$self" ]; do
+    link=$(readlink "$self")
+    case "$link" in
+        /*) self="$link" ;;
+        *)  self="$(dirname "$self")/$link" ;;
+    esac
+done
+SCRIPT_DIR="$(cd "$(dirname "$self")" && pwd)"
 DIR="${FAKE_GPIO_DIR:-$SCRIPT_DIR/.fake-gpio}"
 PROG="gpioget"
 

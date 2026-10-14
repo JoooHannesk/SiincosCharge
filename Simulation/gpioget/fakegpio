@@ -17,7 +17,16 @@
 # State lives in .fake-gpio next to this script; override with FAKE_GPIO_DIR.
 HELP_END=18
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Resolve symlinks so state lives next to the real script, not the link
+self="$0"
+while [ -L "$self" ]; do
+    link=$(readlink "$self")
+    case "$link" in
+        /*) self="$link" ;;
+        *)  self="$(dirname "$self")/$link" ;;
+    esac
+done
+SCRIPT_DIR="$(cd "$(dirname "$self")" && pwd)"
 DIR="${FAKE_GPIO_DIR:-$SCRIPT_DIR/.fake-gpio}"
 CHIP="${FAKE_GPIO_CHIP:-gpiochip0}"
 INVERT="${FAKE_GPIO_INVERT:-1}"
