@@ -34,13 +34,6 @@ Just a single configuration file. SiincosCharge abstracts hardware complexity. S
 
 ---
 
-## Project Scope Summary
-| 🟣 SiincosCharge focus | ⚪ Outside the scope |
-|---|---|
-| An open-source IoT-based management system for operating, monitoring and integrating EV charging infrastructure. Focused on multi-location deployments, device integration, telemetry, remote management and data sovereignty. | It does not provide PV surplus charging or advanced vehicle charging strategies. |
-
----
-
 ## Architecture
 
 SiincosCharge is split into a lightweight edge component, a robust backend ecosystem, and a modern mobile client to ensure maximum security and scalability:
