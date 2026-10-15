@@ -1,7 +1,14 @@
 # Development Documentation
 
-## Simulating digital inputs on the GPIOs
+## External Load Limiting through GPIOs
 Complying with §14 EnWG according to German law requires the edge controller to temporarily pause or limit the power drawn from the grid - when requested by the grid-operator. This is currently implemented via digital inputs through the GPIOs. To simulate this behavior without (attaching) real hardware I needed something to plug between the SiincosChargeEdge service and the actual GPIO subsystem.
+
+The external load limiter provides access to external load limiting signals via GPIOs (electrically connected to the device e.g. as dry-contact, or similar). Assume running SiincosChargeEdge on the reComputer featuring two digital inputs, which are used as follows:
+
+| physical input pin |   Purpose   | sysfs convention  |    chip    | `gpioget` convention    |
+| ------------------ | ----------  | ----------------- | ---------- | ----------------------- |
+| DI 1               |  cut off    | GPIO 530          | gpiochip0  |           18            |
+| DI 2               |  derating   | GPIO 531          | gpiochip0  |           19            |
 
 ### Current implementation in SiincosChargeEdge
 The service doesn't talk to the GPIO hardware directly. It calls the standard libgpiod command-line tool `gpioget` and parses its output. Because that boundary is just an executable, I can swap it for a fake one on macOS for testing, simulating and debugging purposes. This lets me run the complete, unchanged service in Xcode and toggle the "contact" from a terminal while it runs.
