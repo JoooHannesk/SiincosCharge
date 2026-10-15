@@ -66,4 +66,4 @@ This project is licensed under the **Apache License 2.0**. You are free to use, 
 This README was reviewed for readability, spelling and grammar using AI-assisted tools.
 
 ---
-*Developed and maintained with 💜 by [Johannes Kinzig](https://johanneskinzig.com) / [JoooHannesk](https://github.com/JoooHannesk).*
+*Developed and maintained with 💜 by [Johannes Kinzig](https://johanneskinzig.com)*
