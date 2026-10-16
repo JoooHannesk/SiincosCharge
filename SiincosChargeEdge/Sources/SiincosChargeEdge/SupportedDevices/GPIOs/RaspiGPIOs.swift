@@ -19,7 +19,7 @@ enum GpioChip: String, RawRepresentable {
 /// `gpioget -c gpiochip0 -l --numeric 18`. The `-l` option makes `gpioget`
 /// to report a low pin as active (1) and vice-versa.
 ///
-/// Refer to <doc:DevelopmentDocumentation#Simulating-digital-inputs-on-the-GPIOs>
+/// Refer to <doc:DevelopmentDocumentation#External-Load-Limiting-through-GPIOs>
 /// for more details and usage on systems where native GPIOs are not available.
 struct RaspiGPIOHandler: GpioHandler {
     let binExecPath: String
@@ -48,7 +48,7 @@ struct RaspiGPIOHandler: GpioHandler {
     /// Reads the pin state through `gpioget` command with the `-l` (active-low) option,
     /// making `gpioget` to report a low pin as active (1) and vice-versa.
     ///
-    /// - Returns: the pin state as ``GpioState/high`` or ``GpioState/low``.
+    /// - Returns: the pin state as ``PinState/high`` or ``PinState/low``.
     func getPinState() throws -> PinState {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: binExecPath)

@@ -28,6 +28,9 @@ struct RaspiGPIOHandlerTests {
     /// ```bash
     /// fakegpio init 18 19
     /// ```
+    /// 
+    /// - Note: Refer to the developer documentation to learn how the GPIO simulator
+    /// works in this context: <doc:DevelopmentDocumentation#External-Load-Limiting-through-GPIOs>
     static func initGPIOSimulator() {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/local/bin/fakegpio")
@@ -41,6 +44,9 @@ struct RaspiGPIOHandlerTests {
     /// ```bash
     /// fakegpio reset
     /// ```
+    ///
+    /// - Note: Refer to the developer documentation to learn how the GPIO simulator
+    /// works in this context: <doc:DevelopmentDocumentation#External-Load-Limiting-through-GPIOs>
     static func deinitGPIOSimulator() {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/local/bin/fakegpio")
