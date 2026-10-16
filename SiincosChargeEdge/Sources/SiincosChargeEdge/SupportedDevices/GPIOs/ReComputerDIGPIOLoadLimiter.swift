@@ -16,7 +16,7 @@
 /// | DI 1                         |  cut off       | GPIO 530              | gpiochip0  |           18                            |
 /// | DI 2                         |  derating    | GPIO 531              | gpiochip0  |           19                            |
 ///
-final class ExternalGPIOLoadLimiter: ExternalLoadLimiterSignalHandler {
+final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiterSignalHandler {
     
     private let extCutOffSignalProvider: GpioHandler
     private let extDeratingSignalProvider: GpioHandler

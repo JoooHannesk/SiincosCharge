@@ -108,7 +108,7 @@ struct RaspiGPIOHandlerTests {
     @Test("checkForError", .enabled(if: !Self.onLinux))
     func checkForError() throws {
         Self.deinitGPIOSimulator()
-        let gpioloadlimiter = ExternalGPIOLoadLimiter()
+        let gpioloadlimiter = ReComputerDIGPIOLoadLimiter()
         #expect(throws: SystemError.ioErrorToolFailed) {
             try gpioloadlimiter.loadLimitingSignal
         }
