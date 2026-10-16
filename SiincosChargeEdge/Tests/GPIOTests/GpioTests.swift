@@ -7,6 +7,8 @@
 
 import Testing
 @testable import SiincosChargeEdge
+import Foundation
+
 
 /// Test suite to test the systems GPIO digital inputs provided through
 /// `gpioget`.
@@ -14,6 +16,42 @@ import Testing
 @Suite("GPIO Tests with gpioget", .serialized)
 struct RaspiGPIOHandlerTests {
     
+    static var onLinux: Bool {
+        #if os(Linux)
+        return true
+        #else
+        return false
+        #endif
+    }
+    
+    /// Sets up the GPIO simulator by running the shell command
+    /// ```bash
+    /// fakegpio init 18 19
+    /// ```
+    static func initGPIOSimulator() {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/local/bin/fakegpio")
+        process.arguments = ["init", "18", "19"]
+        
+        try? process.run()
+        process.waitUntilExit()
+    }
+    
+    /// Shutdown the simulator by running the shell command
+    /// ```bash
+    /// fakegpio reset
+    /// ```
+    static func deinitGPIOSimulator() {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/local/bin/fakegpio")
+        process.arguments = ["reset"]
+        
+        try? process.run()
+        process.waitUntilExit()
+    }
+    
+    /// Ensure GPIO inputs are working correctly
+    ///
     /// When testing on a system where `gpioget` is unavailable, make sure to initialize
     /// the simulator beforehand. Refer to the documentation *Development Documentation*
     /// section *Simulating digital inputs on the GPIOs* for setting up a (wannabe) GPIO simulator.
@@ -31,26 +69,43 @@ struct RaspiGPIOHandlerTests {
     /// fakegpio set 18 1
     /// fakegpio set 19 0
     /// ```
+    ///
+    /// - Note: The `gpioget` simulator gets activated
+    /// on macOS only. On linux systems, the native `gpioget`
+    /// binary is used.
     @Test("Check for valid state")
     func checkForValidState() throws {
+        #if os(macOS)
+        Self.initGPIOSimulator()
+        defer { Self.deinitGPIOSimulator() }
+        #endif
         let gpio18 = RaspiGPIOHandler(gpiochip: .chip0, pin: 18)
         let state = try gpio18.getPinState()
         #expect(state == .high || state == .low)
     }
     
+    /// Ensure unaccessible GPIOs throw
+    ///
     /// Make sure `gpioget` is returning an error, e.g.
     /// by resetting the simulator via
     /// ```bash
     /// fakegpio reset
     /// ```
-    @Test("checkForError")
+    ///
+    /// - Note: This test will most likely only succeed on macOS (and linux systems where no
+    /// `gpioget` binary is available or not working correctly). Therefore it will be disabled for linux
+    /// systems under the assumption that running on linux always provides a working `gpioget` and
+    /// the test then would never succeed.
+    /// Anyhow, this step is essential to test, to ensure that errors occuring during reading the GPIO
+    /// state are propagated to the main run loop and from there to the cloud. Otherwise this error would
+    /// fail silently without anybody recognizing.
+    @Test("checkForError", .enabled(if: !Self.onLinux))
     func checkForError() throws {
+        Self.deinitGPIOSimulator()
         let gpioloadlimiter = ExternalGPIOLoadLimiter()
-        
         #expect(throws: SystemError.ioErrorToolFailed) {
             try gpioloadlimiter.loadLimitingSignal
         }
     }
-    
 }
 
