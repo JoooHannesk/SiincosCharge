@@ -16,10 +16,10 @@
 /// | DI 1                         |  cut off       | GPIO 530              | gpiochip0  |           18                            |
 /// | DI 2                         |  derating    | GPIO 531              | gpiochip0  |           19                            |
 ///
-final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiterSignalHandler {
+final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiter {
     
-    private let extCutOffSignalProvider: GpioHandler
-    private let extDeratingSignalProvider: GpioHandler
+    private let extCutOffSignalProvider: GpioController
+    private let extDeratingSignalProvider: GpioController
     
     /// Current load limiting signal provided
     /// Required by protocol ``ExternalLoadLimiterSignalHandler``
@@ -38,7 +38,7 @@ final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiterSignalHandler {
     }
     
     init(cutOffPin: UInt8 = 18, deratingPin: UInt8 = 19) {
-        self.extCutOffSignalProvider = RaspiGPIOHandler(gpiochip: .chip0, pin: cutOffPin)
-        self.extDeratingSignalProvider = RaspiGPIOHandler(gpiochip: .chip0, pin: deratingPin)
+        self.extCutOffSignalProvider = RaspiGPIOController(gpiochip: .chip0, pin: cutOffPin)
+        self.extDeratingSignalProvider = RaspiGPIOController(gpiochip: .chip0, pin: deratingPin)
     }
 }

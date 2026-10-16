@@ -9,10 +9,14 @@ import Foundation
 
 
 /// The external load limiter provides access to external load limiting signals
-final class ExternalLoadLimiter {
+final class ExternalLoadLimiterController {
+    
+    private var extLoadLimiter: ExternalLoadLimiter?
     
     var signal: LoadLimiterSignal {
-        .normalOperation
+        get throws {
+            return .normalOperation
+        }
     }
     
     init(config: SystemConfig) {

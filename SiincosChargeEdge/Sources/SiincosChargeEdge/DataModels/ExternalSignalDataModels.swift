@@ -13,7 +13,7 @@ enum PinState {
 }
 
 
-
-protocol GpioHandler {
+/// GPIO controller are required to conform
+protocol GpioController {
     func getPinState() throws -> PinState
 }

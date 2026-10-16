@@ -24,6 +24,6 @@ enum LoadLimiterSignal: Equatable {
 }
 
 
-protocol ExternalLoadLimiterSignalHandler {
+protocol ExternalLoadLimiter {
     var loadLimitingSignal: LoadLimiterSignal { get throws }
 }

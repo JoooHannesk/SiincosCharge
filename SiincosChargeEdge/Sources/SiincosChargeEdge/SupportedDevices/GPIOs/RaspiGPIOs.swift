@@ -21,7 +21,7 @@ enum GpioChip: String, RawRepresentable {
 ///
 /// Refer to <doc:DevelopmentDocumentation#External-Load-Limiting-through-GPIOs>
 /// for more details and usage on systems where native GPIOs are not available.
-struct RaspiGPIOHandler: GpioHandler {
+struct RaspiGPIOController: GpioController {
     let binExecPath: String
     let arguments: [String]
     private let logger = ComponentSupplier.mainLogger

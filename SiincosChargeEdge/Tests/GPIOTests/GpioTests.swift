@@ -85,7 +85,7 @@ struct RaspiGPIOHandlerTests {
         Self.initGPIOSimulator()
         defer { Self.deinitGPIOSimulator() }
         #endif
-        let gpio18 = RaspiGPIOHandler(gpiochip: .chip0, pin: 18)
+        let gpio18 = RaspiGPIOController(gpiochip: .chip0, pin: 18)
         let state = try gpio18.getPinState()
         #expect(state == .high || state == .low)
     }
