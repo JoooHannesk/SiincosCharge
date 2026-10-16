@@ -37,5 +37,20 @@ struct RaspiGPIOHandlerTests {
         let state = try gpio18.getPinState()
         #expect(state == .high || state == .low)
     }
+    
+    /// Make sure `gpioget` is returning an error, e.g.
+    /// by resetting the simulator via
+    /// ```bash
+    /// fakegpio reset
+    /// ```
+    @Test("checkForError")
+    func checkForError() throws {
+        let gpioloadlimiter = ExternalGPIOLoadLimiter()
+        
+        #expect(throws: SystemError.ioErrorToolFailed) {
+            try gpioloadlimiter.loadLimitingSignal
+        }
+    }
+    
 }
 
