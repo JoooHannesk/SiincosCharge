@@ -22,6 +22,7 @@ class SystemConfigTests {
                                 meterBus: "/dev/ttyUSB0",
                                 lineLength: lineLength,
                                 lineMaxCurrent: lineMaxCurrent,
+                                externalLoadLimiter: .gpio,
                                 cloudHost: "cloud.example.com",
                                 cloudPort: 8883,
                                 cloudCACertPath: "/opt/SiincosChargeEdge/Assets/ca.pem",

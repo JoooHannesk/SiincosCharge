@@ -19,6 +19,7 @@ protocol DeviceConfig {
     var meterBus: String { get }
     var lineLength: UInt8 { get }
     var lineMaxCurrent: Measurement<UnitElectricCurrent> { get }
+    var externalLoadLimiter: ExternalLoadLimiterType { get }
 }
 
 /// Cloud Configuration
@@ -44,6 +45,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let meterBus: String
     let lineLength: UInt8
     let lineMaxCurrent: Measurement<UnitElectricCurrent>
+    let externalLoadLimiter: ExternalLoadLimiterType
     let cloudHost: String
     let cloudPort: UInt16
     let cloudCACertPath: String
@@ -61,6 +63,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         case meterBus
         case lineLength
         case lineMaxCurrentA
+        case externalLoadLimiter
         case cloudHost
         case cloudPort
         case cloudCACertPath
@@ -79,6 +82,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
          meterBus: String,
          lineLength: UInt8,
          lineMaxCurrent: Measurement<UnitElectricCurrent>,
+         externalLoadLimiter: ExternalLoadLimiterType,
          cloudHost: String,
          cloudPort: UInt16,
          cloudCACertPath: String,
@@ -92,6 +96,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         self.meterBus = meterBus
         self.lineLength = lineLength
         self.lineMaxCurrent = lineMaxCurrent
+        self.externalLoadLimiter = externalLoadLimiter
         self.cloudHost = cloudHost
         self.cloudPort = cloudPort
         self.cloudCACertPath = cloudCACertPath
@@ -111,20 +116,21 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
      */
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        systemId = try container.decode(String.self, forKey: .systemId)
-        chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
-        chargerBus = try container.decode(String.self, forKey: .chargerBus)
-        meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)
-        meterBus = try container.decode(String.self, forKey: .meterBus)
-        lineLength = try container.decode(UInt8.self, forKey: .lineLength)
+        self.systemId = try container.decode(String.self, forKey: .systemId)
+        self.chargerModel = try container.decode(SupportedCharger.self, forKey: .chargerModel)
+        self.chargerBus = try container.decode(String.self, forKey: .chargerBus)
+        self.meterModel = try container.decode(SupportedPowerMeter.self, forKey: .meterModel)
+        self.meterBus = try container.decode(String.self, forKey: .meterBus)
+        self.lineLength = try container.decode(UInt8.self, forKey: .lineLength)
         let lineMaxCurrentA = try container.decode(Double.self, forKey: .lineMaxCurrentA)
-        lineMaxCurrent = Measurement(value: lineMaxCurrentA, unit: .amperes)
-        cloudHost = try container.decode(String.self, forKey: .cloudHost)
-        cloudPort = try container.decode(UInt16.self, forKey: .cloudPort)
-        cloudCACertPath = try container.decode(String.self, forKey: .cloudCACertPath)
-        cloudClientId = try container.decode(String.self, forKey: .cloudClientId)
-        cloudUsername = try container.decode(String.self, forKey: .cloudUsername)
-        cloudPassword = try container.decode(String.self, forKey: .cloudPassword)
+        self.lineMaxCurrent = Measurement(value: lineMaxCurrentA, unit: .amperes)
+        self.externalLoadLimiter = try container.decode(ExternalLoadLimiterType.self, forKey: .externalLoadLimiter)
+        self.cloudHost = try container.decode(String.self, forKey: .cloudHost)
+        self.cloudPort = try container.decode(UInt16.self, forKey: .cloudPort)
+        self.cloudCACertPath = try container.decode(String.self, forKey: .cloudCACertPath)
+        self.cloudClientId = try container.decode(String.self, forKey: .cloudClientId)
+        self.cloudUsername = try container.decode(String.self, forKey: .cloudUsername)
+        self.cloudPassword = try container.decode(String.self, forKey: .cloudPassword)
 
         try self.validate()
     }
@@ -138,19 +144,20 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
      */
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(systemId, forKey: .systemId)
-        try container.encode(chargerModel, forKey: .chargerModel)
-        try container.encode(chargerBus, forKey: .chargerBus)
-        try container.encode(meterModel, forKey: .meterModel)
-        try container.encode(meterBus, forKey: .meterBus)
-        try container.encode(lineLength, forKey: .lineLength)
-        try container.encode(lineMaxCurrent.converted(to: .amperes).value, forKey: .lineMaxCurrentA)
-        try container.encode(cloudHost, forKey: .cloudHost)
-        try container.encode(cloudPort, forKey: .cloudPort)
-        try container.encode(cloudCACertPath, forKey: .cloudCACertPath)
-        try container.encode(cloudClientId, forKey: .cloudClientId)
-        try container.encode(cloudUsername, forKey: .cloudUsername)
-        try container.encode(cloudPassword, forKey: .cloudPassword)
+        try container.encode(self.systemId, forKey: .systemId)
+        try container.encode(self.chargerModel, forKey: .chargerModel)
+        try container.encode(self.chargerBus, forKey: .chargerBus)
+        try container.encode(self.meterModel, forKey: .meterModel)
+        try container.encode(self.meterBus, forKey: .meterBus)
+        try container.encode(self.lineLength, forKey: .lineLength)
+        try container.encode(self.lineMaxCurrent.converted(to: .amperes).value, forKey: .lineMaxCurrentA)
+        try container.encode(self.externalLoadLimiter, forKey: .externalLoadLimiter)
+        try container.encode(self.cloudHost, forKey: .cloudHost)
+        try container.encode(self.cloudPort, forKey: .cloudPort)
+        try container.encode(self.cloudCACertPath, forKey: .cloudCACertPath)
+        try container.encode(self.cloudClientId, forKey: .cloudClientId)
+        try container.encode(self.cloudUsername, forKey: .cloudUsername)
+        try container.encode(self.cloudPassword, forKey: .cloudPassword)
     }
 
     /// Validate System Configuration
@@ -183,6 +190,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
             Meter Bus: \(self.meterBus),
             Line Length: \(self.lineLength),
             Line Max Current (A): \(self.lineMaxCurrent.value),
+            External Load Limiter: \(self.externalLoadLimiter)
             Cloud: \(self.cloudHost):\(self.cloudPort)"
             """
     }

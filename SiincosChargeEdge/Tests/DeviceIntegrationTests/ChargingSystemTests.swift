@@ -135,6 +135,7 @@ class ChargingSystemLoadBalancerTests {
                                       meterBus: "",
                                       lineLength: 6,
                                       lineMaxCurrent: Measurement(value: 32.0, unit: .amperes),
+                                      externalLoadLimiter: .gpio,
                                       cloudHost: "",
                                       cloudPort: 0,
                                       cloudCACertPath: "",

@@ -7,6 +7,11 @@
 
 import Foundation
 
+/// System supported external load limiter types
+enum ExternalLoadLimiterType: String, Codable {
+    /// External load limiting signal is transmitted into the system using GPIOs
+    case gpio
+}
 
 /// The load limiter signal provides information about
 /// the external load limiting type.
