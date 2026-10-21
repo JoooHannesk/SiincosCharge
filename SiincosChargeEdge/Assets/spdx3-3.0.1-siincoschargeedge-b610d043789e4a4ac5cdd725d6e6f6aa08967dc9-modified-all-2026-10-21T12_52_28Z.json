@@ -2,41 +2,41 @@
   "@context" : "https://spdx.org/rdf/3.0.1/spdx-context.jsonld",
   "@graph" : [
     {
-      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
-      "from" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6",
+      "creationInfo" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7:creationInfo",
+      "from" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7",
       "relationshipType" : "hasDeclaredLicense",
-      "spdxId" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6-hasDeclaredLicense-urn:spdx:Apache-2.0",
+      "spdxId" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7-hasDeclaredLicense-urn:spdx:Apache-2.0",
       "to" : [
         "urn:spdx:Apache-2.0"
       ],
       "type" : "Relationship"
     },
     {
-      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "creationInfo" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7:creationInfo",
       "simplelicensing_licenseExpression" : "Apache-2.0",
       "spdxId" : "urn:spdx:Apache-2.0",
       "type" : "simplelicensing_LicenseExpression"
     },
     {
-      "@id" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
-      "created" : "2026-09-25T17:43:25Z",
+      "@id" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7:creationInfo",
+      "created" : "2026-10-21T12:52:27Z",
       "createdBy" : [
-        "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6"
+        "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7"
       ],
       "specVersion" : "6.4.0-dev",
       "type" : "CreationInfo"
     },
     {
-      "creationInfo" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6:creationInfo",
+      "creationInfo" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7:creationInfo",
       "name" : "swift-package-manager",
-      "spdxId" : "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6",
+      "spdxId" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7",
       "type" : "Agent"
     },
     {
       "@id" : "_:creationInfo",
-      "created" : "2026-09-25T17:43:25Z",
+      "created" : "2026-10-21T12:52:27Z",
       "createdBy" : [
-        "urn:uuid:8eb042e7-485e-4c36-bf47-0994d7fdaac6"
+        "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7"
       ],
       "specVersion" : "3.0.1",
       "type" : "CreationInfo"
@@ -50,14 +50,14 @@
       "rootElement" : [
         "urn:spdx:siincoschargeedge"
       ],
-      "spdxId" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f",
+      "spdxId" : "urn:uuid:9aaf63b9-5e56-4c66-b3a2-23711e337ac3",
       "type" : "software_Sbom"
     },
     {
       "creationInfo" : "_:creationInfo",
-      "from" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f",
+      "from" : "urn:uuid:9aaf63b9-5e56-4c66-b3a2-23711e337ac3",
       "relationshipType" : "describes",
-      "spdxId" : "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f-describes-urn:spdx:siincoschargeedge",
+      "spdxId" : "urn:uuid:9aaf63b9-5e56-4c66-b3a2-23711e337ac3-describes-urn:spdx:siincoschargeedge",
       "to" : [
         "urn:spdx:siincoschargeedge"
       ],
@@ -70,9 +70,9 @@
         "software"
       ],
       "rootElement" : [
-        "urn:uuid:c136c83c-a455-4a83-bdd0-64dd4fb85d0f"
+        "urn:uuid:9aaf63b9-5e56-4c66-b3a2-23711e337ac3"
       ],
-      "spdxId" : "urn:uuid:cae8b0ab-13ff-4695-8661-0dd9ddda9992",
+      "spdxId" : "urn:uuid:d8e778bf-9619-415e-be4c-671d62ea0f2d",
       "type" : "SpdxDocument"
     },
     {
@@ -141,9 +141,9 @@
     {
       "creationInfo" : "_:creationInfo",
       "description" : "<ResolvedPackage: siincoschargeedge>",
-      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "name" : "siincoschargeedge",
-      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_internalVersion" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "software_primaryPurpose" : "application",
       "spdxId" : "urn:spdx:siincoschargeedge",
       "summary" : "swift-package",
@@ -151,9 +151,9 @@
     },
     {
       "creationInfo" : "_:creationInfo",
-      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdge@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdge@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "name" : "SiincosChargeEdge",
-      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_internalVersion" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "software_primaryPurpose" : "application",
       "spdxId" : "urn:spdx:siincoschargeedge:SiincosChargeEdge",
       "summary" : "swift-product",
@@ -161,9 +161,9 @@
     },
     {
       "creationInfo" : "_:creationInfo",
-      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdgeTests@955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "externalUrl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdgeTests@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "name" : "SiincosChargeEdgeTests",
-      "software_internalVersion" : "955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
+      "software_internalVersion" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "software_primaryPurpose" : "library",
       "spdxId" : "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests",
       "summary" : "swift-product",
@@ -824,14 +824,6 @@
     },
     {
       "externalIdentifierType" : "gitoid",
-      "identifier" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
-      "identifierLocator" : [
-        "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
-      ],
-      "type" : "ExternalIdentifier"
-    },
-    {
-      "externalIdentifierType" : "gitoid",
       "identifier" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272",
       "identifierLocator" : [
         "https://github.com/apple/swift-async-algorithms.git"
@@ -851,6 +843,14 @@
       "identifier" : "urn:spdx:b601256eab081c0f92f059e12818ac1d4f178ff7",
       "identifierLocator" : [
         "https://github.com/apple/swift-atomics.git"
+      ],
+      "type" : "ExternalIdentifier"
+    },
+    {
+      "externalIdentifierType" : "gitoid",
+      "identifier" : "urn:spdx:b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
+      "identifierLocator" : [
+        "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
       ],
       "type" : "ExternalIdentifier"
     },
@@ -950,18 +950,6 @@
     },
     {
       "creationInfo" : "_:creationInfo",
-      "from" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71",
-      "relationshipType" : "generates",
-      "spdxId" : "urn:spdx:955e7df83a87c0b5ac1d7d6bdf1a4d5d573e8b71-generates",
-      "to" : [
-        "urn:spdx:siincoschargeedge",
-        "urn:spdx:siincoschargeedge:SiincosChargeEdge",
-        "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests"
-      ],
-      "type" : "Relationship"
-    },
-    {
-      "creationInfo" : "_:creationInfo",
       "from" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272",
       "relationshipType" : "generates",
       "spdxId" : "urn:spdx:9d349bcc328ac3c31ce40e746b5882742a0d1272-generates",
@@ -996,6 +984,18 @@
       "to" : [
         "urn:spdx:swift-atomics",
         "urn:spdx:swift-atomics:Atomics"
+      ],
+      "type" : "Relationship"
+    },
+    {
+      "creationInfo" : "_:creationInfo",
+      "from" : "urn:spdx:b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
+      "relationshipType" : "generates",
+      "spdxId" : "urn:spdx:b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-generates",
+      "to" : [
+        "urn:spdx:siincoschargeedge",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdge",
+        "urn:spdx:siincoschargeedge:SiincosChargeEdgeTests"
       ],
       "type" : "Relationship"
     },

@@ -161,7 +161,7 @@
       "pedigree" : {
         "commits" : [
           {
-            "uid" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+            "uid" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
             "url" : "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
           }
         ]
@@ -172,10 +172,10 @@
           "value" : "swift-package"
         }
       ],
-      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "scope" : "required",
       "type" : "application",
-      "version" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54"
+      "version" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified"
     },
     {
       "bom-ref" : "siincoschargeedge:SiincosChargeEdge",
@@ -186,7 +186,7 @@
       "pedigree" : {
         "commits" : [
           {
-            "uid" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+            "uid" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
             "url" : "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
           }
         ]
@@ -197,10 +197,10 @@
           "value" : "swift-product"
         }
       ],
-      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdge@edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdge@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "scope" : "required",
       "type" : "application",
-      "version" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54"
+      "version" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified"
     },
     {
       "bom-ref" : "siincoschargeedge:SiincosChargeEdgeTests",
@@ -211,7 +211,7 @@
       "pedigree" : {
         "commits" : [
           {
-            "uid" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+            "uid" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
             "url" : "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
           }
         ]
@@ -222,10 +222,10 @@
           "value" : "swift-product"
         }
       ],
-      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdgeTests@edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge:SiincosChargeEdgeTests@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "scope" : "excluded",
       "type" : "library",
-      "version" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54"
+      "version" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified"
     },
     {
       "bom-ref" : "swift-async-algorithms",
@@ -1085,7 +1085,7 @@
       "pedigree" : {
         "commits" : [
           {
-            "uid" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+            "uid" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9",
             "url" : "https://JoooHannesk@github.com/JoooHannesk/SiincosCharge.git"
           }
         ]
@@ -1096,16 +1096,16 @@
           "value" : "swift-package"
         }
       ],
-      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@edb8e8fa078eca737bbed2bffa6d3d0e109aae54",
+      "purl" : "pkg:swift/github.com/JoooHannesk/siincoschargeedge@b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified",
       "scope" : "required",
       "type" : "application",
-      "version" : "edb8e8fa078eca737bbed2bffa6d3d0e109aae54"
+      "version" : "b610d043789e4a4ac5cdd725d6e6f6aa08967dc9-modified"
     },
-    "timestamp" : "2026-09-25T17:29:30Z",
+    "timestamp" : "2026-10-21T12:52:27Z",
     "tools" : {
       "components" : [
         {
-          "bom-ref" : "urn:uuid:aee0585e-6e27-4632-b841-a8c5417558ad",
+          "bom-ref" : "urn:uuid:9ed5ea67-6570-4902-8b3d-44348840ade7",
           "licenses" : [
             {
               "license" : {
@@ -1123,7 +1123,7 @@
       ]
     }
   },
-  "serialNumber" : "urn:uuid:d0092d20-0432-4fa7-8a4d-36b6cf919206",
+  "serialNumber" : "urn:uuid:d8e778bf-9619-415e-be4c-671d62ea0f2d",
   "specVersion" : "1.7",
   "version" : 1
 }
