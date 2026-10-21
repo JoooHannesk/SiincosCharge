@@ -10,7 +10,7 @@ The external load limiter provides access to external load limiting signals via 
 | DI 1               |  cut off    | GPIO 530          | gpiochip0  |           18            |
 | DI 2               |  derating   | GPIO 531          | gpiochip0  |           19            |
 
-### Current implementation in SiincosChargeEdge
+### Implementation in SiincosChargeEdge
 The service doesn't talk to the GPIO hardware directly. It calls the standard libgpiod command-line tool `gpioget` and parses its output. Because that boundary is just an executable, I can swap it for a fake one on macOS for testing, simulating and debugging purposes. This lets me run the complete, unchanged service in Xcode and toggle the "contact" from a terminal while it runs.
 
 The fake consists of two small POSIX shell scripts, which can be found in *Simulation/gpioget*:

@@ -24,7 +24,7 @@ final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiter {
     private let deratingMaxCurrent: Measurement<UnitElectricCurrent>
     
     /// Current load limiting signal provided
-    /// Required by protocol ``ExternalLoadLimiterSignalHandler``
+    /// Member required by protocol ``ExternalLoadLimiter``
     var loadLimitingSignal: LoadLimiterSignal {
         get throws {
             let cutOffPinState = try self.extCutOffSignalProvider.getPinState()

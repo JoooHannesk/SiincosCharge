@@ -25,11 +25,13 @@ SiincosCharge tracks precise energy consumption, aggregates detailed statistics,
 ### 🛡️ 4. Data Sovereignty (Private Cloud)
 Your charging data belongs to you. SiincosCharge is natively cloud-enabled but designed to run on *your* infrastructure. By hosting your own open-source backend based on ThingsBoard CE, you get full remote access and a seamless user experience – without sharing telemetry or user data with third-party vendors.
 
-### ⚡️ 5. Load Balancing & Grid Compliance (§ 14a EnWG - German regulation)
-*   **Dynamic Load Management:** Automatic load balancing in case multiple EV chargers are operating concurrently. The system dynamically adjusts the charging current per station to ensure the overall electrical installation limit is never exceeded.
-*   **Grid Operator Curtailment (Ready for § 14a EnWG):** Designed with strict German grid regulations in mind. The system is architected to interface with a grid operator receiver / ripple control receiver (e.g., via a dry-contact / potential-free input on the edge hardware) to temporarily pause or dim charging sessions down to the legally mandated minimum (e.g., 4.2 kW). *Note: The dry-contact hardware trigger integration is currently under active development and will be released in an upcoming update.*
+### ⚡️ 5. Dynamic Load Balancing
+Automatic load balancing in case multiple EV chargers are operating concurrently. The system dynamically adjusts the charging current per station to ensure the overall electrical installation limit is never exceeded.
 
-### ⚙️ 6. Simple Configuration
+### 6. 📄 Grid compliance through grid Operator Curtailment (Ready for §14a EnWG)
+Designed with German grid regulations in mind. The system is architected to interface with a grid operator receiver / ripple control receiver (e.g., via a dry-contact / potential-free input on the edge hardware) to temporarily pause or dim charging sessions down to the legally mandated minimum (e.g., 4.2 kW). Two DIs on the reComputer allow to either reduce the charging power or pause all charging sessions during an active external load limiting signal.
+
+### ⚙️ 7. Simple Configuration
 Just a single configuration file. SiincosCharge abstracts hardware complexity. Simply configure your edge device (e.g., Raspberry Pi) by following our guide, connect a supported wallbox, and you are ready to go. (In some cases the EV charger or power meter may require some minor configuration, but this will be described in our documentation.)
 
 ---
