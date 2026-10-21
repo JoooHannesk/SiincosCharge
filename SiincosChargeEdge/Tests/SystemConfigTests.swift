@@ -14,7 +14,8 @@ class SystemConfigTests {
 
     /// Create a `SystemConfig` with valid defaults, allowing individual parameters to be overridden per test case
     private func makeSystemConfig(lineLength: UInt8 = 2,
-                                  lineMaxCurrent: Measurement<UnitElectricCurrent> = Measurement(value: 32, unit: .amperes)) throws -> SystemConfig {
+                                  lineMaxCurrent: Measurement<UnitElectricCurrent> = Measurement(value: 32, unit: .amperes),
+                                  externalLoadLimiterDeratingCurrent: Measurement<UnitElectricCurrent> = Measurement(value: 6, unit: .amperes)) throws -> SystemConfig {
         return try SystemConfig(systemId: "test-system",
                                 chargerModel: .mockCharger,
                                 chargerBus: "/dev/ttyUSB0",
@@ -23,6 +24,7 @@ class SystemConfigTests {
                                 lineLength: lineLength,
                                 lineMaxCurrent: lineMaxCurrent,
                                 externalLoadLimiter: .gpio,
+                                externalLoadLimiterDeratingCurrent: externalLoadLimiterDeratingCurrent,
                                 cloudHost: "cloud.example.com",
                                 cloudPort: 8883,
                                 cloudCACertPath: "/opt/SiincosChargeEdge/Assets/ca.pem",

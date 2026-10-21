@@ -25,6 +25,7 @@ struct ChargingControllerTests {
                                       lineLength: 6,
                                       lineMaxCurrent: Measurement(value: 32.0, unit: .amperes),
                                       externalLoadLimiter: .gpio,
+                                      externalLoadLimiterDeratingCurrent: Measurement(value: 6.0, unit: .amperes),
                                       cloudHost: "",
                                       cloudPort: 0,
                                       cloudCACertPath: "",

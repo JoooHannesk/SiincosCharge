@@ -580,6 +580,7 @@ actor ChargingController {
     /// - total number of charging points
     /// - max. installation line current (amperes)
     /// - load balanced max. current
+    /// - externalLoadLimiterSignal
     /// - system error
     private func updateChargingSystemInformation() async {
         let chargingPointsCharging = try? await self.chargingSystem?.chargingPointsCharging

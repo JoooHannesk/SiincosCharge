@@ -27,7 +27,7 @@ final class ExternalLoadLimiterController {
         
         switch config.externalLoadLimiter {
         case .gpio:
-            self.extLoadLimiter = ReComputerDIGPIOLoadLimiter()
+            self.extLoadLimiter = ReComputerDIGPIOLoadLimiter(deratingMaxCurrent: config.externalLoadLimiterDeratingCurrent)
         }
     }
 }

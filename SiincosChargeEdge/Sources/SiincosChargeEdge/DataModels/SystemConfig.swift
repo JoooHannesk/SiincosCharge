@@ -20,6 +20,7 @@ protocol DeviceConfig {
     var lineLength: UInt8 { get }
     var lineMaxCurrent: Measurement<UnitElectricCurrent> { get }
     var externalLoadLimiter: ExternalLoadLimiterType { get }
+    var externalLoadLimiterDeratingCurrent: Measurement<UnitElectricCurrent> { get }
 }
 
 /// Cloud Configuration
@@ -46,6 +47,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
     let lineLength: UInt8
     let lineMaxCurrent: Measurement<UnitElectricCurrent>
     let externalLoadLimiter: ExternalLoadLimiterType
+    let externalLoadLimiterDeratingCurrent: Measurement<UnitElectricCurrent>
     let cloudHost: String
     let cloudPort: UInt16
     let cloudCACertPath: String
@@ -64,6 +66,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         case lineLength
         case lineMaxCurrentA
         case externalLoadLimiter
+        case externalLoadLimiterDeratingCurrentA
         case cloudHost
         case cloudPort
         case cloudCACertPath
@@ -83,6 +86,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
          lineLength: UInt8,
          lineMaxCurrent: Measurement<UnitElectricCurrent>,
          externalLoadLimiter: ExternalLoadLimiterType,
+         externalLoadLimiterDeratingCurrent: Measurement<UnitElectricCurrent>,
          cloudHost: String,
          cloudPort: UInt16,
          cloudCACertPath: String,
@@ -97,6 +101,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         self.lineLength = lineLength
         self.lineMaxCurrent = lineMaxCurrent
         self.externalLoadLimiter = externalLoadLimiter
+        self.externalLoadLimiterDeratingCurrent = externalLoadLimiterDeratingCurrent
         self.cloudHost = cloudHost
         self.cloudPort = cloudPort
         self.cloudCACertPath = cloudCACertPath
@@ -125,6 +130,8 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         let lineMaxCurrentA = try container.decode(Double.self, forKey: .lineMaxCurrentA)
         self.lineMaxCurrent = Measurement(value: lineMaxCurrentA, unit: .amperes)
         self.externalLoadLimiter = try container.decode(ExternalLoadLimiterType.self, forKey: .externalLoadLimiter)
+        let externalLoadLimiterDeratingCurrent = try container.decode(Double.self, forKey: .externalLoadLimiterDeratingCurrentA)
+        self.externalLoadLimiterDeratingCurrent = Measurement(value: externalLoadLimiterDeratingCurrent, unit: .amperes)
         self.cloudHost = try container.decode(String.self, forKey: .cloudHost)
         self.cloudPort = try container.decode(UInt16.self, forKey: .cloudPort)
         self.cloudCACertPath = try container.decode(String.self, forKey: .cloudCACertPath)
@@ -152,6 +159,7 @@ struct SystemConfig: DeviceConfig, CloudConfig, Codable, CustomStringConvertible
         try container.encode(self.lineLength, forKey: .lineLength)
         try container.encode(self.lineMaxCurrent.converted(to: .amperes).value, forKey: .lineMaxCurrentA)
         try container.encode(self.externalLoadLimiter, forKey: .externalLoadLimiter)
+        try container.encode(self.externalLoadLimiterDeratingCurrent.converted(to: .amperes).value, forKey: .externalLoadLimiterDeratingCurrentA)
         try container.encode(self.cloudHost, forKey: .cloudHost)
         try container.encode(self.cloudPort, forKey: .cloudPort)
         try container.encode(self.cloudCACertPath, forKey: .cloudCACertPath)

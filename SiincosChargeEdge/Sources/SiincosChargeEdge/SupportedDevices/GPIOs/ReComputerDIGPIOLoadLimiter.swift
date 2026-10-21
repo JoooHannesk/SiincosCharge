@@ -39,6 +39,13 @@ final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiter {
         }
     }
     
+    /// Requires two GPIO pins to name (`cutOff` and `derating`) and a maximum allowed current
+    /// when derating the charging current
+    /// - Parameters:
+    ///   - cutOffPin: Pin id to cut power immediately (will pause all running charging sessions)
+    ///   - deratingPin: Pin id to derate the charging current to the new maximum defined in `deratingMaxCurrent`
+    ///   - deratingMaxCurrent: Maximum current allowed per charging point while derating signal is active. The default is 6.0 A
+    ///   which is approx. 4.2 kWh for a 3 phase grid and the currently requested maximum power according to German §14a EnWG.
     init(
         cutOffPin: UInt8 = 18,
         deratingPin: UInt8 = 19,
