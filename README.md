@@ -28,7 +28,7 @@ Your charging data belongs to you. SiincosCharge is natively cloud-enabled but d
 ### ⚡️ 5. Dynamic Load Balancing
 Automatic load balancing in case multiple EV chargers are operating concurrently. The system dynamically adjusts the charging current per station to ensure the overall electrical installation limit is never exceeded.
 
-### 6. 📄 Grid compliance through grid Operator Curtailment (Ready for §14a EnWG)
+### 📄 6. Grid compliance through grid Operator Curtailment (Ready for §14a EnWG)
 Designed with German grid regulations in mind. The system is architected to interface with a grid operator receiver / ripple control receiver (e.g., via a dry-contact / potential-free input on the edge hardware) to temporarily pause or dim charging sessions down to the legally mandated minimum (e.g., 4.2 kW). Two DIs on the reComputer allow to either reduce the charging power or pause all charging sessions during an active external load limiting signal.
 
 ### ⚙️ 7. Simple Configuration
