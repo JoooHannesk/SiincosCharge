@@ -227,18 +227,19 @@ actor ChargingSystem {
     ///
     /// Determine how many charging points are currently in `.charging` state and distribute the
     /// max. available current ``ChargingSystem/systemTotalMaxCurrent`` among all charging stations equally.
-    /// - Parameter forceSetpoint: Force this setpoint globally, but respect current balancing to prevent circuit breakers to trigger
+    /// - Parameter maxCurrentForcedPerCP: Force this setpoint as the maximum current for each charging point. Respects the load balancer value.
     @discardableResult
-    func updateLoadBalancedCurrent(forceSetpoint: Measurement<UnitElectricCurrent>? = nil) async throws -> Measurement<UnitElectricCurrent> {
+    func updateLoadBalancedCurrent(maxCurrentForcedPerCP: Measurement<UnitElectricCurrent>? = nil) async throws -> Measurement<UnitElectricCurrent> {
         let chargingPointsCharging = try await self.chargingPointsCharging
         let currentDivider = chargingPointsCharging == 0 ? 1 : chargingPointsCharging
-        let loadBalancedCurrent = self.systemTotalMaxCurrent.converted(to: .amperes).value / Double(currentDivider)
-        self.loadBalancedMaxCurrent = Measurement(value: loadBalancedCurrent, unit: .amperes)
-        if let forceSetpoint {
-            return min(forceSetpoint, self.loadBalancedMaxCurrent)
+        let loadBalancedCurrentA = self.systemTotalMaxCurrent.converted(to: .amperes).value / Double(currentDivider)
+        let loadBalancedMaxCurrent = Measurement(value: loadBalancedCurrentA, unit: UnitElectricCurrent.amperes)
+        if let maxCurrentForcedPerCP {
+            self.loadBalancedMaxCurrent = min(maxCurrentForcedPerCP, loadBalancedMaxCurrent)
         } else {
-            return self.loadBalancedMaxCurrent
+            self.loadBalancedMaxCurrent = loadBalancedMaxCurrent
         }
+        return self.loadBalancedMaxCurrent
     }
 
     /// Collect Charging Points

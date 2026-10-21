@@ -13,6 +13,7 @@ import SiincosChargeDataModels
 actor ChargingController {
 
     let systemConfig: SystemConfig
+    let loadLimiterController: ExternalLoadLimiterController
     var backend: BackendController? = nil
     var chargingSystem: ChargingSystem? = nil
     var sysError: SystemError? = nil
@@ -34,10 +35,11 @@ actor ChargingController {
         self.logger.info("\(LogMessages.welcomeMsg)")
 
         self.systemConfig = systemConfig ?? Self.loadSystemConfig()
+        self.loadLimiterController = ExternalLoadLimiterController(config: self.systemConfig)
         self.backend = ThingsBoardBackend(chargingController: self)
 
         do {
-            try self.chargingSystem = await ChargingSystem(config: self.systemConfig as DeviceConfig)
+            self.chargingSystem = try await ChargingSystem(config: self.systemConfig as DeviceConfig)
         } catch {
             self.logger.critical("\(error.localizedDescription)", metadata: ["error": "\(error)"])
         }
@@ -96,7 +98,7 @@ actor ChargingController {
         await self.updateChargingSystemInformation()
         do {
             try await self.updateChargingPointStatus()
-            try await self.chargingSystem?.updateLoadBalancedCurrent()
+            try await self.loadBalancing()
             try await self.executeChargingSessions()
             self.sysError = nil
         } catch {
@@ -275,7 +277,8 @@ actor ChargingController {
         }
         return requestedSession
     }
-
+    
+    // MARK: - Handle charging session requests
 
     /// Handle Charging Session Request…
     ///
@@ -367,6 +370,8 @@ actor ChargingController {
             return nil
         }
     }
+    
+    // MARK: - Charging session actions
 
     /// Start a charging session
     ///
@@ -450,6 +455,20 @@ actor ChargingController {
         return chargingSession
     }
 
+    // MARK: - Actions operating on all sessions
+    
+    /// Pause all charging sessions
+    func pauseChargingSessions() async throws {
+        guard let chargingSessions = await self.chargingSystem?.chargingPointContainer.chargingSessions.values else {
+            return
+        }
+        for chargingSession in chargingSessions {
+            if chargingSession.status == .running {
+                try await self.pauseChargingSession(for: chargingSession.cpId)
+            }
+        }
+    }
+    
     /// Terminate all charging sessions
     ///
     /// Stop all running charging sessions gracefully.
@@ -459,6 +478,27 @@ actor ChargingController {
         }
         for chargingSession in chargingSessions {
             try await self.stopChargingSession(for: chargingSession.cpId)
+        }
+    }
+    
+    // MARK: - Load balancing
+    
+    /// Perform load balancing
+    ///
+    /// Perform load balancing based on chargers with `.charging` session active and
+    /// based on external power limiter signals
+    private func loadBalancing() async throws {
+        let externalLimiterSignal: LoadLimiterSignal = try self.loadLimiterController.signal
+        switch externalLimiterSignal {
+        case .normalOperation:
+            try await self.chargingSystem?.updateLoadBalancedCurrent()
+        case .cutOff:
+            try await self.pauseChargingSessions()
+            try await self.chargingSystem?.updateLoadBalancedCurrent()
+            self.logger.info("\(LogMessages.externalLoadLimiterCutOff)")
+        case .derating(let deratingMaxCurrent):
+            try await self.chargingSystem?.updateLoadBalancedCurrent(maxCurrentForcedPerCP: deratingMaxCurrent)
+            self.logger.info("\(LogMessages.externalLoadLimiterDerating) \(deratingMaxCurrent)")
         }
     }
 

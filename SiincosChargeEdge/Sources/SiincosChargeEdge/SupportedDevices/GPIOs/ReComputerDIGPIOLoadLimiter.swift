@@ -5,6 +5,7 @@
 //  Created by Johannes Kinzig on 15.10.26.
 //
 
+import Foundation
 
 /// The external load limiter provides access to external load limiting signals via GPIOs
 /// (electrically connected to the device e.g. as dry-contact, or similar).
@@ -20,6 +21,7 @@ final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiter {
     
     private let extCutOffSignalProvider: GpioController
     private let extDeratingSignalProvider: GpioController
+    private let deratingMaxCurrent: Measurement<UnitElectricCurrent>
     
     /// Current load limiting signal provided
     /// Required by protocol ``ExternalLoadLimiterSignalHandler``
@@ -30,15 +32,29 @@ final class ReComputerDIGPIOLoadLimiter: ExternalLoadLimiter {
             if cutOffPinState == .high {
                 return .cutOff
             } else if deratingPinState == .high {
-                return .derating(nil)
+                return .derating(maxCurrent: self.deratingMaxCurrent)
             } else {
                 return .normalOperation
             }
         }
     }
     
-    init(cutOffPin: UInt8 = 18, deratingPin: UInt8 = 19) {
-        self.extCutOffSignalProvider = RaspiGPIOController(gpiochip: .chip0, pin: cutOffPin)
-        self.extDeratingSignalProvider = RaspiGPIOController(gpiochip: .chip0, pin: deratingPin)
+    init(
+        cutOffPin: UInt8 = 18,
+        deratingPin: UInt8 = 19,
+        deratingMaxCurrent: Measurement<UnitElectricCurrent> = Measurement(
+            value: 6.0,
+            unit: .amperes
+        )
+    ) {
+        self.extCutOffSignalProvider = RaspiGPIOController(
+            gpiochip: .chip0,
+            pin: cutOffPin
+        )
+        self.extDeratingSignalProvider = RaspiGPIOController(
+            gpiochip: .chip0,
+            pin: deratingPin
+        )
+        self.deratingMaxCurrent = deratingMaxCurrent
     }
 }

@@ -11,6 +11,8 @@ enum LogMessages {
     static let welcomeMsg = "Hello, I am SiincosChargeEdge charging controller. – My PID is: \(getpid())"
     static let goodbyMsg = "Shutting down... Goodbye!"
     static let sysInfo = "System information:"
+    static let externalLoadLimiterDerating = "External load limiter is derating charging current to:"
+    static let externalLoadLimiterCutOff = "External load limiter forced all charging sessions to pause."
     static let dataConversionFailed = "Failed to convert message to object."
     static let chargingSessionRequest = "Charging session requested: "
     static let noChargingPointsFound = "No charging points found. Please check your configuration."

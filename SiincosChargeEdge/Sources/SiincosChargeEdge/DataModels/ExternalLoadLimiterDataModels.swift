@@ -25,7 +25,7 @@ enum LoadLimiterSignal: Equatable {
     case cutOff
     
     /// System derating required, current drawn should not exceed `deratedMaxCurrent`
-    case derating(Measurement<UnitElectricCurrent>?)
+    case derating(maxCurrent: Measurement<UnitElectricCurrent>)
 }
 
 

@@ -155,7 +155,7 @@ class ChargingSystemLoadBalancerTests {
 
     @Test("Force-Setpoint-is-below-system-max-current")
     func testForceSetpointIsBelowSystemMaxCurrent() async throws {
-        let currentSetpointChargingPoint = try await self.chargingSystem.updateLoadBalancedCurrent(forceSetpoint: Measurement(value: 64.0, unit: .amperes))
+        let currentSetpointChargingPoint = try await self.chargingSystem.updateLoadBalancedCurrent(maxCurrentForcedPerCP: Measurement(value: 64.0, unit: .amperes))
         #expect(currentSetpointChargingPoint.value <= 32.0)
     }
 
