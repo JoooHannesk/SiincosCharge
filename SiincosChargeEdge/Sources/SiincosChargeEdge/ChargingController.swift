@@ -582,21 +582,17 @@ actor ChargingController {
     /// - load balanced max. current
     /// - system error
     private func updateChargingSystemInformation() async {
-        var chargingPointsCharging: UInt8 = 0
-        do {
-            chargingPointsCharging = try await self.chargingSystem?.chargingPointsCharging ?? 0
-        } catch {
-            await self.handleError(err: error)
-        }
+        let chargingPointsCharging = try? await self.chargingSystem?.chargingPointsCharging
         let chargingSystemInformation = ChargingSystemInformation(
             systemId: self.systemConfig.systemId,
             appVersion: AppConstants.version,
             chargerModel: self.systemConfig.chargerModel,
             meterModel: self.systemConfig.meterModel,
             chargingPoints: self.systemConfig.lineLength,
-            chargingPointsCharging: chargingPointsCharging,
+            chargingPointsCharging: chargingPointsCharging ?? 0,
             lineMaxCurrent: self.systemConfig.lineMaxCurrent,
             loadBalancedMaxCurrent: await self.chargingSystem?.loadBalancedMaxCurrent ?? Measurement(value: 0.0, unit: UnitElectricCurrent.amperes),
+            externalLoadLimiterSignal: (try? self.loadLimiterController.signal) ?? .normalOperation,
             sysError: self.sysError
         )
         self.backend?.updateChargingSystemInformation(with: chargingSystemInformation)

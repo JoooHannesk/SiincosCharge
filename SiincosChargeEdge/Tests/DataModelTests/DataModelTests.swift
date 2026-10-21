@@ -27,6 +27,7 @@ struct DataModelTests {
                                                  chargingPointsCharging: 1,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  loadBalancedMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
+                                                 externalLoadLimiterSignal: .normalOperation,
                                                  sysError: nil)
         try #require(csysInfo.asJson != nil)
         if let jsonString = csysInfo.asJson {
@@ -46,6 +47,7 @@ struct DataModelTests {
                                                  chargingPointsCharging: 1,
                                                  lineMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
                                                  loadBalancedMaxCurrent: Measurement(value: 16.0, unit: UnitElectricCurrent.amperes),
+                                                 externalLoadLimiterSignal: .normalOperation,
                                                  sysError: .chargersMissing)
         try #require(csysInfo.asJson != nil)
         if let jsonString = csysInfo.asJson {

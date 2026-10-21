@@ -15,7 +15,7 @@ enum ExternalLoadLimiterType: String, Codable {
 
 /// The load limiter signal provides information about
 /// the external load limiting type.
-enum LoadLimiterSignal: Equatable {
+enum LoadLimiterSignal: Equatable, Hashable {
     
     /// Normal system operation, no cutoff or derating required
     case normalOperation

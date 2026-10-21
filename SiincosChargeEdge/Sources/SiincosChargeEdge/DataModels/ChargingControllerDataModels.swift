@@ -191,6 +191,7 @@ struct ChargingSystemInformation: Hashable, CustomStringConvertible, Codable {
     let chargingPointsCharging: UInt8
     let lineMaxCurrent: Measurement<UnitElectricCurrent>
     let loadBalancedMaxCurrent: Measurement<UnitElectricCurrent>
+    let externalLoadLimiterSignal: LoadLimiterSignal
     let sysError: SystemError?
 
     var description: String {

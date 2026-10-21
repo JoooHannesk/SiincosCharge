@@ -15,12 +15,13 @@ import SiincosChargeDataModels
 extension ChargingSystemInformation: JsonStringConvertible {
 
     enum CodingKeys: String, CodingKey {
-        case systemId, appVersion, chargerModel, meterModel, chargingPoints, chargingPointsCharging, lineMaxCurrentA, loadBalancedMaxCurrentA, sysError
+        case systemId, appVersion, chargerModel, meterModel, chargingPoints, chargingPointsCharging, lineMaxCurrentA, loadBalancedMaxCurrentA, externalLoadLimiterSignal, sysError
     }
 
     /// Encodes `ChargingSystemInformation` to a flat JSON structure.
     ///
     /// - Note: The `lineMaxCurrent` property is encoded as a single numeric value using the key `lineMaxCurrentA` (amperes only), for interoperability with flat-data systems like MQTT/ThingsBoard. Same applies to `loadBalancedMaxCurrent`.
+    /// - Note: The `externalLoadLimiterSignal` is encoded as a string representing the case name only. The associated value for `.derating` is ignored.
     /// - Throws: An error if any value fails to encode.
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -32,12 +33,14 @@ extension ChargingSystemInformation: JsonStringConvertible {
         try container.encode(chargingPointsCharging, forKey: .chargingPointsCharging)
         try container.encode(lineMaxCurrent.converted(to: .amperes).value, forKey: .lineMaxCurrentA)
         try container.encode(loadBalancedMaxCurrent.converted(to: .amperes).value, forKey: .loadBalancedMaxCurrentA)
+        try container.encode(Self.encodeLoadLimiterSignal(value: self.externalLoadLimiterSignal), forKey: .externalLoadLimiterSignal)
         try container.encode(sysError?.rawValue ?? "", forKey: .sysError)
     }
 
     /// Decodes ChargingSystemInformation from a flat JSON structure.
     ///
     /// - Note: The `lineMaxCurrentA` key is decoded as a numeric value in amperes and reconstructed as a `Measurement<UnitElectricCurrent>`. Same applies to `loadBalancedMaxCurrentA`
+    /// - Note: The `externalLoadLimiterSignal` is decoded from a string. For the `.derating` case, a default associated value of 0 amperes is used.
     /// - Throws: An error if any value fails to decode or is missing.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -51,8 +54,29 @@ extension ChargingSystemInformation: JsonStringConvertible {
         self.lineMaxCurrent = Measurement(value: lmca, unit: UnitElectricCurrent.amperes)
         let lbmca = try container.decode(Double.self, forKey: .loadBalancedMaxCurrentA)
         self.loadBalancedMaxCurrent = Measurement(value: lbmca, unit: UnitElectricCurrent.amperes)
+        let loadLimiterSignalString = try container.decode(String.self, forKey: .externalLoadLimiterSignal)
+        self.externalLoadLimiterSignal = Self.decodeLoadLimiterSignal(value: loadLimiterSignalString)
         let errorString = try container.decode(String.self, forKey: .sysError)
         self.sysError = errorString.isEmpty ? nil : SystemError(rawValue: errorString)
+    }
+    
+    /// Encodes load limiter signal as string, ignoring associated values
+    private static func encodeLoadLimiterSignal(value: LoadLimiterSignal) -> String {
+        switch value {
+        case .normalOperation: "normalOperation"
+        case .cutOff: "cutOff"
+        case .derating: "derating"
+        }
+    }
+    
+    /// Decodes load limiter signal from string, using default value `0` for `.derating` associated value
+    private static func decodeLoadLimiterSignal(value: String) -> LoadLimiterSignal {
+        switch value {
+        case "normalOperation": .normalOperation
+        case "cutOff": .cutOff
+        case "derating": .derating(maxCurrent: Measurement(value: 0, unit: .amperes))
+        default: .normalOperation
+        }
     }
 }
 
