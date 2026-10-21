@@ -6,7 +6,7 @@
     "meterBus": "/dev/tty.usbserial-AB0O6Z89",
     "lineLength": 3,
     "lineMaxCurrentA": 16,
-    "externalLoadLimiter": "gpio"
+    "externalLoadLimiter": "gpio",
     "externalLoadLimiterDeratingCurrentA": 6,
     "cloudHost": "my-iot-cloud-host.com",
     "cloudPort": 8883,
