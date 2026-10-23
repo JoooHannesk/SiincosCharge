@@ -58,7 +58,7 @@ SiincosCharge consists of an edge component, a robust backend ecosystem and a pr
 
 ## Installation & Documentation
 
-The installation guide is currently a work in progress and will be linked here as soon as the first version is ready.
+The documentation is currently a work in progress and will be linked here as soon as the first version is ready.
 
 ---
 
