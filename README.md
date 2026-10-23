@@ -2,11 +2,12 @@
 
 An open-source, privacy-first EV charging infrastructure management system designed for multi-location deployment and decentralized control. Take back your data and manage all your charging points across different locations through elegant dashboards – without being locked into proprietary cloud providers or restrictive corporate ecosystems.
 
-![Siincos Charge Dashboard showing a charging point. The vehicle is plugged in and is currently charging. The actual power drawn from the grid shows approximately 7 kW while the total energy consumption for the running session shows around 4.42 kWh. The charging session is still running.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosChargeWebUIChargingFullscreen.png "Siincos Charge Dashboard showing a charging point with a vehicle connected. The vehicle is currently charging.")
+![SiincosCharge Web showing a charging point while a vehicle is plugged in and charging: about 7 kW power and 4.42 kWh energy consumed so far.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosChargeWebUIChargingFullscreen.png)
 
 | ![Charts dashboard with total power, per-phase power and per-phase current over time.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosChargeWebUIChartsFullscreen.png) | ![Table of charging sessions with timestamp, session ID, charging time, energy consumed and current setpoint.](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SiincosChargeWebUIChargingSessionLogs.png) |
 |:---:|:---:|
 | *Charts: total power, per-phase power and current* | *Charging session history* |
+
 ## The Vision
 Many modern EV charging solutions rely on proprietary cloud backends that limit data ownership, customization and integration possibilities.
 
@@ -31,8 +32,8 @@ Your charging data belongs to you. SiincosCharge is natively cloud-enabled but d
 ### ⚡️ 5. Dynamic Load Balancing
 Automatic load balancing in case multiple EV chargers are operating concurrently. The system dynamically adjusts the charging current per station to ensure the overall electrical installation limit is never exceeded.
 
-### 📄 6. Grid compliance through Operator Curtailment (Ready for §14a EnWG)
-Designed with German grid regulations in mind. The system is architected to interface with a grid operator receiver / ripple control receiver (e.g., via a dry-contact / potential-free input on the edge hardware) to temporarily pause or dim charging sessions down to the legally mandated minimum (e.g., 4.2 kW). Two digital inputs (DIs) on the reComputer allow to either reduce the charging power or pause all charging sessions during an active external load limiting signal.
+### 📄 6. Grid Compliance through Operator Curtailment (Ready for §14a EnWG)
+Designed with German grid regulations in mind. The system is designed to interface with a grid operator receiver / ripple control receiver (e.g., via a dry-contact / potential-free input on the edge hardware) to temporarily pause or dim charging sessions down to the legally mandated minimum (e.g., 4.2 kW). Two digital inputs (DIs) on the reComputer allow you to either reduce the charging power or pause all charging sessions during an active external load limiting signal.
 
 ### ⚙️ 7. Simple Configuration
 Just a single configuration file. SiincosCharge abstracts hardware complexity. Simply configure your edge device (e.g., Raspberry Pi) by following our guide, connect a supported wallbox, and you are ready to go. (In some cases the EV charger or power meter may require some minor configuration, but this will be described in our documentation.)
@@ -47,7 +48,7 @@ SiincosCharge consists of an edge component, a robust backend ecosystem and a pr
 
 *   **Backend (this repo):** Powered by ThingsBoard CE. This repository contains the configuration assets, device profiles and links to documentation you need to get your private cloud instance up and running effortlessly.
 
-*   **SiincosCharge Web (this repo):** Pre-built ThingsBoard dashboards for monitoring and controlling your charging points, including real-time power, session data and history. They run in any browser, including on your phone, and together with the edge component and backend make SiincosCharge a complete system that works on its own.
+*   **SiincosCharge Web (this repo):** Pre-built ThingsBoard dashboards for monitoring and controlling your charging points: real-time power, session data and history; in addition starting, stopping, pausing and resuming charging sessions. They run in any browser, including browsers on your phone. Together with the edge component and backend make SiincosCharge a complete system that works on its own.
 
 *   **SiincosCharge App (optional, coming soon):** Native apps for Apple platforms (iOS, iPadOS, macOS) that connect directly to your private cloud instance, adding improved mobile usability and PDF reports. The apps are closed source and will be available as a one-time purchase, which supports the continued development of this open-source project. Android is currently planned.
 
