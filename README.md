@@ -20,7 +20,7 @@ Manage multiple charging points across various physical locations (e.g., your ho
 Want to share your charger with friends, neighbors or employees? Authorize users directly within your ThingsBoard CE tenant.
 
 ### 📊 3. Reporting
-SiincosCharge tracks precise energy consumption, aggregates detailed statistics, and automatically generates detailed charging session reports.
+SiincosCharge tracks precise energy consumption and automatically records every charging session as a structured, machine-readable session report (JSON), ready for dashboards, scripts, or custom integrations.
 
 ### 🛡️ 4. Data Sovereignty (Private Cloud)
 Your charging data belongs to you. SiincosCharge is natively cloud-enabled but designed to run on *your* infrastructure. By hosting your own open-source backend based on ThingsBoard CE, you get full remote access and a seamless user experience – without sharing telemetry or user data with third-party vendors.
@@ -38,11 +38,15 @@ Just a single configuration file. SiincosCharge abstracts hardware complexity. S
 
 ## Architecture
 
-SiincosCharge is split into a lightweight edge component, a robust backend ecosystem, and a modern mobile client to ensure maximum security and scalability:
+SiincosCharge is split into a lightweight edge component, a robust backend ecosystem with pre-built dashboards (and optional native apps):
 
-*   **SiincosCharge Edge (This Repo):** The lightweight open-source firmware running locally on your edge device (e.g., Raspberry Pi). It communicates directly with your EV chargers and power meters via Modbus (TCP/RTU) and securely pushes telemetry data to your private backend.
-*   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains all the necessary configuration assets, links to documentation, device profiles and pre-built IoT dashboards to get your private cloud instance up and running effortlessly.
-*   **SiincosCharge App (Optional, coming soon):** Our native iOS and Android app (both coming soon) that hook directly into your private cloud instance, adding improved usability for mobile devices including advanced reporting and statistics.
+*   **SiincosCharge Edge (This Repo):** The lightweight open-source firmware running locally on your edge device (e.g., Raspberry Pi). It communicates directly with your EV chargers and power meters via Modbus (RTU) and securely pushes telemetry data to your private backend.
+
+*   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains the configuration assets, device profiles and links to documentation you need to get your private cloud instance up and running effortlessly.
+
+*   **Dashboards (This Repo):** Pre-built ThingsBoard dashboards for monitoring and controlling your charging points, including real-time power, session data and history. They run in any browser and are fully usable on mobile, so the open-source core works completely on its own without the (native) apps.
+
+*   **SiincosCharge App (optional, coming soon):** Native apps for Apple platforms (iOS, iPadOS, macOS) that connect directly to your private cloud instance, adding improved mobile usability and PDF reports. The apps are closed source and will be available as a one-time purchase, which supports the continued development of this open-source core. Android is currently planned.
 
 ![Siincos Charge System Architecture](https://github.com/JoooHannesk/SiincosCharge/blob/main/SiincosChargeEdge/Sources/SiincosChargeEdge/SiincosChargeEdge.docc/SystemArchitecture.jpg)
 ---
@@ -62,7 +66,7 @@ We love contributions! Whether you want to add a Modbus profile for a new model,
 ## License
 
 This project is licensed under the **Apache License 2.0**. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved.
-
+The SiincosCharge apps and any hosted services are separate products and are not covered by it.
 ---
 
 This README was reviewed for readability, spelling and grammar using AI-assisted tools.
