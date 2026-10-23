@@ -44,7 +44,7 @@ SiincosCharge is split into a lightweight edge component, a robust backend ecosy
 
 *   **Backend (This Repo):** Powered by ThingsBoard CE. This repository contains the configuration assets, device profiles and links to documentation you need to get your private cloud instance up and running effortlessly.
 
-*   **Dashboards (This Repo):** Pre-built ThingsBoard dashboards for monitoring and controlling your charging points, including real-time power, session data and history. They run in any browser and are fully usable on mobile, so the open-source core works completely on its own without the (native) apps.
+*   **Dashboards (This Repo):** Pre-built ThingsBoard dashboards for monitoring and controlling your charging points, including real-time power, session data and history. They run in any browser, including on your phone, and together with the edge component and backend make SiincosCharge a complete system that works on its own.
 
 *   **SiincosCharge App (optional, coming soon):** Native apps for Apple platforms (iOS, iPadOS, macOS) that connect directly to your private cloud instance, adding improved mobile usability and PDF reports. The apps are closed source and will be available as a one-time purchase, which supports the continued development of this open-source core. Android is currently planned.
 
@@ -65,8 +65,7 @@ We love contributions! Whether you want to add a Modbus profile for a new model,
 
 ## License
 
-This project is licensed under the **Apache License 2.0**. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved.
-The SiincosCharge apps and any hosted services are separate products and are not covered by it.
+This project is licensed under the Apache License 2.0. You are free to use, modify, and distribute the core software, as long as the original copyright is preserved. The SiincosCharge apps and any hosted services are separate products and are not covered by it.
 ---
 
 This README was reviewed for readability, spelling and grammar using AI-assisted tools.
