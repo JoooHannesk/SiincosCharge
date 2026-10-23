@@ -5,7 +5,7 @@ Thank you for your interest in contributing! Contributions of all kinds are welc
 ## Ways to contribute
 
 - **Report a bug or suggest a feature:** Open an issue and describe what you expected, what happened, and how to reproduce it. For hardware problems, please include your charger / power meter model and edge device.
-- **Add a device profile:** Support for a new EV charger or power meter is one of the most valuable contributions. Please include the model name, the register documentation or source you used, and, if possible, confirm that you tested it on real hardware.
+- **Add new devices:** Support for a new EV charger or power meter is one of the most valuable contributions. Please include the model name, the documentation or source you used, and confirm that you tested it on real hardware. In addition, please also extend the documentation by providing the necessary steps to setup and configure the device (e.g. ModbusRTU configuration, setting maximum hardware current, etc.) 
 - **Improve the documentation:** Typos, unclear steps and missing explanations are all worth fixing.
 - **Fix a bug or add a feature:** See below.
 
