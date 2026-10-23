@@ -72,7 +72,7 @@ The installation guide is currently a work in progress and will be linked here a
 
 ## Contributing
 
-We love contributions! Whether you want to add a Modbus profile for a new model, fix a bug, or improve the documentation – feel free to open an issue or submit a pull request. 
+We love contributions! Whether you want to add a Modbus profile for a new model, fix a bug, or improve the documentation – feel free to open an issue or submit a pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started.
 
 ## License
 
